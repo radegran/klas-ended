@@ -33,6 +33,18 @@ var SampleApp = function() {
         };
     };
 
+	var eachJsAndCssFiles = function(cb)
+	{
+		var files = fs.readdirSync('.')
+					.filter(function(v){
+						return (/.(js|css)$/).test(v);
+					});
+					
+		for (var i = 0; i < files.length; i++)
+		{
+			cb(files[i]);
+		}			
+	};
 
     /**
      *  Populate the cache.
@@ -44,6 +56,11 @@ var SampleApp = function() {
 
         //  Local cache for static content.
         self.zcache['index.html'] = fs.readFileSync('./index.html');
+		
+		eachJsAndCssFiles(function(file)
+		{
+			self.zcache[file] = fs.readFileSync("./" + file);
+		});
     };
 
 
@@ -104,6 +121,15 @@ var SampleApp = function() {
             res.setHeader('Content-Type', 'text/html');
             res.send(self.cache_get('index.html') );
         };
+		
+		eachJsAndCssFiles(function(file)
+		{
+			self.routes['/' + file] = function(req, res)
+			{
+				res.setHeader('Content-Type', 'text');
+				res.send(self.cache_get(file) );	
+			}
+		});
     };
 
 

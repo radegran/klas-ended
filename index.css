@@ -1,0 +1,7 @@
+tr.odd {
+	background-color: #F4F4F4;
+}
+
+td.diff-cell, td.cell {
+	text-align: center;
+}
