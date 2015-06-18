@@ -358,5 +358,14 @@ $(document).ready(function()
 			return false;
 		}
 	});
+
+	// TEST POST
+	$.ajax({
+	  type: "POST",
+	  url: "/update",
+	  data: JSON.stringify({"hej": 42, san: ["klös", 999]}),
+	  contentType: "application/json",
+	  success: function(d) { console.log("Received:"); console.log(d); }
+	});
 	
 });
