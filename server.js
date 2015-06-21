@@ -2,6 +2,16 @@
 //  OpenShift sample Node application
 var express = require('express');
 var fs      = require('fs');
+var MongoClient = require('mongodb').MongoClient;
+var database;
+
+// Connect to the db
+MongoClient.connect("mongodb://localhost:27017/exampleDb", function(err, db) {
+  if(!err) {
+	database = db;
+    console.log("We are connected");
+  }
+});
 
 
 /**
