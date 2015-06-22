@@ -231,8 +231,6 @@ var SampleApp = function() {
         for (var r in self.routes) {
             self.app.get(r, self.routes[r]);
         }
-		
-		
 
 		// P O S T   H A N D L E R S 
 		self.app.post("/update", function(req, res) 

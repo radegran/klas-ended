@@ -1,8 +1,8 @@
 $(document).ready(function() 
 {
-	var $table = $("<table>");
-	var $center = $("<center/>");
-	$(document.body).append($center.append($table));
+	var $table = $("<table>").addClass("center");
+	var $container = $("<div/>").css("position", "relative");
+	$(document.body).append($container.append($table));
 
 	var data = {
 		"names": ["Klas", "Göran", "Berit"],
@@ -19,14 +19,17 @@ $(document).ready(function()
 	t = Table($table, model);
 	t.update(data);
 	
+	var buttonCss = function(color) {
+		return {
+			"margin-top": "15px",
+			"padding": "10px",
+			"background-color": color,
+			"cursor": "hand"
+		}
+	};
+	
 	// "Ok, I get it!"
-	var $iGetIt = $("<div/>").css({
-		"margin-top": "30px",
-		"padding": "10px",
-		"background-color": "lightgreen",
-		"display": "inline-block",
-		"cursor": "hand"
-	}).text("Okej, jag fattar!");
+	var $iGetIt = $("<div/>").css(buttonCss("lightgreen")).text("Okej, jag fattar!");
 	
 	$iGetIt.on("click", function()
 	{
@@ -42,6 +45,37 @@ $(document).ready(function()
 		});
 	});
 	
-	$center.append($iGetIt);
+	// Read more ...
+	var $readMore = $("<div/>").css(buttonCss("#f0f0f0")).text("Hur gör man ..?");
+	
+	$readMore.one("click", function()
+	{
+		var info = function(whatText, howText) 
+		{ 
+			var $div = $("<div/>").css({
+				"margin": "10px 0 5px 15px", 
+				"padding": "3px"
+			});
+			
+			$div.append(
+				$("<div/>").text(whatText),
+			    $("<div/>").text(howText).css({"color": "gray", "margin": "5px 0 0 5px"}));
+			
+			return $div;
+		};
+		
+		$(this).append(
+			$("<div/>").append(
+				info("Ny kompis", "Klicka plusknappen uppe till höger"),
+				info("Ny betalning", "Klicka plusknappen nere till vänster"),
+				info("Ta bort", "Sudda all text för kompis/betalning"),
+				info("Någon står utanför en betalning", "Sudda siffran i rutan"),
+				info("Gör en överföring på 100 kr", "Skriv 100 på den som ger och -100 på den som får"),
+				info("Längst ner står nuvarande balans!", "")
+			)
+		)
+	});
+	
+	$container.append($("<br/>"), $readMore.addClass("center"), $iGetIt.addClass("center"));
 	
 });
