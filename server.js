@@ -2,16 +2,89 @@
 //  OpenShift sample Node application
 var express = require('express');
 var fs      = require('fs');
-var MongoClient = require('mongodb').MongoClient;
-var database;
+var crypto  = require('crypto');
+var mongoClient = require('mongodb').MongoClient;
 
-// Connect to the db
-MongoClient.connect("mongodb://localhost:27017/exampleDb", function(err, db) {
-  if(!err) {
-	database = db;
-    console.log("We are connected");
-  }
-});
+var DB = function(mongoClient, url)
+{
+	var db; 
+	
+	    // default to a 'localhost' configuration:
+    var connectionString = '127.0.0.1:27017/klas';
+    // if OPENSHIFT env variables are present, use the available connection info:
+    if (process.env.OPENSHIFT_MONGODB_DB_PASSWORD) {
+        connectionString = process.env.OPENSHIFT_MONGODB_DB_USERNAME + ":" +
+        process.env.OPENSHIFT_MONGODB_DB_PASSWORD + "@" +
+        process.env.OPENSHIFT_MONGODB_DB_HOST + ':' +
+        process.env.OPENSHIFT_MONGODB_DB_PORT + '/' +
+        process.env.OPENSHIFT_APP_NAME;
+	}
+	
+	mongoClient.connect("mongodb://" + connectionString, function(err, database)
+	{
+		if (err) 
+		{ 
+			console.dir(err); 
+		}		
+		else
+		{
+			console.log("Connected to Mongo database!")
+			db = database;
+		}
+	});
+	
+	var create = function(callback) 
+	{
+		var collection = db.collection('docs');
+		var id = crypto.randomBytes(10).toString('hex');
+		var doc = {"id":id, "generation":0, "data":{"names":[], "payments":[]}};
+
+		collection.insert(doc, {w:1}, function(err, result)
+		{
+			callback(err, id);
+		});
+	};
+		
+	var update = function(doc, callback) 
+	{
+		var collection = db.collection('docs');
+
+		collection.findOne({"id":doc.id}, function(err, foundDoc) 
+		{
+			if (err) 
+			{ 
+				callback(err, foundDoc);
+				return; 
+			}
+		
+			if (foundDoc.generation >= doc.generation)
+			{
+				// Conflict
+				callback(null, foundDoc);
+			}
+			else
+			{
+				collection.update({"id":doc.id}, {$set:{"generation":doc.generation, "data": doc.data}}, {w:1}, function(err, result)
+				{
+					if (err) 
+					{ 
+						callback(err, foundDoc);
+					}
+					
+					doc.ok = true;
+					callback(null, doc);
+				});
+			}
+		});		
+	};
+	
+	return {
+		"create": create,
+		"update": update
+	};
+};
+
+var db = DB(mongoClient);
 
 
 /**
@@ -59,13 +132,13 @@ var SampleApp = function() {
     /**
      *  Populate the cache.
      */
-    self.populateCache = function() {
-        if (typeof self.zcache === "undefined") {
-            self.zcache = { 'index.html': '' };
-        }
-
+    self.populateCache = function() 
+	{
+		self.zcache = {};
+        
         //  Local cache for static content.
         self.zcache['index.html'] = fs.readFileSync('./index.html');
+	    self.zcache['example.html'] = fs.readFileSync('./example.html');
 		
 		eachJsAndCssFiles(function(file)
 		{
@@ -122,10 +195,17 @@ var SampleApp = function() {
     self.createRoutes = function() {
         self.routes = { };
 
-        self.routes['/'] = function(req, res) {
+        self.routes['/'] = function(req, res) 
+		{
             res.setHeader('Content-Type', 'text/html');
             res.send(self.cache_get('index.html') );
         };
+		
+		self.routes['/[0-9a-f]+$'] = function(req, res) 
+		{
+            res.setHeader('Content-Type', 'text/html');
+            res.send(self.cache_get('example.html') );			
+		};
 		
 		eachJsAndCssFiles(function(file)
 		{
@@ -152,11 +232,71 @@ var SampleApp = function() {
             self.app.get(r, self.routes[r]);
         }
 		
-		// POST 
-		self.app.post("/update", function(req, res) {
-			console.log("GOT REQUEST");
-			console.log(req.body.hej);
-			res.send({"status": 1234});
+		
+
+		// P O S T   H A N D L E R S 
+		self.app.post("/update", function(req, res) 
+		{
+			console.log("GOT update REQUEST");
+			
+			var doc = {
+				"id": req.body.id,
+				"generation": req.body.generation || -1,
+				"data": req.body.data || {}
+			};
+			
+			db.update(doc, function(err, foundDoc)
+			{
+				if (err)
+				{
+					console.log("Error updating document!");
+					res.send({"err": "Error updating document!"});
+				}
+				else
+				{
+					res.send(foundDoc);
+				}
+			});
+		});
+
+		self.app.post("/get", function(req, res) 
+		{
+			console.log("GOT get REQUEST");
+			
+			var doc = {
+				"id": req.body.id,
+				"generation": req.body.generation || -1,
+				"data": req.body.data || {}
+			};
+			
+			db.update(doc, function(err, foundDoc)
+			{
+				if (err)
+				{
+					console.log("Error updating document!");
+					res.send({"err": "Error updating document!"});
+				}
+				else
+				{
+					res.send(foundDoc);
+				}
+			});
+		});
+
+		self.app.post("/create", function(req, res) 
+		{
+			console.log("GOT create REQUEST");
+			db.create(function(err, id)
+			{
+				if (err)
+				{
+					res.send({"err": "could not create document!"});
+				}
+				else
+				{
+					res.send({"url": id});
+				}
+			});
 		});
     };
 
