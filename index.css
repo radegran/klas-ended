@@ -2,6 +2,10 @@ body {
 	font-family: 'Open Sans', sans-serif;
 }
 
+.header {
+	font-size: 1.5em;
+}
+
 tr.odd {
 	background-color: #F4F4F4;
 }

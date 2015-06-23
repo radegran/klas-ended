@@ -44,19 +44,17 @@ var toValidCellValue = function(text)
 	return isNaN(parseFloat(trimmed)) ? null : parseFloat(trimmed);
 };
 
-var Table = function($table, model)
+var Table = function($header, $table, model)
 {
 	var newRow = function() { return $("<tr>"); };
 
 	var $addColumnCell = addButtonCell(function()
 	{
 		model.addColumn();
-		$(this).prev().focus().text("");
 	});
 	var $addRowCell = addButtonCell(function() 
 	{ 
-		model.addRow(); 
-		$(this).parent().prev().find("td:first").focus().text("");
+		model.addRow();
 	});
 	
 	// Setup clean table
@@ -101,6 +99,16 @@ var Table = function($table, model)
 
 	var update = function(data)
 	{
+		$header.text(data.title);
+		makeEditable($header, data.title, function(newTitle)
+		{
+			if (newTitle == "")
+			{
+				newTitle = "...";
+			}
+			model.updateTitle(newTitle);
+		});
+		
 		var d3table = d3.select($table[0]);
 		
 		// First row - Names
@@ -307,6 +315,13 @@ var Model = function(initdata, onChangedCallback)
 		onChanged(data);
 	};
 	
+	var updateTitle = function(newTitle)
+	{
+		var data = currentData();
+		data.title = newTitle;
+		onChanged(data);
+	};
+	
 	var updatePaymentText = function(newText, i)
 	{
 		var data = currentData();
@@ -334,6 +349,7 @@ var Model = function(initdata, onChangedCallback)
 		"updateName": updateName,
 		"updatePaymentText": updatePaymentText,
 		"updatePaymentValue": updatePaymentValue,
+		"updateTitle": updateTitle,
 		"undo": undo,
 		"redo": redo,
 		"reset": reset

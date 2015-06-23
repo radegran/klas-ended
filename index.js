@@ -1,10 +1,13 @@
 $(document).ready(function() 
 {
 	var $table = $("<table>").addClass("center");
+	var $header = $("<div/>").addClass("center header");
 	var $container = $("<div/>").css("position", "relative");
-	$(document.body).append($container.append($table));
+	
+	$(document.body).append($container.append($header, $table));
 
 	var data = {
+		"title": "Exempel på balansräkning",
 		"names": ["Klas", "Göran", "Berit"],
 		"payments": [
 			{"text": "Överföring från Klas till Göran", "values": [100, -100, null]},
@@ -16,7 +19,7 @@ $(document).ready(function()
 	var t;
 	var model = Model(data, function(newdata) { t.update(newdata); });
 
-	t = Table($table, model);
+	t = Table($header, $table, model);
 	t.update(data);
 	
 	var buttonCss = function(color) {

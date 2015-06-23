@@ -70,7 +70,7 @@ var DocState = function(doc)
 					}
 					else
 					{
-						info("Någon har ändrat balansen. Prova igen eller ladda om sidan.")
+						info("Någon har ändrat balansen, försök igen.")
 						data = updatereply.data;
 						generation = updatereply.generation;
 						conflictCallback(data);
@@ -112,8 +112,9 @@ var DocState = function(doc)
 var initialize = function(docState)
 {	
 	var $table = $("<table>").addClass("center");
+	var $header = $("<div/>").addClass("center header");
 	var $container = $("<div/>").css("position", "relative");
-	$(document.body).prepend($container.append($table));
+	$(document.body).prepend($container.append($header, $table));
 
 	var t;
 	var model = Model(docState.data(), function(newdata) 
@@ -131,7 +132,7 @@ var initialize = function(docState)
 		});
 	});
 
-	t = Table($table, model);
+	t = Table($header, $table, model);
 	t.update(docState.data());
 	
 	if (docState.generation() == 0)
@@ -153,7 +154,16 @@ $(document).ready(function()
 	  url: "/get",
 	  data: JSON.stringify({"id": window.location.pathname.substring(1)}),
 	  contentType: "application/json",
-	  success: function(doc) { initialize(DocState(doc)); },
+	  success: function(reply) { 
+		if (reply.err)
+		{
+			info(reply.err);
+		}
+		else
+		{
+			initialize(DocState(reply)); 			
+		}
+	  },
 	  error: function() { bailout(); }
 	});
 });

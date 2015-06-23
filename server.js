@@ -37,7 +37,7 @@ var DB = function(mongoClient, url)
 	{
 		var collection = db.collection('docs');
 		var id = crypto.randomBytes(10).toString('hex');
-		var doc = {"id":id, "generation":0, "data":{"names":[], "payments":[]}};
+		var doc = {"id":id, "generation":0, "data":{"title": "Skriv en titel här", "names":[], "payments":[]}};
 
 		collection.insert(doc, {w:1}, function(err, result)
 		{
@@ -51,12 +51,12 @@ var DB = function(mongoClient, url)
 
 		collection.findOne({"id":doc.id}, function(err, foundDoc) 
 		{
-			if (err) 
+			if (err || foundDoc === null) 
 			{ 
-				callback(err, foundDoc);
+				callback("Kunde inte hitta balansräkningen!", foundDoc);
 				return; 
 			}
-		
+
 			if (foundDoc.generation >= doc.generation)
 			{
 				// Conflict
@@ -238,11 +238,12 @@ var SampleApp = function() {
 			{
 				if (err)
 				{
-					console.log("Error updating document!");
-					res.send({"err": "Error updating document!"});
+					console.log(err.message || err);
+					res.send({"err": err.message || err});
 				}
 				else
 				{
+					delete foundDoc._id;
 					res.send(foundDoc);
 				}
 			});			
