@@ -205,7 +205,8 @@ var Table = function($table, model)
 		
 		for (var i = 0; i < totalDiffs.length; i++)
 		{
-			$diffRow.append($("<td/>").addClass("diff-cell").text(Math.round(totalDiffs[i])));
+			var twoDecimals = totalDiffs[i].toFixed(2);
+			$diffRow.append($("<td/>").addClass("diff-cell").text(twoDecimals));
 		}
 		
 		// Pyjamas classes
