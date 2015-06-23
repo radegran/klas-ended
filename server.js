@@ -243,7 +243,7 @@ var SampleApp = function() {
 				}
 				else
 				{
-					setTimeout(function() { res.send(foundDoc); }, 3000);
+					res.send(foundDoc);
 				}
 			});			
 		};

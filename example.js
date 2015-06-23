@@ -76,7 +76,10 @@ var DocState = function(doc)
 						conflictCallback(data);
 					}
 				},
-				error: bailout,
+				error: function() 
+				{
+					bailout();
+				},
 				complete: function()
 				{
 					if (returnedOk)
@@ -151,6 +154,6 @@ $(document).ready(function()
 	  data: JSON.stringify({"id": window.location.pathname.substring(1)}),
 	  contentType: "application/json",
 	  success: function(doc) { initialize(DocState(doc)); },
-	  error: bailout
+	  error: function() { bailout(); }
 	});
 });
