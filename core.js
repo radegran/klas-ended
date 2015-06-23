@@ -51,10 +51,12 @@ var Table = function($header, $table, model)
 	var $addColumnCell = addButtonCell(function()
 	{
 		model.addColumn();
+		$(this).prev().focus().text("");
 	});
 	var $addRowCell = addButtonCell(function() 
 	{ 
-		model.addRow();
+		model.addRow(); 
+		$(this).parent().prev().find("td:first").focus().text("");
 	});
 	
 	// Setup clean table
@@ -99,6 +101,9 @@ var Table = function($header, $table, model)
 
 	var update = function(data)
 	{
+		// Prevents bug for updating while contenteditable has focus... sigh.
+		$table.find("*").off("blur");
+		
 		$header.text(data.title);
 		makeEditable($header, data.title, function(newTitle)
 		{
