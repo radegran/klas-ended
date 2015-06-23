@@ -1,3 +1,7 @@
+body {
+	font-family: 'Open Sans', sans-serif;
+}
+
 tr.odd {
 	background-color: #F4F4F4;
 }
