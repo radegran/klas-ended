@@ -26,3 +26,9 @@ td {
 	position: relative; 
 	display: table;
 }
+
+.info {
+	margin-top: 15px;
+	padding: 10px;
+	background-color: #FFE869;
+}

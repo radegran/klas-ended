@@ -260,6 +260,13 @@ var Model = function(initdata, onChangedCallback)
 		onChangedCallback(undoStack[undoStackCursor]);
 	};
 	
+	var reset = function(data)
+	{
+		undoStack = [data];
+		undoStackCursor = 0;
+		onChangedCallback(data);
+	};
+	
 	var addColumn = function()
 	{
 		var data = currentData();
@@ -328,7 +335,8 @@ var Model = function(initdata, onChangedCallback)
 		"updatePaymentText": updatePaymentText,
 		"updatePaymentValue": updatePaymentValue,
 		"undo": undo,
-		"redo": redo
+		"redo": redo,
+		"reset": reset
 	};
 };
 

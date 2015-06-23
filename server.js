@@ -232,17 +232,8 @@ var SampleApp = function() {
             self.app.get(r, self.routes[r]);
         }
 
-		// P O S T   H A N D L E R S 
-		self.app.post("/update", function(req, res) 
+		var update = function(doc, req, res)
 		{
-			console.log("GOT update REQUEST");
-			
-			var doc = {
-				"id": req.body.id,
-				"generation": req.body.generation || -1,
-				"data": req.body.data || {}
-			};
-			
 			db.update(doc, function(err, foundDoc)
 			{
 				if (err)
@@ -252,9 +243,23 @@ var SampleApp = function() {
 				}
 				else
 				{
-					res.send(foundDoc);
+					setTimeout(function() { res.send(foundDoc); }, 3000);
 				}
-			});
+			});			
+		};
+		
+		// P O S T   H A N D L E R S 
+		self.app.post("/update", function(req, res) 
+		{
+			console.log("GOT update REQUEST");
+			
+			var doc = {
+				"id": req.body.id,
+				"generation": req.body.generation,
+				"data": req.body.data
+			};
+			
+			update(doc, req, res);
 		});
 
 		self.app.post("/get", function(req, res) 
@@ -263,22 +268,10 @@ var SampleApp = function() {
 			
 			var doc = {
 				"id": req.body.id,
-				"generation": req.body.generation || -1,
-				"data": req.body.data || {}
+				"generation": -1
 			};
 			
-			db.update(doc, function(err, foundDoc)
-			{
-				if (err)
-				{
-					console.log("Error updating document!");
-					res.send({"err": "Error updating document!"});
-				}
-				else
-				{
-					res.send(foundDoc);
-				}
-			});
+			update(doc, req, res);
 		});
 
 		self.app.post("/create", function(req, res) 

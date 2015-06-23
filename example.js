@@ -1,43 +1,102 @@
+var showMessage = function(message)
+{
+	$(".center.info").remove();
+	var $msg = $("<div/>")
+	    .addClass("center info")
+		.text(message);
+	$(document.body).prepend($msg);	
+	return $msg;
+};
+
+var bailout = function(message)
+{
+	showMessage(message || "Ooops! Ett fel har inträffat... Laddar strax om sidan!")
+	setTimeout(function() { window.location.href = window.location.href;}, 3000)
+};
+
+var info = function(message)
+{
+	showMessage(message).delay(3000).fadeOut('slow');
+};
+
 var DocState = function(doc)
 {
 	var generation = doc.generation;
 	var data = doc.data;
 	var id = doc.id;
 	
+	var Queue = function () 
+	{
+		var previous = new $.Deferred().resolve();
+		
+		return function (fn) 
+		{
+			previous = previous.then(fn, function() {});
+		};
+	};
+	
+	var q = Queue();
+	
 	var update = function(opts) 
 	{
 		var conflictCallback = opts.conflict;
 		
-		generation++;
+		var sequenceAjax = function()
+		{
+			generation++;
+			
+			var d = new $.Deferred();
+			var returnedOk = false;
+			
+			$.ajax({
+				type: "POST",
+				url: "/update",
+				data: JSON.stringify({
+					"id": id,
+					"generation": generation,
+					"data": opts.data
+				}),
+				contentType: "application/json",
+				success: function(updatereply) 
+				{ 
+					if (updatereply.err)
+					{
+						bailout(updatereply.err)
+					}
+					else if (updatereply.ok)
+					{
+						// All good...
+						returnedOk = true;
+					}
+					else
+					{
+						info("Någon har ändrat balansen. Prova igen eller ladda om sidan.")
+						data = updatereply.data;
+						generation = updatereply.generation;
+						conflictCallback(data);
+					}
+				},
+				error: bailout,
+				complete: function()
+				{
+					if (returnedOk)
+					{
+						d.resolve();
+					}
+					else
+					{
+						// Invalidate any queue requests
+						d.reject();
+						// Make a fresh queue
+						q = Queue();
+					}
+				}
+			});
+			
+			return d;
+		};
 		
-		// TODO: Wait for any on-going ajax call
-		$.ajax({
-			type: "POST",
-			url: "/update",
-			data: JSON.stringify({
-				"id": id,
-				"generation": generation,
-				"data": opts.data
-			}),
-			contentType: "application/json",
-			success: function(updatereply) 
-			{ 
-				if (updatereply.err)
-				{
-					alert(updatereply.err)
-				}
-				else if (updatereply.ok)
-				{
-					// All good...
-				}
-				else
-				{
-					data = updatereply.data;
-					generation = updatereply.generation;
-					conflictCallback(data);
-				}
-			}
-		});
+		q(sequenceAjax);
 	};
 	
 	return {
@@ -63,7 +122,8 @@ var initialize = function(docState)
 			"conflict": function(theirdata) 
 			{
 				// Conflict!
-				t.update(theirdata);
+				
+				model.reset(theirdata);
 			}
 		});
 	});
@@ -75,15 +135,10 @@ var initialize = function(docState)
 	{			
 		$(document.body).append(
 			$("<div/>")
-			.css({			
-				"margin-top": "15px",
-				"padding": "10px",
-				"background-color": "#FFE869"})
+			.addClass("center info")
 			.text("Kopiera länken när du är klar. Alla ändringas sparas.")
 			.delay(2000)
-			.fadeOut('slow')
-			.addClass("center")
-			);
+			.fadeOut('slow'));
 	}
 };
 
@@ -95,6 +150,7 @@ $(document).ready(function()
 	  url: "/get",
 	  data: JSON.stringify({"id": window.location.pathname.substring(1)}),
 	  contentType: "application/json",
-	  success: function(doc) { initialize(DocState(doc)); }
+	  success: function(doc) { initialize(DocState(doc)); },
+	  error: bailout
 	});
 });
