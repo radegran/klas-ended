@@ -73,8 +73,7 @@ $(document).ready(function()
 				info("Ny betalning", "Klicka plusknappen nere till vänster"),
 				info("Ta bort", "Sudda all text för kompis/betalning"),
 				info("Någon står utanför en betalning", "Sudda siffran i rutan"),
-				info("Gör en överföring på 100 kr", "Skriv 100 på den som ger och -100 på den som får"),
-				info("Längst ner står nuvarande balans!", "")
+				info("Gör en överföring på 100 kr", "Skriv 100 på den som ger och -100 på den som får")
 			)
 		)
 	});

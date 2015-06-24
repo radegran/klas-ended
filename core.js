@@ -32,6 +32,96 @@ var makeEditable = function($elem, currentValue, onNewValue)
 	});	
 };
 
+var transferPlan = function(balances)
+{
+	var MoneyTransfer = function(fromIndex, toIndex, amount)
+	{
+		return {
+			"from": fromIndex,
+			"to": toIndex,
+			"amount": amount
+		};
+	};
+	
+	var IndexedBalance = function(i, balance)
+	{
+		return {
+			"index": i,
+			"balance": balance
+		};
+	};
+	
+	var positives = [];
+	var negatives = [];
+	
+	$.each(balances, function(i, value)
+	{
+		if (value > 0)
+		{
+			positives.push(IndexedBalance(i, value));
+		}
+		else if (value < 0)
+		{
+			negatives.push(IndexedBalance(i, -value));
+		}
+	});
+	
+	var plan = [];
+	var n = negatives.pop();
+	var p = positives.pop();
+	
+	while (p && n)
+	{
+		var pReceived = 0;
+		var pIsSatisfied = false;
+		
+		do
+		{
+			var pRemains = p.balance - pReceived;
+			pIsSatisfied = n.balance >= pRemains;
+			
+			var amount = pIsSatisfied ? pRemains : n.balance;
+			plan.push(MoneyTransfer(n.index, p.index, amount));
+			
+			pReceived += amount;
+			
+			if (!pIsSatisfied)
+			{
+				n = negatives.pop();
+			}
+			else
+			{
+				n.balance -= amount;
+			}
+		}
+		while (!pIsSatisfied && n)
+			
+		p = positives.pop();
+	}
+	
+	return plan;
+};
+
+// Only for testing!!!
+var testTransfer = function(balances)
+{
+	var sum = balances.reduce(function(a, b) { return a + b; });
+	var normBalances = balances.map(function(v) { return v - sum/balances.length; });
+	
+	var plan = transferPlan(normBalances);
+	var p = plan.pop();
+	while(p)
+	{
+		normBalances[p.from] += p.amount;
+		normBalances[p.to] -= p.amount;
+		
+		console.log(p.from + " -> " + p.to + ": " + p.amount);
+		p = plan.pop();
+	}
+	
+	console.log(normBalances);
+}
+
 var isValidCellValue = function(text)
 {
 	var trimmed = text.replace(/ /g, "");
@@ -98,12 +188,54 @@ var Table = function($header, $table, model)
 		});
 				
 	};
-
-	var update = function(data)
+	
+	var updatePaymentPlan = function(data, plan)
 	{
-		// Prevents bug for updating while contenteditable has focus... sigh.
-		$table.find("*").off("blur");
-		
+		$table.find(".transfer-plan").remove();
+	
+		$.each(plan, function(i, moneyTransfer)
+		{
+			var longRow = function(text)
+			{
+				var tr = $("<tr/>").addClass("transfer-plan");
+				var td = $("<td colspan=" + (data.names.length+1) + "/>");
+				if (text) { td.text(text)} else { td.html("&nbsp;"); }
+				return tr.append(td);
+			};
+			
+			if (i==0)
+			{
+				// Some air in the table...
+				$table.append(longRow());
+			}
+			
+			var mt = moneyTransfer;
+			if (mt.amount > 0.005)
+			{
+				// Only show if amount is big enough
+				$table.append(
+					longRow(data.names[mt.from] + " ska ge " + mt.amount.toFixed(2) + " till " + data.names[mt.to]));				
+			}
+		});
+	};
+	
+	var updatePyjamasClasses = function()
+	{
+		$table.find("tr").each(function(i)
+		{
+			if (i % 2 == 1)
+			{
+				$(this).addClass("odd");
+			}
+			else
+			{
+				$(this).removeClass("odd");
+			}
+		});
+	};
+	
+	var updateHeader = function(data)
+	{
 		$header.text(data.title);
 		makeEditable($header, data.title, function(newTitle)
 		{
@@ -112,8 +244,53 @@ var Table = function($header, $table, model)
 				newTitle = "...";
 			}
 			model.updateTitle(newTitle);
+		});		
+	};
+	
+	var updateTotalDiffRow = function(data)
+	{
+		var $diffRow = $table.find(".diff-row");
+		$diffRow.find(".diff-cell").remove();
+		
+		var totalDiffs = new Array(data.names.length);
+		for (var i = 0; i < totalDiffs.length; i++)
+			totalDiffs[i] = 0;
+		
+		$(data.payments).each(function(i, payment) 
+		{
+			var rowSum = 0;
+			var rowCount = 0;
+			$(payment.values).each(function(i, value) 
+			{
+				// Discard those who didn't participate in this payment
+				if (value !== null)
+				{
+					rowSum += value;
+					rowCount++;					
+				}
+			});
+			
+			$(payment.values).each(function(i, value) 
+			{
+				// Discard those who didn't participate in this payment
+				if (value !== null)
+				{
+					totalDiffs[i] += value - rowSum / rowCount;		
+				}
+			});
 		});
 		
+		for (var i = 0; i < totalDiffs.length; i++)
+		{
+			var twoDecimals = totalDiffs[i].toFixed(2);
+			$diffRow.append($("<td/>").addClass("diff-cell").text(twoDecimals));
+		}
+		
+		return totalDiffs;
+	};
+	
+	var updateNamesAndPayments = function(data)
+	{
 		var d3table = d3.select($table[0]);
 		
 		// First row - Names
@@ -168,7 +345,11 @@ var Table = function($header, $table, model)
 			.style("background-color", "")
 			.each(function(value, i, j) {
 				var $cell = $(this);
-				makeEditable($cell, value + "", function(newValue) {
+				makeEditable($cell, value + "", function(newValue) 
+				{
+					// Not comma, use dot
+					newValue = newValue.replace(/,/g, ".");
+					
 					if (isValidCellValue(newValue))
 					{
 						$cell.css("background-color", "");
@@ -183,57 +364,17 @@ var Table = function($header, $table, model)
 		
 		paymentCell.exit()
 			.remove();
-			
-		// UPDATE DIFF ROW
-		var $diffRow = $table.find(".diff-row");
-		$diffRow.find(".diff-cell").remove();
+	};
+
+	var update = function(data)
+	{
+		// Prevents bug for updating while contenteditable has focus... sigh.
+		$table.find("*").off("blur");
 		
-		var totalDiffs = new Array(data.names.length);
-		for (var i = 0; i < totalDiffs.length; i++)
-			totalDiffs[i] = 0;
-		
-		$(data.payments).each(function(i, payment) 
-		{
-			var rowSum = 0;
-			var rowCount = 0;
-			$(payment.values).each(function(i, value) 
-			{
-				// Discard those who didn't enjoy this payment
-				if (value !== null)
-				{
-					rowSum += value;
-					rowCount++;					
-				}
-			});
-			
-			$(payment.values).each(function(i, value) 
-			{
-				// Discard those who didn't enjoy this payment
-				if (value !== null)
-				{
-					totalDiffs[i] += value - rowSum / rowCount;		
-				}
-			});
-		});
-		
-		for (var i = 0; i < totalDiffs.length; i++)
-		{
-			var twoDecimals = totalDiffs[i].toFixed(2);
-			$diffRow.append($("<td/>").addClass("diff-cell").text(twoDecimals));
-		}
-		
-		// Pyjamas classes
-		$table.find("tr").each(function(i)
-		{
-			if (i % 2 == 1)
-			{
-				$(this).addClass("odd");
-			}
-			else
-			{
-				$(this).removeClass("odd");
-			}
-		});
+		updateNamesAndPayments(data);			
+		var diffs = updateTotalDiffRow(data);
+		updatePaymentPlan(data, transferPlan(diffs));
+		updatePyjamasClasses();
 	};
 	
 	setup();
