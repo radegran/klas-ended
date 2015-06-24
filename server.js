@@ -37,7 +37,14 @@ var DB = function(mongoClient, url)
 	{
 		var collection = db.collection('docs');
 		var id = crypto.randomBytes(10).toString('hex');
-		var doc = {"id":id, "generation":0, "data":{"title": "Skriv en titel här", "names":[], "payments":[]}};
+		var doc = {
+			"id":id,
+			"lastUpdated": Date.now(),
+			"generation":0, 
+			"data":{
+				"title": "Skriv en titel här", 
+				"names":[], 
+			"payments":[]}};
 
 		collection.insert(doc, {w:1}, function(err, result)
 		{
@@ -64,7 +71,13 @@ var DB = function(mongoClient, url)
 			}
 			else
 			{
-				collection.update({"id":doc.id}, {$set:{"generation":doc.generation, "data": doc.data}}, {w:1}, function(err, result)
+				var setter = {
+					"lastUpdated": Date.now(),
+					"generation": doc.generation, 
+					"data": doc.data
+				};
+				
+				collection.update({"id":doc.id}, {$set:setter}, {w:1}, function(err, result)
 				{
 					if (err) 
 					{ 
@@ -78,9 +91,21 @@ var DB = function(mongoClient, url)
 		});		
 	};
 	
+	var stats = function(callback)
+	{
+		db.collection('docs').find(
+			{"lastUpdated":{"$exists":true}}, 
+			{"sort":[["lastUpdated", "descending"]], "limit": 500})
+			.toArray(function(err, docs)
+			{
+				callback(docs);
+			});
+	};
+	
 	return {
 		"create": create,
-		"update": update
+		"update": update,
+		"stats": stats
 	};
 };
 
@@ -201,6 +226,22 @@ var SampleApp = function() {
             res.send(self.cache_get('index.html') );
         };
 		
+        self.routes['/stats'] = function(req, res) 
+		{
+            res.setHeader('Content-Type', 'text/html');
+			var response = "<html><body>";
+            db.stats(function(docs) 
+			{
+				for (var i = 0; i < docs.length; i++)
+				{
+					var d = docs[i];
+					response += (new Date(d.lastUpdated)).toString().substring(0, 33) + " : gen " + d.generation + "<br/>";
+				}
+				
+				res.send(response + "</body></html>");
+			});
+        };
+		
 		self.routes['/[0-9a-f]+$'] = function(req, res) 
 		{
             res.setHeader('Content-Type', 'text/html');
@@ -243,6 +284,7 @@ var SampleApp = function() {
 				}
 				else
 				{
+					delete foundDoc.touchedTime;
 					delete foundDoc._id;
 					res.send(foundDoc);
 				}
