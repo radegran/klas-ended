@@ -371,6 +371,7 @@ var Table = function($header, $table, model)
 		// Prevents bug for updating while contenteditable has focus... sigh.
 		$table.find("*").off("blur");
 		
+		updateHeader(data);
 		updateNamesAndPayments(data);			
 		var diffs = updateTotalDiffRow(data);
 		updatePaymentPlan(data, transferPlan(diffs));
