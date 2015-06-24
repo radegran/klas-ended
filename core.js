@@ -283,7 +283,10 @@ var Table = function($header, $table, model)
 		for (var i = 0; i < totalDiffs.length; i++)
 		{
 			var twoDecimals = totalDiffs[i].toFixed(2);
-			$diffRow.append($("<td/>").addClass("diff-cell").text(twoDecimals));
+			$diffRow.append($("<td/>")
+				.addClass("diff-cell")
+				.text(twoDecimals)
+				.css("color", (twoDecimals > 0 ? "limegreen" : (twoDecimals < 0 ? "salmon" : ""))));
 		}
 		
 		return totalDiffs;
