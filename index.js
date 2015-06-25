@@ -7,7 +7,7 @@ $(document).ready(function()
 	$(document.body).append($container.append($header, $table));
 
 	var data = {
-		"title": "Exempel på balansräkning",
+		"title": "Exempel på balansräkning (inga ändringar sparas)",
 		"names": ["Klas", "Göran", "Berit"],
 		"payments": [
 			{"text": "Överföring från Klas till Göran", "values": [100, -100, null]},

@@ -141,7 +141,7 @@ var initialize = function(docState)
 			$("<div/>")
 			.addClass("center info")
 			.text("Kopiera länken när du är klar. Alla ändringas sparas.")
-			.delay(2000)
+			.delay(5000)
 			.fadeOut('slow'));
 	}
 };
