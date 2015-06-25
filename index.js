@@ -7,7 +7,7 @@ $(document).ready(function()
 	$(document.body).append($container.append($header, $table));
 
 	var data = {
-		"title": "Exempel på balansräkning (inga ändringar sparas)",
+		"title": "Exempel på balansräkning. Prova på tills du fattar! (inga ändringar sparas)",
 		"names": ["Klas", "Göran", "Berit"],
 		"payments": [
 			{"text": "Överföring från Klas till Göran", "values": [100, -100, null]},
@@ -78,6 +78,6 @@ $(document).ready(function()
 		)
 	});
 	
-	$container.append($("<br/>"), $readMore.addClass("center"), $iGetIt.addClass("center"));
+	$container.append($("<br/>"), $iGetIt.addClass("center"), $readMore.addClass("center"));
 	
 });
