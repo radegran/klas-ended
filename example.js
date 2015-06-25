@@ -173,4 +173,21 @@ $(document).ready(function()
 	  },
 	  error: function() { bailout(); }
 	});
+	
+	var ajaxTimer = null;
+	var $savingMessage = $();
+	
+	$(document).ajaxStart(function()
+	{
+		ajaxTimer = setTimeout(function() {
+			$savingMessage = showMessage("Sparar ...");
+		}, 2000);
+	});
+	
+	$(document).ajaxStop(function()
+	{
+		clearTimeout(ajaxTimer);
+		$savingMessage.hide();
+	});
+	
 });
