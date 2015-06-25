@@ -7,7 +7,7 @@ $(document).ready(function()
 	$(document.body).append($container.append($header, $table));
 
 	var data = {
-		"title": "Exempel på balansräkning. Prova på tills du fattar! (inga ändringar sparas)",
+		"title": "Exempel på balansräkning (klicka Okej för att kunna spara)",
 		"names": ["Klas", "Göran", "Berit"],
 		"payments": [
 			{"text": "Överföring från Klas till Göran", "values": [100, -100, null]},
@@ -53,6 +53,8 @@ $(document).ready(function()
 	
 	$readMore.one("click", function()
 	{
+		$(this).css("cursor", "");
+	
 		var info = function(whatText, howText) 
 		{ 
 			var $div = $("<div/>").css({
