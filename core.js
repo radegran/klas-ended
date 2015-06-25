@@ -1,4 +1,4 @@
- var addButtonCell = function(onclick)
+var addButtonCell = function(onclick)
 {
 	var c = $("<td/>").html("&nbsp;+&nbsp;");
 	c.on("click", onclick);
@@ -516,4 +516,34 @@ var isCtrlY = function(e)
 {
 	e = window.event || e;
     return (e.keyCode == 89 && e.ctrlKey);
+};
+
+var wrapCenter = function($elem, option)
+{
+	var $centered = $("<div/>").css({"overflow": "auto"}).append(
+		$("<div/>").css({"position": "relative", "float": "right", "right": "50%"}).append(
+				$("<div/>").css({"position": "relative", "float": "right", "right": "-50%"}).append(
+					$elem)
+				)
+			);
+			
+	if (option == "fixed")
+	{
+		return $("<div/>").css({"position": "fixed", "top": 0, "right": 0, "left": 0}).append($centered);
+	}
+	return $centered;
+};
+
+var addToCenter = function($elem, option)
+{
+	var $wrap = wrapCenter($elem, option);
+	$(document.body).append($wrap);
+	return $wrap;
+};
+
+var prependToCenter = function($elem, option)
+{
+	var $wrap = wrapCenter($elem, option);
+	$(document.body).prepend($wrap);
+	return $wrap;
 };

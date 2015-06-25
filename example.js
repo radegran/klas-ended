@@ -1,11 +1,11 @@
 var showMessage = function(message)
 {
-	$(".center.info").remove();
+	$(".message").remove();
 	var $msg = $("<div/>")
-	    .addClass("center info")
+		.addClass("yellow info")
 		.text(message);
-	$(document.body).prepend($msg);	
-	return $msg;
+		
+	return prependToCenter($msg, "fixed").addClass("message");
 };
 
 var bailout = function(message)
@@ -111,10 +111,10 @@ var DocState = function(doc)
 
 var initialize = function(docState)
 {	
-	var $table = $("<table>").addClass("center");
-	var $header = $("<div/>").addClass("center header");
-	var $container = $("<div/>").css("position", "relative");
-	$(document.body).prepend($container.append($header, $table));
+	var $table = $("<table>");
+	var $header = $("<div/>").addClass("header");
+	addToCenter($header);
+	addToCenter($table);
 
 	var $startupInfo = $();
 	var t;
@@ -129,8 +129,7 @@ var initialize = function(docState)
 			"data": newdata,
 			"conflict": function(theirdata) 
 			{
-				// Conflict!
-				
+				// Conflict!	
 				model.reset(theirdata);
 			}
 		});
@@ -141,7 +140,7 @@ var initialize = function(docState)
 	
 	if (docState.generation() == 0)
 	{			
-		$startupInfo = $("<div/>").addClass("center info yellow startup").append(
+		$startupInfo = $("<div/>").addClass("info yellow startup").append(
 			$("<span/>").text("Ovanför finns en tom sammanställning du kan börja fylla i."), $("<br/>"),
 			$("<span/>").text("Du kan lägga till den här sidan som ett bokmärke för att"), $("<br/>"),
 			$("<span/>").text("återkomma senare. Det går också låta andra ta del av sidan"), $("<br/>"),
@@ -150,7 +149,7 @@ var initialize = function(docState)
 			$("<a/>").attr("href", window.location.href).text(window.location.href), $("<br/>"),
 			$("<br/>"),
 			$("<span/>").text("Alla ändringar sparas automatiskt!"));
-		$(document.body).append($startupInfo);
+		addToCenter($startupInfo);
 	}
 };
 

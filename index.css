@@ -1,4 +1,4 @@
-body {
+body div {
 	font-family: 'Open Sans', sans-serif;
 }
 
@@ -49,15 +49,16 @@ td {
 
 .center
 {
-	margin-left: auto;
-	margin-right: auto; 
-	position: relative; 
-	display: table;
+	margin: 0 auto;
 }
 
 .info {
 	margin-top: 15px;
 	padding: 10px;
+}
+
+.message {
+	z-index: 10;
 }
 
 .yellow {

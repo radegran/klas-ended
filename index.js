@@ -2,18 +2,19 @@ $(document).ready(function()
 {
 	var welcomeText = function(text) { return $("<span/>").css("display", "block").text(text); };
 	
-	var $welcome = $("<div/>").addClass("center welcome").append(
-		welcomeText("Dela lika").css("font-size", "2.1em"),
+	var $welcome = $("<div/>").addClass("welcome").append(
+		welcomeText("Dela lika").css({"font-size": "2.1em", "margin-bottom": "0.5em"}),
 		welcomeText("Det ska va riktigt lätt att dela upp utgifter."),
 		welcomeText("Och det blir inte lättare än så här."),
-		welcomeText("Prova först själv här nere."),
-		welcomeText("Klicka sen på gröna knappen och börja dela lika på riktigt!")
+		welcomeText("Prova först själv här nere, klicka sen på"),
+		welcomeText("gröna knappen och börja dela lika på riktigt!")
 	);
-	var $table = $("<table>").addClass("center");
-	var $header = $("<div/>").addClass("center header");
-	var $container = $("<div/>").css("position", "relative");
+	var $table = $("<table>");
+	var $header = $("<div/>");
 	
-	$(document.body).append($container.append($welcome, $header, $table));
+	addToCenter($welcome);
+	addToCenter($header);
+	addToCenter($table);
 
 	var data = {
 		"title": "",
@@ -35,7 +36,7 @@ $(document).ready(function()
 		var css = {
 			"margin-top": "15px",
 			"padding": "10px",
-			"cursor": "hand"
+			"cursor": "pointer"
 		};
 		
 		if (color) css["background-color"] = color;
@@ -96,6 +97,7 @@ $(document).ready(function()
 		)
 	});
 	
-	$container.append($("<br/>"), $("<br/>"), $iGetIt.addClass("center"), $readMore.addClass("center"));
+	addToCenter([$("<br/>"), $("<br/>"), $iGetIt]);
+	addToCenter($readMore);
 	
 });

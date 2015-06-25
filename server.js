@@ -252,7 +252,14 @@ var SampleApp = function() {
 		{
 			self.routes['/' + file] = function(req, res)
 			{
-				res.setHeader('Content-Type', 'text');
+				if (file.search("css") > -1)
+				{
+					res.setHeader('Content-Type', 'text/css');
+				}
+				else
+				{
+					res.setHeader('Content-Type', 'text/javascript');
+				}
 				res.send(self.cache_get(file) );	
 			}
 		});
