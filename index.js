@@ -1,18 +1,27 @@
 $(document).ready(function() 
 {
+	var welcomeText = function(text) { return $("<span/>").css("display", "block").text(text); };
+	
+	var $welcome = $("<div/>").addClass("center welcome").append(
+		welcomeText("Dela lika").css("font-size", "2.1em"),
+		welcomeText("Det ska va riktigt lätt att dela upp utgifter."),
+		welcomeText("Och det blir inte lättare än så här."),
+		welcomeText("Prova först själv här nere."),
+		welcomeText("Klicka sen på gröna knappen och börja dela lika på riktigt!")
+	);
 	var $table = $("<table>").addClass("center");
 	var $header = $("<div/>").addClass("center header");
 	var $container = $("<div/>").css("position", "relative");
 	
-	$(document.body).append($container.append($header, $table));
+	$(document.body).append($container.append($welcome, $header, $table));
 
 	var data = {
-		"title": "Exempel på balansräkning (klicka Okej för att kunna spara)",
+		"title": "",
 		"names": ["Klas", "Göran", "Berit"],
 		"payments": [
-			{"text": "Överföring från Klas till Göran", "values": [100, -100, null]},
 			{"text": "Berit köper pizza till allihop", "values": [0, 0, 210]},
-			{"text": "Göran köper öl till sig själv och Berit", "values": [null, 140, 0]}				
+			{"text": "Göran köper öl till sig själv och Berit", "values": [null, 140, 0]},
+			{"text": "Överföring från Klas till Göran", "values": [100, -100, null]}
 		]
 	};
 
@@ -23,16 +32,20 @@ $(document).ready(function()
 	t.update(data);
 	
 	var buttonCss = function(color) {
-		return {
+		var css = {
 			"margin-top": "15px",
 			"padding": "10px",
-			"background-color": color,
 			"cursor": "hand"
-		}
+		};
+		
+		if (color) css["background-color"] = color;
+		return css;
 	};
 	
 	// "Ok, I get it!"
-	var $iGetIt = $("<div/>").css(buttonCss("lightgreen")).text("Okej, jag fattar!");
+	var $iGetIt = $("<div/>")
+		.css(buttonCss("lightgreen"))
+		.text("Okej, jag fattar!");
 	
 	$iGetIt.on("click", function()
 	{
@@ -49,7 +62,10 @@ $(document).ready(function()
 	});
 	
 	// Read more ...
-	var $readMore = $("<div/>").css(buttonCss("#f0f0f0")).text("Hur gör man ..?");
+	var $readMore = $("<div/>")
+		.css(buttonCss())
+		.addClass("yellow")
+		.text("Hur gör man ..?");
 	
 	$readMore.one("click", function()
 	{
@@ -80,6 +96,6 @@ $(document).ready(function()
 		)
 	});
 	
-	$container.append($("<br/>"), $iGetIt.addClass("center"), $readMore.addClass("center"));
+	$container.append($("<br/>"), $("<br/>"), $iGetIt.addClass("center"), $readMore.addClass("center"));
 	
 });

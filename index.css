@@ -2,6 +2,14 @@ body {
 	font-family: 'Open Sans', sans-serif;
 }
 
+.startup {
+	font-size: 0.8em;
+}
+
+.startup a {
+	font-size: 1.2em;
+}
+
 .header {
 	margin-top: 1.5em;
 	font-size: 1.5em;
@@ -17,6 +25,11 @@ td.diff-cell, td.cell {
 
 td.diff-cell {
 	font-weight: bold;
+}
+
+.welcome {
+	margin-top: 20px;
+	font-size: 0.9em;
 }
 
 table {
@@ -45,5 +58,8 @@ td {
 .info {
 	margin-top: 15px;
 	padding: 10px;
+}
+
+.yellow {
 	background-color: #FFE869;
 }

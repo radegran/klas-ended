@@ -116,12 +116,12 @@ var initialize = function(docState)
 	var $container = $("<div/>").css("position", "relative");
 	$(document.body).prepend($container.append($header, $table));
 
-	var $welcomeInfo = $();
+	var $startupInfo = $();
 	var t;
 	
 	var model = Model(docState.data(), function(newdata) 
 	{ 
-		$welcomeInfo.fadeOut('slow');
+		$startupInfo.fadeOut('fast');
 		
 		t.update(newdata);
 
@@ -141,16 +141,16 @@ var initialize = function(docState)
 	
 	if (docState.generation() == 0)
 	{			
-		$welcomeInfo = $("<div/>").addClass("center info").append(
-			$("<span/>").text("Ovanför finns en tom sammanställning du kan börja fylla i."), $("<br/>">),
-			$("<span/>").text("Du kan lägga till den här sidan som ett bokmärke för att"), $("<br/>">),
-			$("<span/>").text("återkomma senare. Det går också låta andra ta del av sidan"), $("<br/>">),
-			$("<span/>").text("genom att bara kopiera och maila länken:"), $("<br/>">),
-			$("<br/>">),
-			$("<span/>").text(window.location.href), $("<br/>">),
-			$("<br/>">),
+		$startupInfo = $("<div/>").addClass("center info yellow startup").append(
+			$("<span/>").text("Ovanför finns en tom sammanställning du kan börja fylla i."), $("<br/>"),
+			$("<span/>").text("Du kan lägga till den här sidan som ett bokmärke för att"), $("<br/>"),
+			$("<span/>").text("återkomma senare. Det går också låta andra ta del av sidan"), $("<br/>"),
+			$("<span/>").text("genom att bara kopiera och maila länken:"), $("<br/>"),
+			$("<br/>"),
+			$("<a/>").attr("href", window.location.href).text(window.location.href), $("<br/>"),
+			$("<br/>"),
 			$("<span/>").text("Alla ändringar sparas automatiskt!"));
-		$(document.body).append($welcomeInfo);
+		$(document.body).append($startupInfo);
 	}
 };
 
