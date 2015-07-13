@@ -249,7 +249,8 @@ var SampleApp = function() {
 				for (var i = 0; i < docs.length; i++)
 				{
 					var d = docs[i];
-					response += (new Date(d.lastUpdated)).toString().substring(0, 33) + " : gen " + d.generation + "<br/>";
+					var ageDays = Math.floor((d.lastUpdated - (d.created || d.lastUpdated)) / 1000 / 60 / 60 / 24);
+					response += (new Date(d.lastUpdated)).toString().substring(0, 33) + " : age " + ageDays + ", gen " + d.generation + "<br/>";
 				}
 				
 				res.send(response + "</body></html>");
