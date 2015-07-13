@@ -5,6 +5,19 @@ var fs      = require('fs');
 var crypto  = require('crypto');
 var mongoClient = require('mongodb').MongoClient;
 
+var startData = function() 
+{
+	return {
+		"title": "Skriv en titel här",
+		"names": ["Klas", "Göran", "Berit"],
+		"payments": [
+			{"text": "Exempel 1 - Berit köper pizza till allihop", "values": [0, 0, 210]},
+			{"text": "Exempel 2 - Göran köper öl till sig själv och Berit", "values": [null, 140, 0]},
+			{"text": "Exempel 3 - Klas ger 100 kr till Göran", "values": [100, -100, null]}
+		]
+	};
+};
+
 var DB = function(mongoClient, url)
 {
 	var db; 
@@ -37,14 +50,15 @@ var DB = function(mongoClient, url)
 	{
 		var collection = db.collection('docs');
 		var id = crypto.randomBytes(10).toString('hex');
+		var now = Date.now();
+		
 		var doc = {
 			"id":id,
-			"lastUpdated": Date.now(),
+			"created": now,
+			"lastUpdated": now,
 			"generation":0, 
-			"data":{
-				"title": "Skriv en titel här", 
-				"names":[], 
-			"payments":[]}};
+			"data": startData()
+			};
 
 		collection.insert(doc, {w:1}, function(err, result)
 		{

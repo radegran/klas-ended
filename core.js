@@ -520,13 +520,8 @@ var isCtrlY = function(e)
 
 var wrapCenter = function($elem, option)
 {
-	var $centered = $("<div/>").css({"overflow": "auto"}).append(
-		$("<div/>").css({"position": "relative", "float": "right", "right": "50%"}).append(
-				$("<div/>").css({"position": "relative", "float": "right", "right": "-50%"}).append(
-					$elem)
-				)
-			);
-			
+	var $centered = $("<div/>").css({"display": "table", "margin": "auto"}).append($elem);
+
 	if (option == "fixed")
 	{
 		return $("<div/>").css({"position": "fixed", "top": 0, "right": 0, "left": 0}).append($centered);

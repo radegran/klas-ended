@@ -1,9 +1,19 @@
+body {
+	margin: 0;
+}
+
 body div {
 	font-family: 'Open Sans', sans-serif;
 }
 
 .startup {
-	font-size: 0.8em;
+	position: relative;
+	font-size: 1em;
+	padding: 10px;
+}
+.info {
+	margin-top: 15px;
+	padding: 10px;
 }
 
 .startup a {
@@ -50,11 +60,6 @@ td {
 .center
 {
 	margin: 0 auto;
-}
-
-.info {
-	margin-top: 15px;
-	padding: 10px;
 }
 
 .message {

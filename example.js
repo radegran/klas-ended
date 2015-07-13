@@ -121,13 +121,14 @@ var initialize = function(docState)
 	
 	var model = Model(docState.data(), function(newdata) 
 	{ 
-		$startupInfo.fadeOut('fast');
+		$startupInfo.animate({height:0, padding:0, margin:0, "font-size":0});
+		$startupInfo = $();
 		
 		t.update(newdata);
 
 		docState.update({
 			"data": newdata,
-			"conflict": function(theirdata) 
+			"conflict": function(theirdata)
 			{
 				// Conflict!	
 				model.reset(theirdata);
@@ -138,18 +139,16 @@ var initialize = function(docState)
 	t = Table($header, $table, model);
 	t.update(docState.data());
 	
+	// First time? Show info...
 	if (docState.generation() == 0)
 	{			
-		$startupInfo = $("<div/>").addClass("info yellow startup").append(
-			$("<span/>").text("Ovanför finns en tom sammanställning du kan börja fylla i."), $("<br/>"),
-			$("<span/>").text("Du kan lägga till den här sidan som ett bokmärke för att"), $("<br/>"),
-			$("<span/>").text("återkomma senare. Det går också låta andra ta del av sidan"), $("<br/>"),
-			$("<span/>").text("genom att bara kopiera och maila länken:"), $("<br/>"),
-			$("<br/>"),
-			$("<a/>").attr("href", window.location.href).text(window.location.href), $("<br/>"),
-			$("<br/>"),
-			$("<span/>").text("Alla ändringar sparas automatiskt!"));
-		addToCenter($startupInfo);
+		var $startupInfo = $("<div/>")
+			.text("Alla ändringar sparas till länken i adressfältet!")
+			.addClass("startup");
+		var $startupContainer = wrapCenter($("<div/>").append($startupInfo))
+		    .addClass("yellow");
+		
+		$(document.body).prepend($startupContainer);
 	}
 };
 
