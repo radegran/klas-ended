@@ -237,12 +237,12 @@ var Table = function($header, $table, model)
 		
 		// Value cells
 		paymentCell.enter()
-			.append("td")
-			.attr("class", "cell");
+			.append("td");
 			
 		// update
 		paymentCell
 			.text(function(value) { return value; })
+			.attr("class", function(value) { return (value === null) ? "cell nullvalue" : "cell"; })
 			.style("background-color", "")
 			.each(function(value, i, j) {
 				var $cell = $(this);

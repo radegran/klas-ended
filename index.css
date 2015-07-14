@@ -6,6 +6,12 @@ body div {
 	font-family: 'Open Sans', sans-serif;
 }
 
+.nullvalue:empty:not(:focus):before{
+    content: "∅";
+	font-size: 0.9em;
+	color: lightgray;
+}
+
 .startup {
 	position: relative;
 	font-size: 1em;
