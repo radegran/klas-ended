@@ -222,6 +222,7 @@ var Table = function($header, $table, model)
 			.append("td");
 		// update	
 		paymentRow.select("td")
+			.attr("class", "payment-text")
 			.text(function(d) { return d.text; })
 			.each(function(d, i) {
 				makeEditable($(this), d.text, function(newValue) {

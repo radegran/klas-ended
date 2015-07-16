@@ -53,6 +53,10 @@ table {
 	border-spacing: 0px;
 }
 
+.payment-text {
+	white-space: nowrap;
+}
+
 td {
 	padding: 0.15em 0.5em 0.15em 0.5em;
 }
