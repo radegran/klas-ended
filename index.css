@@ -1,5 +1,5 @@
 body {
-	margin: 0;
+	margin: 0 0 0 1em;
 }
 
 body div {
@@ -27,25 +27,8 @@ body div {
 }
 
 .header {
-	margin-top: 1.5em;
-	font-size: 1.5em;
-}
-
-tr.odd {
-	background-color: #F4F4F4;
-}
-
-td.diff-cell, td.cell {
-	text-align: center;
-}
-
-td.diff-cell {
-	font-weight: bold;
-}
-
-.welcome {
-	margin-top: 20px;
-	font-size: 0.9em;
+	margin: 1.5em 0 0 0.2em;
+	font-size: 1.8em;
 }
 
 table {
@@ -53,18 +36,42 @@ table {
 	border-spacing: 0px;
 }
 
-.payment-text {
-	white-space: nowrap;
+.payment-row.even {
+	background-color: #F4F4F4;
 }
 
-td {
-	padding: 0.15em 0.5em 0.15em 0.5em;
+.welcome {
+	margin-top: 20px;
+	font-size: 0.9em;
+}
+
+.payment-text {
+	white-space: nowrap;
 }
 
 .transfer-plan
 {
 	font-size: 0.9em;
 	color: gray;
+}
+
+td.diff-cell, td.cell {
+	text-align: center;
+}
+
+td {
+	padding: 0.25em 0.5em 0.25em 0.5em;
+}
+
+.transfer-plan td {
+	padding: 0.2em 0 0.2em 0.5em;
+}
+
+.column-header-row  td:not(:last-child),
+.diff-row  td {
+	padding: 0.5em;
+	background-color: darkslategray;
+	color: #F8F8F8;
 }
 
 .center

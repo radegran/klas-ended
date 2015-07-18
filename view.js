@@ -51,7 +51,7 @@ var Table = function($header, $table, model)
 	var setup = function()
 	{
 		$table.empty().append(
-			newRow().append(
+			newRow().addClass("column-header-row").append(
 				$("<td/>"),
 				$addColumnCell.addClass("add-column-cell")),
 			newRow().addClass("add-row-row").append(
@@ -101,12 +101,6 @@ var Table = function($header, $table, model)
 				return tr.append(td);
 			};
 			
-			if (i==0)
-			{
-				// Some air in the table...
-				$table.append(longRow());
-			}
-			
 			var mt = moneyTransfer;
 			if (mt.amount > 0.005)
 			{
@@ -121,13 +115,13 @@ var Table = function($header, $table, model)
 	{
 		$table.find("tr").each(function(i)
 		{
-			if (i % 2 == 1)
+			if (i % 2 == 0)
 			{
-				$(this).addClass("odd");
+				$(this).addClass("even");
 			}
 			else
 			{
-				$(this).removeClass("odd");
+				$(this).removeClass("even");
 			}
 		});
 	};

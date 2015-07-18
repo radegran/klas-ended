@@ -23,8 +23,7 @@ var initialize = function(docState)
 {	
 	var $table = $("<table>");
 	var $header = $("<div/>").addClass("header");
-	addToCenter($header);
-	addToCenter($table);
+	addToCenter([$header, $table]);
 
 	var $startupInfo = $();
 	var t;
