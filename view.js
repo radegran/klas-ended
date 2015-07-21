@@ -6,8 +6,12 @@ var addButtonCell = function(onclick)
 	return c;
 };
 
-var makeEditable = function($elem, currentValue, onNewValue)
-{
+var makeEditable = function($td, currentValue, onNewValue)
+{	
+	// contenteditable not for td elems in IE
+	var $elem = $("<div/>").text(currentValue === null ? "" : currentValue);
+	$td.html($elem);
+	
 	// Reset any earlier makeEditable for this element
 	$elem.off("blur");
 	$elem.off("keydown");
@@ -39,12 +43,12 @@ var Table = function($header, $table, model)
 	var $addColumnCell = addButtonCell(function()
 	{
 		model.addColumn();
-		$(this).prev().focus().text("");
+		$(this).prev().find("div").text("").focus();
 	});
 	var $addRowCell = addButtonCell(function() 
 	{ 
 		model.addRow(); 
-		$(this).parent().prev().find("td:first").focus().text("");
+		$(this).parent().prev().find("td:first").find("div").text("").focus();
 	});
 	
 	// Setup clean table
@@ -127,7 +131,6 @@ var Table = function($header, $table, model)
 	
 	var updateHeader = function(data)
 	{
-		$header.text(data.title);
 		makeEditable($header, data.title, function(newTitle)
 		{
 			if (newTitle == "")
@@ -199,7 +202,6 @@ var Table = function($header, $table, model)
 			.attr("class", "cell");
 		// update
 		firstRowCell
-			.text(function(name) { return name; })
 			.each(function(d, i) {
 				makeEditable($(this), d, function(newValue) {
 					model.updateName(newValue, i);
@@ -222,7 +224,6 @@ var Table = function($header, $table, model)
 		// update	
 		paymentRow.select("td")
 			.attr("class", "payment-text")
-			.text(function(d) { return d.text; })
 			.each(function(d, i) {
 				makeEditable($(this), d.text, function(newValue) {
 					model.updatePaymentText(newValue, i);
@@ -241,12 +242,11 @@ var Table = function($header, $table, model)
 			
 		// update
 		paymentCell
-			.text(function(value) { return value; })
 			.attr("class", function(value) { return (value === null) ? "cell nullvalue" : "cell"; })
 			.style("background-color", "")
 			.each(function(value, i, j) {
 				var $cell = $(this);
-				makeEditable($cell, value + "", function(newValue) 
+				makeEditable($cell, value, function(newValue) 
 				{
 					// Not comma, use dot
 					newValue = newValue.replace(/,/g, ".");

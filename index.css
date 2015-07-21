@@ -6,14 +6,10 @@ body {
 	font-family: 'Open Sans', sans-serif;
 }
 
-.nullvalue:empty:not(:focus):before{
+.nullvalue div:empty:not(:focus):before {
     content: "∅";
 	font-size: 0.9em;
 	color: lightgray;
-}
-
-.startup a {
-	font-size: 1.2em;
 }
 
 table {
