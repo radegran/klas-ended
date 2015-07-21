@@ -12,11 +12,6 @@ body {
 	color: lightgray;
 }
 
-.info {
-	display: inline-block;
-	padding: 2px;
-}
-
 .startup a {
 	font-size: 1.2em;
 }
@@ -57,13 +52,13 @@ td {
 	padding: 0.2em 0 0.2em 0.5em;
 }
 
-
 .header {
 	color: #f8f8f8;
 	border-bottom: 1px solid #197541;
 	background-color: seagreen;
 	padding: 1em 0 1em 1em;
 	font-size: 1.8em;
+	outline:0;
 }
 
 .column-header-row  td,
@@ -86,8 +81,17 @@ td {
 	margin: 0 auto;
 }
 
-.message {
-	z-index: 10;
+.info {
+	padding: 2px 0 2px 0.5em;
+}
+
+.message: {
+	width: 100%;
+}
+
+.messagecontainer {
+	position:relative;
+	min-width: 100%;
 }
 
 .yellow {

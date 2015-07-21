@@ -49,7 +49,7 @@ var DocState = function(doc)
 					}
 					else
 					{
-						info("Någon har ändrat balansen, försök igen.")
+						info("Någon har gjort en ändring, försök igen.")
 						data = updatereply.data;
 						generation = updatereply.generation;
 						conflictCallback(data);

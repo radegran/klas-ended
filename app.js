@@ -2,13 +2,16 @@ var initialize = function(docState)
 {	
 	var $table = $("<table>");
 	var $header = $("<div/>").addClass("header");
-	var $startupInfo = $();
+	var startupInfo;
 	var t;
 	
 	var model = Model(docState.data(), function(newdata) 
 	{ 
-		$startupInfo.animate({height:0, padding:0, margin:0, "font-size":0});
-		$startupInfo = $();
+		if (startupInfo)
+		{
+			startupInfo.hide();
+			startupInfo = null;
+		}
 		
 		t.update(newdata);
 
@@ -24,22 +27,21 @@ var initialize = function(docState)
 
 	t = Table($header, $table, model);
 	t.update(docState.data());
-	
-	// First time? Show info...
-	if (docState.generation() == 0)
-	{			
-		$startupInfo = info("Alla ändringar sparas till länken i adressfältet!", 9999999999);
-		
-		$startupInfo.show('slow');
-	}
-	
+
 	$(document.body).append($("<div/>").css({
 		"display": "inline-block",
 		"min-width": "100%"
 	}).append([
+		$("<div/>").addClass("messagecontainer"),
 		$header,
 		$table
 	]));
+	
+	// First time? Show info...
+	if (docState.generation() == 0)
+	{			
+		startupInfo = info("Alla ändringar sparas till länken i adressfältet!", 9999999999);
+	}	
 };
 
 $(document).ready(function() 
@@ -64,19 +66,19 @@ $(document).ready(function()
 	});
 	
 	var ajaxTimer = null;
-	var $savingMessage = $();
+	var messageObj = {"hide": $.noop};
 	
 	$(document).ajaxStart(function()
 	{
 		ajaxTimer = setTimeout(function() {
-			$savingMessage = showMessage("Sparar ...");
+			messageObj = showMessage("Sparar ...");
 		}, 2000);
 	});
 	
 	$(document).ajaxStop(function()
 	{
 		clearTimeout(ajaxTimer);
-		$savingMessage.hide();
+		messageObj.hide();
 	});
 	
 });

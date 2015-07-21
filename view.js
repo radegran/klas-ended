@@ -298,22 +298,29 @@ var isCtrlY = function(e)
     return (e.keyCode == 89 && e.ctrlKey);
 };
 
-var showMessage = function(message)
+var showMessage = function(message, delay)
 {
-	$(".message").remove();
+	$(".messagecontainer").empty();
 	
-	var $msg = $("<div/>")
-		.addClass("yellow info")
-		.text(message);
-		
 	var $message = $("<div/>")
-		.css({"position": "fixed", "top": 0, "right": 0, "left": 0})
-		.addClass("message")
-		.append($msg);
+		.addClass("message yellow info")
+		.text(message).hide();
 		
-	$(document.body).append($message);
-		
-	return $message;
+	$(".messagecontainer").append($message);
+	
+	var timer = null;
+	
+	var obj = {"hide": function() 
+	{
+		$message.slideUp();
+		obj.hide = $.noop;
+		clearTimeout(timer);
+	}};
+
+	$message.slideDown('fast');
+	timer = setTimeout(function() { $message.slideUp() }, delay || 3000);
+	
+	return obj;
 };
 
 var bailout = function(message)
@@ -324,5 +331,5 @@ var bailout = function(message)
 
 var info = function(message, delay)
 {
-	return showMessage(message).delay(delay || 3000).fadeOut('slow');
+	return showMessage(message, delay);
 };
