@@ -1,8 +1,8 @@
 body {
-	margin: 0 0 0 1em;
+	margin: 0;
 }
 
-body div {
+body {
 	font-family: 'Open Sans', sans-serif;
 }
 
@@ -12,32 +12,22 @@ body div {
 	color: lightgray;
 }
 
-.startup {
-	position: relative;
-	font-size: 1em;
-	padding: 10px;
-}
 .info {
-	margin-top: 15px;
-	padding: 10px;
+	display: inline-block;
+	padding: 2px;
 }
 
 .startup a {
 	font-size: 1.2em;
 }
 
-.header {
-	margin: 1.5em 0 0 0.2em;
-	font-size: 1.8em;
-}
-
 table {
-	margin-top: 30px;
+	min-width: 100%;
 	border-spacing: 0px;
 }
 
 .payment-row.even {
-	background-color: #F4F4F4;
+	background-color: beige;
 }
 
 .welcome {
@@ -67,11 +57,28 @@ td {
 	padding: 0.2em 0 0.2em 0.5em;
 }
 
-.column-header-row  td:not(:last-child),
+
+.header {
+	color: #f8f8f8;
+	border-bottom: 1px solid #197541;
+	background-color: seagreen;
+	padding: 1em 0 1em 1em;
+	font-size: 1.8em;
+}
+
+.column-header-row  td,
 .diff-row  td {
 	padding: 0.5em;
-	background-color: darkslategray;
 	color: #F8F8F8;
+}
+
+.column-header-row  td {
+	border-top: 1px solid #055829;
+	background-color: mediumseagreen;
+}
+
+.diff-row  td {
+	border-top: 1px solid seagreen;
 }
 
 .center

@@ -84,7 +84,6 @@ var Table = function($header, $table, model)
 				return false;
 			}
 		});
-				
 	};
 	
 	var updatePaymentPlan = function(data, plan)
@@ -180,6 +179,9 @@ var Table = function($header, $table, model)
 				.text(twoDecimals)
 				.css("color", (twoDecimals > 0 ? "limegreen" : (twoDecimals < 0 ? "salmon" : ""))));
 		}
+
+		// Tombstone
+		$diffRow.append($("<td/>").addClass("diff-cell"));
 		
 		return totalDiffs;
 	};
@@ -211,9 +213,12 @@ var Table = function($header, $table, model)
 		var paymentRow = d3table.select("tbody").selectAll("tr.payment-row")
 			.data(data.payments);
 
-		paymentRow.enter()
-			.insert("tr", ".add-row-row").attr("class", "payment-row")
-			.append("td");
+		var paymentRowEnter = paymentRow.enter()
+			.insert("tr", ".add-row-row").attr("class", "payment-row");
+			
+		paymentRowEnter.append("td");
+		paymentRowEnter.append("td").attr("class", "tombstone");
+			
 		// update	
 		paymentRow.select("td")
 			.attr("class", "payment-text")
@@ -232,7 +237,7 @@ var Table = function($header, $table, model)
 		
 		// Value cells
 		paymentCell.enter()
-			.append("td");
+			.insert("td", ".tombstone");
 			
 		// update
 		paymentCell
@@ -293,27 +298,31 @@ var isCtrlY = function(e)
     return (e.keyCode == 89 && e.ctrlKey);
 };
 
-var wrapCenter = function($elem, option)
+var showMessage = function(message)
 {
-	var $centered = $("<div/>").css({"display": "table", "margin": "auto"}).append($elem);
-
-	if (option == "fixed")
-	{
-		return $("<div/>").css({"position": "fixed", "top": 0, "right": 0, "left": 0}).append($centered);
-	}
-	return $centered;
+	$(".message").remove();
+	
+	var $msg = $("<div/>")
+		.addClass("yellow info")
+		.text(message);
+		
+	var $message = $("<div/>")
+		.css({"position": "fixed", "top": 0, "right": 0, "left": 0})
+		.addClass("message")
+		.append($msg);
+		
+	$(document.body).append($message);
+		
+	return $message;
 };
 
-var addToCenter = function($elem, option)
+var bailout = function(message)
 {
-	var $wrap = wrapCenter($elem, option);
-	$(document.body).append($wrap);
-	return $wrap;
+	showMessage(message || "Ooops! Ett fel har inträffat... Laddar strax om sidan!")
+	setTimeout(function() { window.location.href = window.location.href;}, 3000)
 };
 
-var prependToCenter = function($elem, option)
+var info = function(message, delay)
 {
-	var $wrap = wrapCenter($elem, option);
-	$(document.body).prepend($wrap);
-	return $wrap;
+	return showMessage(message).delay(delay || 3000).fadeOut('slow');
 };

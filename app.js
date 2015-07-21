@@ -1,30 +1,7 @@
-var showMessage = function(message)
-{
-	$(".message").remove();
-	var $msg = $("<div/>")
-		.addClass("yellow info")
-		.text(message);
-		
-	return prependToCenter($msg, "fixed").addClass("message");
-};
-
-var bailout = function(message)
-{
-	showMessage(message || "Ooops! Ett fel har inträffat... Laddar strax om sidan!")
-	setTimeout(function() { window.location.href = window.location.href;}, 3000)
-};
-
-var info = function(message)
-{
-	showMessage(message).delay(3000).fadeOut('slow');
-};
-
 var initialize = function(docState)
 {	
 	var $table = $("<table>");
 	var $header = $("<div/>").addClass("header");
-	addToCenter([$header, $table]);
-
 	var $startupInfo = $();
 	var t;
 	
@@ -51,14 +28,18 @@ var initialize = function(docState)
 	// First time? Show info...
 	if (docState.generation() == 0)
 	{			
-		var $startupInfo = $("<div/>")
-			.text("Alla ändringar sparas till länken i adressfältet!")
-			.addClass("startup");
-		var $startupContainer = wrapCenter($("<div/>").append($startupInfo))
-		    .addClass("yellow");
+		$startupInfo = info("Alla ändringar sparas till länken i adressfältet!", 9999999999);
 		
-		$(document.body).prepend($startupContainer);
+		$startupInfo.show('slow');
 	}
+	
+	$(document.body).append($("<div/>").css({
+		"display": "inline-block",
+		"min-width": "100%"
+	}).append([
+		$header,
+		$table
+	]));
 };
 
 $(document).ready(function() 
