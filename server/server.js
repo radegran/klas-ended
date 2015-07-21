@@ -1,4 +1,3 @@
-#!/bin/env node
 //  OpenShift sample Node application
 var express = require('express');
 var fs      = require('fs');
@@ -261,10 +260,12 @@ var SampleApp = function() {
 		{
             res.setHeader('Content-Type', 'text/html');
             res.send(self.cache_get('app.html') );			
+		
+			//var swe = req.acceptsLanguage("sv") || req.acceptsLanguage("sv-SE")
 		};
 		
 		eachJsAndCssFiles(function(file)
-		{
+		{	
 			self.routes['/' + file] = function(req, res)
 			{
 				if (file.search("css") > -1)
@@ -383,12 +384,6 @@ var SampleApp = function() {
 
 };   /*  Sample Application.  */
 
+module.exports.SampleApp = SampleApp;
 
-
-/**
- *  main():  Main code.
- */
-var zapp = new SampleApp();
-zapp.initialize();
-zapp.start();
 
