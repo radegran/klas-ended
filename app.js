@@ -39,7 +39,7 @@ var initialize = function(docState)
 	// First time? Show info...
 	if (docState.generation() == 0)
 	{			
-		startupInfo = info("Alla ändringar sparas till länken i adressfältet!", 9999999999);
+		startupInfo = info(L.AllChangesAreSaved, 9999999999);
 	}	
 };
 
@@ -75,7 +75,7 @@ $(document).ready(function()
 	$(document).ajaxStart(function()
 	{
 		ajaxTimer = setTimeout(function() {
-			messageObj = showMessage("Sparar ...");
+			messageObj = showMessage(L.Saving);
 		}, 2000);
 	});
 	

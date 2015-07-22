@@ -109,7 +109,7 @@ var Table = function($header, $table, model)
 			{
 				// Only show if amount is big enough
 				$table.append(
-					longRow(data.names[mt.from] + " ska ge " + mt.amount.toFixed(2) + " till " + data.names[mt.to]));				
+					longRow(data.names[mt.from] + " " + L.ShouldGive + " " + mt.amount.toFixed(2) + " " + L.To + " " + data.names[mt.to]));				
 			}
 		});
 	};
@@ -325,7 +325,7 @@ var showMessage = function(message, delay)
 
 var bailout = function(message)
 {
-	showMessage(message || "Ooops! Ett fel har inträffat... Laddar strax om sidan!")
+	showMessage(message || L.UnknownErrorReloadPage)
 	setTimeout(function() { window.location.href = window.location.href;}, 3000)
 };
 

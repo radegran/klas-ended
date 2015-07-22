@@ -49,7 +49,7 @@ var DocState = function(doc)
 					}
 					else
 					{
-						info("Någon har gjort en ändring, försök igen.")
+						info(L.SomeoneMadeAChangeTryAgain);
 						data = updatereply.data;
 						generation = updatereply.generation;
 						conflictCallback(data);

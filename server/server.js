@@ -5,19 +5,6 @@ var crypto  = require('crypto');
 var mongoClient = require('mongodb').MongoClient;
 var L = require('./localization');
 
-var startData = function() 
-{
-	return {
-		"title": "Skriv en titel här",
-		"names": ["Klas", "Göran", "Berit"],
-		"payments": [
-			{"text": "Exempel 1 - Berit köper pizza till allihop", "values": [0, 0, 210]},
-			{"text": "Exempel 2 - Göran köper öl till sig själv och Berit", "values": [null, 140, 0]},
-			{"text": "Exempel 3 - Klas ger 100 kr till Göran", "values": [100, -100, null]}
-		]
-	};
-};
-
 var DB = function(mongoClient, url)
 {
 	var db; 
@@ -46,7 +33,7 @@ var DB = function(mongoClient, url)
 		}
 	});
 	
-	var create = function(callback) 
+	var create = function(callback, startData) 
 	{
 		var collection = db.collection('docs');
 		var id = crypto.randomBytes(10).toString('hex');
@@ -267,6 +254,13 @@ var SampleApp = function() {
 			});
         };
 		
+		// Localization!! Not a very standard solution I guess
+		self.routes['/localization.js'] = function(req, res)
+		{
+			res.setHeader('Content-Type', 'text/html');
+            res.send("var L = " + JSON.stringify(L.allStrings(req)));
+		};
+		
 		self.routes['/[0-9a-f]+$'] = function(req, res) 
 		{
             res.setHeader('Content-Type', 'text/html');
@@ -353,18 +347,23 @@ var SampleApp = function() {
 
 		self.app.post("/create", function(req, res) 
 		{
+			var startData = function()
+			{
+				return L.getTranslator(req)("StartData");
+			};
+			
 			console.log("GOT create REQUEST");
 			db.create(function(err, id)
 			{
 				if (err)
 				{
-					res.send({"err": "could not create document!"});
+					res.send({"err": L.CouldNotCreateDocument});
 				}
 				else
 				{
 					res.send({"url": id});
 				}
-			});
+			}, startData);
 		});
     };
 
