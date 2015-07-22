@@ -6,6 +6,11 @@ body {
 	font-family: 'Open Sans', sans-serif;
 }
 
+.root {
+	display: inline-block;
+	min-width: 100%;
+}
+
 .nullvalue div:empty:not(:focus):before {
     content: "∅";
 	font-size: 0.9em;

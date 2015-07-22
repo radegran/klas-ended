@@ -32,7 +32,6 @@ var initialize = function(docState)
 		"display": "inline-block",
 		"min-width": "100%"
 	}).append([
-		$("<div/>").addClass("messagecontainer"),
 		$header,
 		$table
 	]));
@@ -46,6 +45,11 @@ var initialize = function(docState)
 
 $(document).ready(function() 
 {
+	$(document.body).append(
+		$("<div/>").addClass("root").append(
+			$("<div/>").addClass("messagecontainer")
+		));
+	
 	// Get initial data
 	$.ajax({
 	  type: "POST",

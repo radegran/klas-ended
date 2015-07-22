@@ -3,6 +3,7 @@ var express = require('express');
 var fs      = require('fs');
 var crypto  = require('crypto');
 var mongoClient = require('mongodb').MongoClient;
+var L = require('./localization');
 
 var startData = function() 
 {
@@ -59,9 +60,19 @@ var DB = function(mongoClient, url)
 			"data": startData()
 			};
 
-		collection.insert(doc, {w:1}, function(err, result)
+		collection.findOne({"id":doc.id}, function(err, foundDoc) 
 		{
-			callback(err, id);
+			if (!err && foundDoc === null)
+			{						
+				collection.insert(doc, {w:1}, function(err, result)
+				{
+					callback(err, id);
+				});
+			}
+			else
+			{
+				callback("err", null);
+			}
 		});
 	};
 		
@@ -73,7 +84,7 @@ var DB = function(mongoClient, url)
 		{
 			if (err || foundDoc === null) 
 			{ 
-				callback("Kunde inte hitta balansräkningen!", foundDoc);
+				callback("NoDocumentFound", foundDoc);
 				return; 
 			}
 
@@ -260,8 +271,6 @@ var SampleApp = function() {
 		{
             res.setHeader('Content-Type', 'text/html');
             res.send(self.cache_get('app.html') );			
-		
-			//var swe = req.acceptsLanguage("sv") || req.acceptsLanguage("sv-SE")
 		};
 		
 		eachJsAndCssFiles(function(file)
@@ -302,8 +311,10 @@ var SampleApp = function() {
 			{
 				if (err)
 				{
-					console.log(err.message || err);
-					res.send({"err": err.message || err});
+					var message = err.message || err;
+					var translation = L.getTranslator(req)(message);
+					console.log(message);
+					res.send({"err": translation});
 				}
 				else
 				{
