@@ -56,7 +56,7 @@ var Strings =
 
 var getLang = function(ereq)
 {
-	return (ereq.acceptsLanguage("sv") || ereq.acceptsLanguage("sv-SE")) ? "sv" : "en";
+	return (ereq.acceptsLanguage("sv") || ereq.acceptsLanguage("sv-SE") || ereq.acceptsLanguage("sv-se")) ? "sv" : "en";
 };
 
 var getTranslator = function(expressRequest)
