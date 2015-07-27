@@ -175,6 +175,7 @@ var SampleApp = function() {
         //  Local cache for static content.
         self.zcache['index.html'] = fs.readFileSync('./index.html');
 	    self.zcache['app.html'] = fs.readFileSync('./app.html');
+	    self.zcache['app.appcache'] = fs.readFileSync('./app.appcache');
 		
 		eachJsAndCssFiles(function(file)
 		{
@@ -236,6 +237,12 @@ var SampleApp = function() {
             res.setHeader('Content-Type', 'text/html');
             res.send(self.cache_get('index.html') );
         };
+		
+		self.routes['/app.appcache'] = function(req, res)
+		{
+            res.setHeader('Content-Type', 'text/cache-manifest');
+            res.send(self.cache_get('app.appcache') );
+		};
 		
         self.routes['/stats'] = function(req, res) 
 		{
