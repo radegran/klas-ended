@@ -40,7 +40,19 @@ var Net = function(jobQueue, errorHandler)
 	
 	var read = function(idObj, onSuccess)
 	{
-		ajax("get", idObj, onSuccess, errorHandler.bailout);
+		var success = function(response)
+		{
+			if (response.err)
+			{
+				info(response.err);
+			}
+			else
+			{
+				onSuccess(response);
+			}
+		};
+		
+		ajax("get", idObj, success, errorHandler.bailout);
 	};
 
 	var update = function(doc, onSuccess, onConflict)
@@ -99,44 +111,60 @@ var Net = function(jobQueue, errorHandler)
 	};
 };
 
-var RemoteDoc = function(doc, net)
+var RemoteDoc = function(id, net)
 {
-	var generation = doc.generation;
-	var data = doc.data;
-	var id = doc.id;
-	var update = function(updateData, updateConflict) 
-	{	
-		if (JSON.stringify(data) === JSON.stringify(updateData))
-		{
-			// No need to update
-			return;
-		}
+	var generation = 0;
 	
-		var onSuccess = function() {};
-		
+	var update = function(updateData, updateConflict) 
+	{		
 		var onConflict = function(conflictDoc) 
 		{
-			data = conflictDoc.data;
+			var data = conflictDoc.data;
 			generation = conflictDoc.generation;
 		
 			updateConflict(data);			
 		};
 		
 		generation++;
-		data = updateData;
 		
 		net.update({
 					"id": id,
 					"generation": generation,
 					"data": updateData
 				},
-				onSuccess,
+				$.noop,
 				onConflict);	
 	};
 	
+	var read = function(onData)
+	{
+		net.read({"id": id}, function(doc)
+		{
+			generation = doc.generation;
+			onData(doc.data);
+		});
+	};
+	
 	return {
-		"data": function() { return data; },
+		"read": read,
 		"update": update,
-		"generation": function() { return generation; }
+		"isFirstGeneration": function() { return generation == 0; }
 	};
 };
+
+// var DocProxy = function(id, net)
+// {
+	// var remoteDoc;
+	
+	// var get = function(callback)
+	// {
+		// if (!remoteDoc)
+		// {
+			// net.read({"id": window.location.pathname.substring(1)}, function(doc)
+			// {
+				// initialize(RemoteDoc(doc, net)); 			
+			// });			
+		// }
+	// };
+	
+// };

@@ -41,66 +41,71 @@ describe("Net", function()
 		var infoSpy;
 		var fatalSpy;
 		
-		var makeRemoteDoc = function(data, generation)
+		var makeRemoteDoc = function()
 		{
 			var errorHandler = {"fatal": $.noop, "info": $.noop};
 			var net = Net(JobQueue(), errorHandler);
 			infoSpy = spyOn(errorHandler, "info");
 			fatalSpy = spyOn(errorHandler, "fatal");
+			spyOn($, "ajax");
 			
-			return RemoteDoc({"data": data, "generation": generation, "id": "some_id"}, net);
+			return RemoteDoc("some_id", net);
 		};
 		
-		it("should hold update data and step generation on success", function()
+		var prevAjaxCall = function()
 		{
-			var rd = makeRemoteDoc(42, 0);
+			return $.ajax.calls.mostRecent().args[0];
+		};
+		
+		var prevAjaxData = function()
+		{
+			return JSON.parse(prevAjaxCall().data);
+		};
+		
+		it("should read data", function()
+		{
+			var onData = jasmine.createSpy('onData');
 			
-			// mock
-			$.ajax = function(obj)
-			{
-				obj.success({ok:true});
-			};
+			var remoteDoc = makeRemoteDoc();
+			remoteDoc.read(onData);
 			
-			rd.update(43, $.noop);
+			prevAjaxCall().success({"data": 42, "generation": 0});
+			expect(prevAjaxData().id).toBe("some_id");
+			expect(onData).toHaveBeenCalledWith(42);
+		});
+		
+		it("should update", function() 
+		{
+			var remoteDoc = makeRemoteDoc();
+			remoteDoc.update(99, $.noop);
+			expect(prevAjaxData()).toEqual(jasmine.objectContaining({"data": 99, "generation": 1}));
+
+			prevAjaxCall().success({ok:true});
 			
 			expect(infoSpy).not.toHaveBeenCalled();
 			expect(fatalSpy).not.toHaveBeenCalled();			
-			expect(rd.data()).toBe(43);
-			expect(rd.generation()).toBe(1);
 		});
 		
 		it("should trigger conflict callback", function()
 		{
-			var rd = makeRemoteDoc(42, 0);
+			var conflictHandler = jasmine.createSpy('h');
 			
-			// mock
-			$.ajax = function(obj)
-			{
-				// no 'ok' means conflict...
-				obj.success({data: 99, generation: 3, id: "some_id"});
-			};
+			var remoteDoc = makeRemoteDoc();
+			remoteDoc.update(99, conflictHandler);
+
+			prevAjaxCall().success({"data": 101, "generation": 3});
 			
-			var conflictSpy = jasmine.createSpy('conflict');
-			rd.update(43, conflictSpy);
-			
+			expect(conflictHandler).toHaveBeenCalledWith(101);
 			expect(infoSpy).toHaveBeenCalled();
-			expect(fatalSpy).not.toHaveBeenCalled();
-			expect(conflictSpy).toHaveBeenCalledWith(99);
-			expect(rd.data()).toBe(99);
-			expect(rd.generation()).toBe(3);			
+			expect(fatalSpy).not.toHaveBeenCalled();			
 		});
 		
 		it("should call fatal error handler when server reports internal error", function()
 		{
-			var rd = makeRemoteDoc(42, 0);
+			var remoteDoc = makeRemoteDoc();
+			remoteDoc.update(43, $.noop);
 			
-			// mock
-			$.ajax = function(obj)
-			{
-				obj.success({err: "aah"});
-			};
-			
-			rd.update(43, $.noop);
+			prevAjaxCall().success({"err": "..."});
 			
 			expect(infoSpy).not.toHaveBeenCalled();
 			expect(fatalSpy).toHaveBeenCalled();			
@@ -108,29 +113,32 @@ describe("Net", function()
 		
 		it("should call fatal error handler when ajax call fails", function()
 		{
-			var rd = makeRemoteDoc(42, 0);
+			var remoteDoc = makeRemoteDoc();
+			remoteDoc.update(43, $.noop);
 			
-			// mock
-			$.ajax = function(obj)
-			{
-				obj.error({err: "aah"});
-			};
-			
-			rd.update(43, $.noop);
+			prevAjaxCall().error({"err": "..."});
 			
 			expect(infoSpy).not.toHaveBeenCalled();
-			expect(fatalSpy).toHaveBeenCalled();			
+			expect(fatalSpy).toHaveBeenCalled();					
+		});
+		
+		it("should tell if its the first generation", function()
+		{
+			var remoteDoc = makeRemoteDoc();
+			expect(remoteDoc.isFirstGeneration()).toBe(true);
+			
+			remoteDoc.update(43, $.noop);
+			expect(remoteDoc.isFirstGeneration()).toBe(false);
 		});
 		
 		it("should discard updating if data has not changed", function()
 		{
 			var rd = makeRemoteDoc({"klas": "mooo"}, 0);
-			var ajaxspy = spyOn($, "ajax");
+			// var ajaxspy = spyOn($, "ajax");
 			
-			rd.update({"klas": "mooo"}, $.noop);
+			// rd.update({"klas": "mooo"}, $.noop);
 			
-			expect(ajaxspy).not.toHaveBeenCalled();
-			expect(rd.generation()).toBe(0);
+			// expect(ajaxspy).not.toHaveBeenCalled();
 		});
 	});
 });
