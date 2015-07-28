@@ -1,30 +1,40 @@
+var JobQueue = function()
+{
+	var previous = new $.Deferred().resolve();
+		
+	var add = function(fn) 
+	{
+		var wrap = function()
+		{
+			var d = new $.Deferred();
+			fn(function() {d.resolve();}, function() {d.reject(); previous = new $.Deferred().resolve(); });
+			return d;
+		};
+		
+		previous = previous.then(wrap, function() {});
+	};		
+	
+	return {
+		"add": add
+	};
+};
+
 var DocState = function(doc)
 {
 	var generation = doc.generation;
 	var data = doc.data;
 	var id = doc.id;
 	
-	var Queue = function () 
-	{
-		var previous = new $.Deferred().resolve();
-		
-		return function (fn) 
-		{
-			previous = previous.then(fn, function() {});
-		};
-	};
-	
-	var q = Queue();
+	var q = JobQueue();
 	
 	var update = function(opts) 
 	{
 		var conflictCallback = opts.conflict;
 		
-		var sequenceAjax = function()
+		q.add(function(resolve, reject)
 		{
 			generation++;
 			
-			var d = new $.Deferred();
 			var returnedOk = false;
 			
 			$.ajax({
@@ -63,22 +73,18 @@ var DocState = function(doc)
 				{
 					if (returnedOk)
 					{
-						d.resolve();
+						resolve();
 					}
 					else
 					{
 						// Invalidate any queue requests
-						d.reject();
-						// Make a fresh queue
-						q = Queue();
+						reject();
 					}
 				}
 			});
-			
-			return d;
-		};
+		});
 		
-		q(sequenceAjax);
+		q.add(sequenceAjax);
 	};
 	
 	return {
