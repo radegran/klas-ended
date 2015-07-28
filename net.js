@@ -106,6 +106,12 @@ var RemoteDoc = function(doc, net)
 	var id = doc.id;
 	var update = function(updateData, updateConflict) 
 	{	
+		if (JSON.stringify(data) === JSON.stringify(updateData))
+		{
+			// No need to update
+			return;
+		}
+	
 		var onSuccess = function() {};
 		
 		var onConflict = function(conflictDoc) 

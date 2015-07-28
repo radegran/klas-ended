@@ -121,5 +121,16 @@ describe("Net", function()
 			expect(infoSpy).not.toHaveBeenCalled();
 			expect(fatalSpy).toHaveBeenCalled();			
 		});
+		
+		it("should discard updating if data has not changed", function()
+		{
+			var rd = makeRemoteDoc({"klas": "mooo"}, 0);
+			var ajaxspy = spyOn($, "ajax");
+			
+			rd.update({"klas": "mooo"}, $.noop);
+			
+			expect(ajaxspy).not.toHaveBeenCalled();
+			expect(rd.generation()).toBe(0);
+		});
 	});
 });
