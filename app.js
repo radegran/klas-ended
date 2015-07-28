@@ -1,11 +1,11 @@
-var initialize = function(docState)
+var initialize = function(remoteDoc)
 {	
 	var $table = $("<table>");
 	var $header = $("<div/>").addClass("header");
 	var startupInfo;
 	var t;
 	
-	var model = Model(docState.data(), function(newdata) 
+	var model = Model(remoteDoc.data(), function(newdata) 
 	{ 
 		if (startupInfo)
 		{
@@ -15,18 +15,16 @@ var initialize = function(docState)
 		
 		t.update(newdata);
 
-		docState.update({
-			"data": newdata,
-			"conflict": function(theirdata)
-			{
-				// Conflict!	
-				model.reset(theirdata);
-			}
-		});
+		var conflictCallback = function(theirdata)
+		{
+			model.reset(theirdata);
+		};
+	
+		remoteDoc.update(newdata, conflictCallback);
 	});
 
 	t = Table($header, $table, model);
-	t.update(docState.data());
+	t.update(remoteDoc.data());
 
 	$(document.body).append($("<div/>").css({
 		"display": "inline-block",
@@ -37,36 +35,30 @@ var initialize = function(docState)
 	]));
 	
 	// First time? Show info...
-	if (docState.generation() == 0)
+	if (remoteDoc.generation() == 0)
 	{			
 		startupInfo = info(L.AllChangesAreSaved, 9999999999);
 	}	
 };
 
 $(document).ready(function() 
-{
+{	
 	$(document.body).append(
 		$("<div/>").addClass("root").append(
 			$("<div/>").addClass("messagecontainer")
 		));
 	
-	// Get initial data
-	$.ajax({
-	  type: "POST",
-	  url: "/get",
-	  data: JSON.stringify({"id": window.location.pathname.substring(1)}),
-	  contentType: "application/json",
-	  success: function(reply) { 
-		if (reply.err)
+	var net = Net(JobQueue(), {"fatal": bailout, "info": info});
+	net.read({"id": window.location.pathname.substring(1)}, function(response)
+	{
+		if (response.err)
 		{
-			info(reply.err);
+			info(response.err);
 		}
 		else
 		{
-			initialize(DocState(reply)); 			
+			initialize(RemoteDoc(response, net)); 			
 		}
-	  },
-	  error: function() { bailout(); }
 	});
 	
 	var ajaxTimer = null;

@@ -19,72 +19,113 @@ var JobQueue = function()
 	};
 };
 
-var DocState = function(doc)
+var Net = function(jobQueue, errorHandler)
+{
+	var ajax = function(url, data, onSuccess, onError)
+	{
+		$.ajax({
+			type: "POST",
+			url: "/" + url,
+			data: JSON.stringify(data),
+			contentType: "application/json",
+			success: onSuccess,
+			error: onError
+		});		
+	};
+	
+	var create = function(onSuccess) 
+	{
+		ajax("create", {}, function(response) { onSuccess(response.url); }, $.noop);
+	};
+	
+	var read = function(idObj, onSuccess)
+	{
+		ajax("get", idObj, onSuccess, errorHandler.bailout);
+	};
+
+	var update = function(doc, onSuccess, onConflict)
+	{
+		var resolve;
+		var reject;
+		
+		var success = function(response)
+		{
+			if (response.err)
+			{
+				errorHandler.fatal(response.err);
+				reject();
+			}
+			else if (response.ok)
+			{
+				// All good...
+				resolve();
+				onSuccess();
+			}
+			else
+			{
+				errorHandler.info(L.SomeoneMadeAChangeTryAgain);
+				
+				var serverDoc = {
+					"data": response.data,
+					"generation": response.generation,
+					"id": response.id
+				};
+				
+				onConflict(serverDoc);
+				reject();
+			}
+		};
+		
+		var error = function(err)
+		{
+			errorHandler.fatal();
+			reject();			
+		};
+		
+		// Add to queue
+		jobQueue.add(function(resolveJob, rejectJob)
+		{
+			resolve = resolveJob;
+			reject = rejectJob;
+			
+			ajax("update", doc, success, error);
+		});
+	};
+	
+	return {
+		"create": create,
+		"update": update,
+		"read": read
+	};
+};
+
+var RemoteDoc = function(doc, net)
 {
 	var generation = doc.generation;
 	var data = doc.data;
 	var id = doc.id;
-	
-	var q = JobQueue();
-	
-	var update = function(opts) 
-	{
-		var conflictCallback = opts.conflict;
+	var update = function(updateData, updateConflict) 
+	{	
+		var onSuccess = function() {};
 		
-		q.add(function(resolve, reject)
+		var onConflict = function(conflictDoc) 
 		{
-			generation++;
-			
-			var returnedOk = false;
-			
-			$.ajax({
-				type: "POST",
-				url: "/update",
-				data: JSON.stringify({
+			data = conflictDoc.data;
+			generation = conflictDoc.generation;
+		
+			updateConflict(data);			
+		};
+		
+		generation++;
+		data = updateData;
+		
+		net.update({
 					"id": id,
 					"generation": generation,
-					"data": opts.data
-				}),
-				contentType: "application/json",
-				success: function(updatereply) 
-				{ 
-					if (updatereply.err)
-					{
-						bailout(updatereply.err)
-					}
-					else if (updatereply.ok)
-					{
-						// All good...
-						returnedOk = true;
-					}
-					else
-					{
-						info(L.SomeoneMadeAChangeTryAgain);
-						data = updatereply.data;
-						generation = updatereply.generation;
-						conflictCallback(data);
-					}
+					"data": updateData
 				},
-				error: function() 
-				{
-					bailout();
-				},
-				complete: function()
-				{
-					if (returnedOk)
-					{
-						resolve();
-					}
-					else
-					{
-						// Invalidate any queue requests
-						reject();
-					}
-				}
-			});
-		});
-		
-		q.add(sequenceAjax);
+				onSuccess,
+				onConflict);	
 	};
 	
 	return {
@@ -92,18 +133,4 @@ var DocState = function(doc)
 		"update": update,
 		"generation": function() { return generation; }
 	};
-};
-
-var createNewApp = function() 
-{
-	$.ajax({
-		type: "POST",
-		url: "/create",
-		data: JSON.stringify({}),
-		contentType: "application/json",
-		success: function(d) 
-		{ 
-			window.location.href = "/" + d.url; 
-		}
-	});
 };
