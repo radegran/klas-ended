@@ -68,7 +68,7 @@ var transferPlan = function(balances)
 	return plan;
 };
 
-// Only for testing!!!
+// Only for testing!!! TODO: jasminify
 var testTransfer = function(balances)
 {
 	var sum = balances.reduce(function(a, b) { return a + b; });
@@ -98,6 +98,72 @@ var toValidCellValue = function(text)
 {	
 	var trimmed = text.replace(/ /g, "");
 	return isNaN(parseFloat(trimmed)) ? null : parseFloat(trimmed);
+};
+
+var LocalDiff = function(serverData, localData)
+{
+	var accepted = function()
+	{
+		if (serverData.title != localData.title ||
+		    localData.names.length < serverData.names.length ||
+		    localData.payments.length < serverData.payments.length)
+		{
+			return false;
+		}
+		
+		var acc = true;
+		
+		// check names diff
+		$.each(serverData.names, function(i, name)
+		{
+			if (name != localData.names[i])
+			{
+				acc = false;
+				return false;
+			}
+		});
+		
+		// check payment diff
+		$.each(serverData.payments, function(i, payment)
+		{
+			if (payment.text != localData.payments[i].text)
+			{
+				acc = false;
+				return false;
+			}
+			
+			$.each(payment.values, function(j, value)
+			{
+				if (value !== localData.payments[i].values[j])
+				{
+					acc = false;
+					return false;
+				}
+			});
+		});
+		
+		return acc;
+	};
+	
+	var paymentStats = function(index)
+	{
+		return {
+			"localOnly": (index < localData.payments.length) && (index+1 > serverData.payments.length)
+		};
+	};
+	
+	var nameStats = function(index)
+	{
+		return {
+			"localOnly": (index < localData.names.length) && (index+1 > serverData.names.length)
+		};
+	};
+	
+	return {
+		"accepted": accepted,
+		"payment": paymentStats,
+		"name": nameStats
+	};
 };
 
 var Model = function(onChangedCallback)

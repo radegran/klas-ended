@@ -210,23 +210,23 @@ var LocalDoc = function(storage)
 
 var DocProxy = function(localDoc, remoteDoc, networkStatus, errorHandler)
 {
-	var lastReadData;
+	var lastServerData;
 	
 	var read = function(onData) 
 	{
 		if (localDoc.exists())
 		{
-			lastReadData = localDoc.read();
-			onData(lastReadData);
+			lastServerData = localDoc.read();
+			onData(lastServerData);
 		}
 		
 		if (networkStatus.isOnline)
 		{	
 			var onRemoteDocData = function(data)
 			{
-				if (JSON.stringify(data) != JSON.stringify(lastReadData))
+				if (JSON.stringify(data) != JSON.stringify(lastServerData))
 				{
-					lastReadData = data;
+					lastServerData = data;
 					localDoc.update(data);
 					onData(data);					
 				}
@@ -234,7 +234,7 @@ var DocProxy = function(localDoc, remoteDoc, networkStatus, errorHandler)
 			
 			var onRemoteDocError = function(err)
 			{
-				if (!lastReadData)
+				if (!lastServerData)
 				{
 					errorHandler.fatal("Oooops!");
 				}
@@ -243,7 +243,7 @@ var DocProxy = function(localDoc, remoteDoc, networkStatus, errorHandler)
 			remoteDoc.read(onRemoteDocData, onRemoteDocError);
 		}
 		
-		if (!lastReadData && !networkStatus.online)
+		if (!lastServerData && !networkStatus.online)
 		{
 			errorHandler.fatal("Ooooops!");
 		}
@@ -254,8 +254,8 @@ var DocProxy = function(localDoc, remoteDoc, networkStatus, errorHandler)
 		var rollback = function()
 		{
 			errorHandler.info(L.OfflineMode);
-			localDoc.update(lastReadData);
-			updateConflict(lastReadData);			
+			localDoc.update(lastServerData);
+			updateConflict(lastServerData);			
 		};
 		
 		var updateConflictInternal = function(conflictData)
