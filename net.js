@@ -22,7 +22,7 @@ var JobQueue = function()
 var NetworkStatus = function()
 {
 	return {
-		"isOnline": false
+		"isOnline": true
 	};
 }
 
@@ -39,7 +39,7 @@ var Net = function(jobQueue, errorHandler, networkStatus)
 			error: function(o) 
 			{ 
 				networkStatus.isOnline = false; 
-				onError(o); 
+				onError(o);  
 				window.setTimeout(function() { ajax("ping", {}, function() { info(L.OnlineMode); }, $.noop); }, 3000);
 			}
 		});		
@@ -50,7 +50,7 @@ var Net = function(jobQueue, errorHandler, networkStatus)
 		ajax("create", {}, function(response) { onSuccess(response.url); }, $.noop);
 	};
 	
-	var read = function(idObj, onSuccess)
+	var read = function(idObj, onSuccess, onError)
 	{
 		var success = function(response)
 		{
@@ -64,7 +64,7 @@ var Net = function(jobQueue, errorHandler, networkStatus)
 			}
 		};
 		
-		ajax("get", idObj, success, errorHandler.bailout);
+		ajax("get", idObj, success, onError);
 	};
 
 	var update = function(doc, onSuccess, onConflict, onError)
@@ -155,13 +155,13 @@ var RemoteDoc = function(id, net)
 				onError);	
 	};
 	
-	var read = function(onData)
+	var read = function(onData, onError)
 	{
 		net.read({"id": id}, function(doc)
 		{
 			generation = doc.generation;
 			onData(doc.data);
-		});
+		}, onError);
 	};
 	
 	return {
@@ -171,23 +171,23 @@ var RemoteDoc = function(id, net)
 	};
 };
 
-var LocalDoc = function()
+var LocalDoc = function(storage)
 {	
 	var supported = function()
 	{
-		return window.localStorage !== undefined;
+		return storage !== undefined;
 	};
 	
 	var exists = function()
 	{
-		return supported() && window.localStorage.data !== undefined;
+		return supported() && storage.data !== undefined;
 	};
 
 	var update = function(data)
 	{
 		if (supported())
 		{
-			window.localStorage.data = JSON.stringify(data);
+			storage.data = JSON.stringify(data);
 		}
 	};
 	
@@ -198,7 +198,7 @@ var LocalDoc = function()
 			throw "local doc does not exist!";
 		}
 		
-		return JSON.parse(window.localStorage.data);
+		return JSON.parse(storage.data);
 	};
 	
 	return {
@@ -208,7 +208,7 @@ var LocalDoc = function()
 	};
 };
 
-var DocProxy = function(localDoc, remoteDoc, networkStatus)
+var DocProxy = function(localDoc, remoteDoc, networkStatus, errorHandler)
 {
 	var lastReadData;
 	
@@ -220,26 +220,54 @@ var DocProxy = function(localDoc, remoteDoc, networkStatus)
 			onData(lastReadData);
 		}
 		
-		remoteDoc.read(function(data) 
+		if (networkStatus.isOnline)
+		{	
+			var onRemoteDocData = function(data)
+			{
+				if (JSON.stringify(data) != JSON.stringify(lastReadData))
+				{
+					lastReadData = data;
+					localDoc.update(data);
+					onData(data);					
+				}
+			};
+			
+			var onRemoteDocError = function(err)
+			{
+				if (!lastReadData)
+				{
+					errorHandler.fatal("Oooops!");
+				}
+			};
+	
+			remoteDoc.read(onRemoteDocData, onRemoteDocError);
+		}
+		
+		if (!lastReadData && !networkStatus.online)
 		{
-			lastReadData = data;
-			localDoc.update(data);
-			onData(data);
-		});
+			errorHandler.fatal("Ooooops!");
+		}
 	};
 	
 	var update = function(data, updateConflict)
 	{
 		var rollback = function()
 		{
-			info(L.OfflineMode);
+			errorHandler.info(L.OfflineMode);
+			localDoc.update(lastReadData);
 			updateConflict(lastReadData);			
+		};
+		
+		var updateConflictInternal = function(conflictData)
+		{
+			localDoc.update(conflictData);
+			updateConflict(conflictData);
 		};
 		
 		if (networkStatus.isOnline)
 		{
 			localDoc.update(data);
-			remoteDoc.update(data, updateConflict, rollback);			
+			remoteDoc.update(data, updateConflictInternal, rollback);			
 		}
 		else
 		{

@@ -144,33 +144,162 @@ describe("Net", function()
 	
 	describe("DocProxy", function()
 	{
-		var localMock;
-		var remoteMock;
 		var online = $.noop;
+		var storage;
+		var remoteMock;
+		var errorHandler;
 		
 		var makeDocProxy = function()
 		{
-			localMock = jasmine.createSpyObj('localDoc', ['read', 'update', 'exists']);
-			remoteMock = jasmine.createSpyObj('remoteDoc', ['read', 'update']);
-			var status = {isOnline: true};
-			var dp = DocProxy(localMock, remoteMock, status);
+			storage = {};
+			remoteMock = {
+				"read": function(onData, onError) {},
+				"update": function(data, onConflict, onError) {}
+			};
 			
+			var status = {isOnline: true};
 			online = function(isOnline)
 			{
 				status.isOnline = isOnline;
 			};
 			
-			return dp;
+			errorHandler = jasmine.createSpyObj('errorHandler', ['info', 'fatal']);
+			
+			return DocProxy(LocalDoc(storage), remoteMock, status, errorHandler);
 		};
-		
-		it("updates localDoc when reading from remoteDoc", function()
+				
+		describe("update function", function() 
 		{
-			var dp = makeDocProxy();
-			dp.read($.noop);
+			it("update(42) -> local:42", function()
+			{
+				var dp = makeDocProxy();
+				var h = jasmine.createSpyObj('h', ['onConflict']);
+				remoteMock.update = function(d, c, e) {};
+				
+				dp.update(42, h.onConflict);
+				
+				expect(storage.data).toBe("42");
+				expect(h.onConflict).not.toHaveBeenCalled();		
+			});
 			
-			remoteMock.read.calls.mostRecent().args[0](42);
+			it("update(42), remote conflict(99) -> 99, local:99", function()
+			{
+				var dp = makeDocProxy();
+				var h = jasmine.createSpyObj('h', ['onConflict']);
+				remoteMock.update = function(d, conflict, e) { conflict(99); };
+				
+				dp.update(42, h.onConflict);
+				
+				expect(storage.data).toBe("99");
+				expect(h.onConflict).toHaveBeenCalledWith(99);
+			});
 			
-			expect(localMock.update).toHaveBeenCalledWith(42);
+			// TODO: some local changes should be accepted!
+			it("local:42, update(99), remote error -> 42, local:42", function()
+			{
+				var dp = makeDocProxy();
+				remoteMock.read = function(onData, e) { onData(42); };
+				remoteMock.update = function(d, c, error) { error(); };
+				dp.read($.noop);				
+				
+				expect(storage.data).toBe("42");
+				
+				var h = jasmine.createSpyObj('h', ['onConflict']);
+				dp.update(99, h.onConflict);
+				
+				expect(storage.data).toBe("42");
+				expect(h.onConflict).toHaveBeenCalledWith(42);
+			});
+		});
+		
+		describe("read function", function() 
+		{
+			it("local:null, remote:error -> fatal error", function()
+			{
+				var dp = makeDocProxy();
+				remoteMock.read = function(a,onError) { onError(); };
+				
+				var handler = jasmine.createSpy('h');
+				dp.read(handler);
+				
+				expect(handler).not.toHaveBeenCalled();
+				expect(errorHandler.info).not.toHaveBeenCalled();
+				expect(errorHandler.fatal).toHaveBeenCalled();
+			});
+			
+			it("local:null, remote:42 -> 42", function()
+			{
+				var dp = makeDocProxy();
+				remoteMock.read = function(onData,a) { onData(42); };
+				
+				var handler = jasmine.createSpy('h');
+				dp.read(handler);
+				
+				expect(handler).toHaveBeenCalledWith(42);
+				expect(handler.calls.count()).toBe(1);
+				expect(errorHandler.info).not.toHaveBeenCalled();
+				expect(errorHandler.fatal).not.toHaveBeenCalled();
+			});
+			
+			it("local:42, remote:error -> 42", function()
+			{
+				var dp = makeDocProxy();
+				storage.data = "42";
+				remoteMock.read = function(a,onError) { onError(); };
+				
+				var handler = jasmine.createSpy('h');
+				dp.read(handler);
+				
+				expect(handler).toHaveBeenCalledWith(42);
+				expect(handler.calls.count()).toBe(1);
+				expect(errorHandler.info).not.toHaveBeenCalled(); // should be called by net code though
+				expect(errorHandler.fatal).not.toHaveBeenCalled();
+			});
+			
+			it("local:42, remote:99 -> 42 and then 99", function()
+			{
+				var dp = makeDocProxy();
+				storage.data = "42";
+				remoteMock.read = function(onData,a) { onData(99); };
+				
+				var handler = jasmine.createSpy('h');
+				dp.read(handler);
+				
+				expect(handler.calls.argsFor(0)[0]).toBe(42);
+				expect(handler.calls.argsFor(1)[0]).toBe(99);
+				expect(handler.calls.count()).toBe(2);
+				expect(errorHandler.info).not.toHaveBeenCalled();
+				expect(errorHandler.fatal).not.toHaveBeenCalled();
+			});
+			
+			it("local:{a:{b:42}}, remote:{a:{b:42}} -> {a:{b:42}} only once", function()
+			{
+				var dp = makeDocProxy();
+				storage.data = JSON.stringify({a:{b:42}});
+				remoteMock.read = function(onData,a) { onData({a:{b:42}}); };
+				
+				var handler = jasmine.createSpy('h');
+				dp.read(handler);
+				
+				expect(handler.calls.mostRecent().args[0]).toEqual(jasmine.objectContaining({a:{b:42}}));
+				expect(handler.calls.count()).toBe(1);
+				expect(errorHandler.info).not.toHaveBeenCalled(); 
+				expect(errorHandler.fatal).not.toHaveBeenCalled();
+			});
+			
+			it("offline, local:null -> fatal error", function()
+			{
+				var dp = makeDocProxy();		
+				online(false);
+				var handler = jasmine.createSpy('h');
+				remoteMock.read = function(onData,a) { onData(42); }; // should not matter
+				
+				dp.read(handler);
+				
+				expect(handler).not.toHaveBeenCalled();
+				expect(errorHandler.info).not.toHaveBeenCalled(); 
+				expect(errorHandler.fatal).toHaveBeenCalled();
+			});
 		});
 	});
 });

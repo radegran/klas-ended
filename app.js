@@ -49,13 +49,17 @@ var initialize = function(remoteDoc)
 
 $(document).ready(function() 
 {	
+	var errorHandler = {"fatal": bailout, "info": info};
 	var networkStatus = NetworkStatus();
 	var net = Net(JobQueue(), 
-				  {"fatal": bailout, "info": info}, 
+				  errorHandler, 
 				  networkStatus);
 	var id = window.location.pathname.substring(1);
 
-	var docProxy = DocProxy(LocalDoc(), RemoteDoc(id, net), networkStatus);
+	var docProxy = DocProxy(LocalDoc(window.localStorage), 
+							RemoteDoc(id, net), 
+							networkStatus,
+							errorHandler);
 	initialize(docProxy); 			
 	
 	var ajaxTimer = null;
