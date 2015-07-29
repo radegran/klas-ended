@@ -141,4 +141,36 @@ describe("Net", function()
 			expect(remoteDoc.isFirstGeneration()).toBe(false);
 		});
 	});
+	
+	describe("DocProxy", function()
+	{
+		var localMock;
+		var remoteMock;
+		var online = $.noop;
+		
+		var makeDocProxy = function()
+		{
+			localMock = jasmine.createSpyObj('localDoc', ['read', 'update', 'exists']);
+			remoteMock = jasmine.createSpyObj('remoteDoc', ['read', 'update']);
+			var status = {isOnline: true};
+			var dp = DocProxy(localMock, remoteMock, status);
+			
+			online = function(isOnline)
+			{
+				status.isOnline = isOnline;
+			};
+			
+			return dp;
+		};
+		
+		it("updates localDoc when reading from remoteDoc", function()
+		{
+			var dp = makeDocProxy();
+			dp.read($.noop);
+			
+			remoteMock.read.calls.mostRecent().args[0](42);
+			
+			expect(localMock.update).toHaveBeenCalledWith(42);
+		});
+	});
 });
