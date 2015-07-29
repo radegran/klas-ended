@@ -95,7 +95,7 @@ describe("Net", function()
 			var conflictHandler = jasmine.createSpy('h');
 			
 			var remoteDoc = makeRemoteDoc();
-			remoteDoc.update(99, conflictHandler, $.noop);
+			remoteDoc.update(99, $.noop, conflictHandler, $.noop);
 
 			prevAjaxCall().success({"data": 101, "generation": 3});
 			
@@ -120,7 +120,7 @@ describe("Net", function()
 			var errHandler = jasmine.createSpy('h');
 			
 			var remoteDoc = makeRemoteDoc();
-			remoteDoc.update(43, $.noop, errHandler);
+			remoteDoc.update(43, $.noop, $.noop, errHandler);
 			
 			prevAjaxCall().error({"err": "..."});
 			
@@ -170,45 +170,100 @@ describe("Net", function()
 				
 		describe("update function", function() 
 		{
-			it("update(42) -> local:42", function()
+			it("update(testData) -> local:testData", function()
 			{
 				var dp = makeDocProxy();
 				var h = jasmine.createSpyObj('h', ['onConflict']);
+				remoteMock.read = function(onData, e) { onData(getTestData()); };
 				remoteMock.update = function(d, c, e) {};
 				
-				dp.update(42, h.onConflict);
+				dp.read($.noop);
+				dp.update(getTestData(), h.onConflict);
 				
-				expect(storage.data).toBe("42");
+				expect(JSON.parse(storage.data)).toEqual(jasmine.objectContaining(getTestData()));
 				expect(h.onConflict).not.toHaveBeenCalled();		
 			});
 			
-			it("update(42), remote conflict(99) -> 99, local:99", function()
+			it("update(testData), remote conflict(modifiedData) -> modifiedData, local:modifiedData", function()
 			{
+				var m = makeModel();
+				m.updatePaymentValue(999, 1, 1);
+				
 				var dp = makeDocProxy();
 				var h = jasmine.createSpyObj('h', ['onConflict']);
-				remoteMock.update = function(d, conflict, e) { conflict(99); };
+				remoteMock.read = function(onData, e) { onData(getTestData()); };
+				remoteMock.update = function(d, s, conflict, e) { conflict(localData); };
 				
-				dp.update(42, h.onConflict);
+				dp.read($.noop);
+				dp.update(getTestData(), h.onConflict);
 				
-				expect(storage.data).toBe("99");
-				expect(h.onConflict).toHaveBeenCalledWith(99);
+				expect(JSON.parse(storage.data)).toEqual(jasmine.objectContaining(localData));
+				expect(h.onConflict).toHaveBeenCalledWith(jasmine.objectContaining(localData));
 			});
 			
 			// TODO: some local changes should be accepted!
-			it("local:42, update(99), remote error -> 42, local:42", function()
+			it("local:testData, update(modifiedData), remote error -> testData, local:testData", function()
 			{
-				var dp = makeDocProxy();
-				remoteMock.read = function(onData, e) { onData(42); };
-				remoteMock.update = function(d, c, error) { error(); };
-				dp.read($.noop);				
+				var m = makeModel();
 				
-				expect(storage.data).toBe("42");
+				var dp = makeDocProxy();
+				remoteMock.read = function(onData, e) { onData(getTestData()); };
+				remoteMock.update = function(d, s, c, error) { error(); };
+				
+				// Arrange to get local:testData
+				dp.read($.noop);				
+				expect(JSON.parse(storage.data)).toEqual(jasmine.objectContaining(getTestData()));
+				
+				// Make some modification, write to 'localData' variable
+				m.updatePaymentValue(999, 1, 1);
 				
 				var h = jasmine.createSpyObj('h', ['onConflict']);
-				dp.update(99, h.onConflict);
+				dp.update(localData, h.onConflict);
 				
-				expect(storage.data).toBe("42");
-				expect(h.onConflict).toHaveBeenCalledWith(42);
+				expect(JSON.parse(storage.data)).toEqual(jasmine.objectContaining(getTestData()));
+				expect(h.onConflict).toHaveBeenCalledWith(jasmine.objectContaining(getTestData()));
+			});
+			
+			it("local:testData, update(extendedData), remote error -> extendedData, local:extendedData", function()
+			{
+				var m = makeModel();
+				m.addRow();
+				m.updatePaymentText("mama", 3);
+				
+				var dp = makeDocProxy();
+				remoteMock.read = function(onData, e) { onData(getTestData()); };
+				remoteMock.update = function(d, s, c, error) { error(); };
+				
+				var h = jasmine.createSpyObj('h', ['onConflict']);
+				
+				dp.read($.noop);				
+				dp.update(localData, h.onConflict);
+				
+				expect(JSON.parse(storage.data)).toEqual(jasmine.objectContaining(localData));
+				expect(h.onConflict).not.toHaveBeenCalled();
+			});
+			
+			it("offline: an unacceptable change to rollback to last acceptable data", function()
+			{
+				var m = makeModel();
+				m.addRow();
+				m.updatePaymentText("mama", 3);
+				
+				var dp = makeDocProxy();
+				remoteMock.read = function(onData, e) { onData(getTestData()); };
+				remoteMock.update = function(d, s, c, error) { error(); };
+				var h = jasmine.createSpyObj('h', ['onConflict']);
+				
+				dp.read($.noop);				
+				dp.update(localData, h.onConflict);
+				var acceptedData = localData;
+				expect(JSON.parse(storage.data)).toEqual(jasmine.objectContaining(acceptedData));
+				
+				m.updatePaymentValue(999, 1, 1);
+				dp.update(localData, h.onConflict);
+				
+				expect(JSON.parse(storage.data)).toEqual(jasmine.objectContaining(acceptedData));
+				expect(h.onConflict).toHaveBeenCalledWith(jasmine.objectContaining(acceptedData));
 			});
 		});
 		

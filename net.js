@@ -38,6 +38,10 @@ var Net = function(jobQueue, errorHandler, networkStatus)
 			success: function(o) { networkStatus.isOnline = true; onSuccess(o); },
 			error: function(o) 
 			{ 
+				if (networkStatus.isOnline)
+				{	
+					errorHandler.info(L.OfflineMode);
+				}
 				networkStatus.isOnline = false; 
 				onError(o);  
 				window.setTimeout(function() { ajax("ping", {}, function() { info(L.OnlineMode); }, $.noop); }, 3000);
@@ -102,7 +106,6 @@ var Net = function(jobQueue, errorHandler, networkStatus)
 		
 		var error = function(err)
 		{
-			errorHandler.info(L.OfflineMode);
 			reject();			
 			onError(err);
 		};
@@ -128,7 +131,7 @@ var RemoteDoc = function(id, net)
 {
 	var generation;
 	
-	var update = function(updateData, onConflict, onError) 
+	var update = function(updateData, onSuccess, onConflict, onError) 
 	{	
 		if (!generation)
 		{
@@ -150,7 +153,7 @@ var RemoteDoc = function(id, net)
 					"generation": generation,
 					"data": updateData
 				},
-				$.noop,
+				onSuccess,
 				onConflictInternal,
 				onError);	
 	};
@@ -251,31 +254,40 @@ var DocProxy = function(localDoc, remoteDoc, networkStatus, errorHandler)
 	
 	var update = function(data, updateConflict)
 	{
-		var rollback = function()
+		var accepted = LocalDiff(lastServerData, data).accepted();
+		
+		var onOffline = function()
 		{
-			errorHandler.info(L.OfflineMode);
-			localDoc.update(lastServerData);
-			updateConflict(lastServerData);			
+			if (!accepted)
+			{
+				errorHandler.info(L.OfflineMode);
+				updateConflict(localDoc.read());		
+			}
+		};
+		
+		var onSuccess = function()
+		{
+			lastServerData = data;
+			localDoc.update(data);
 		};
 		
 		var updateConflictInternal = function(conflictData)
 		{
+			lastServerData = conflictData;
 			localDoc.update(conflictData);
 			updateConflict(conflictData);
 		};
-		
-		if (networkStatus.isOnline)
+
+		if (accepted)
 		{
 			localDoc.update(data);
-			remoteDoc.update(data, updateConflictInternal, rollback);			
 		}
-		else
-		{
-			rollback();
-		}
+
+		remoteDoc.update(data, onSuccess, updateConflictInternal, onOffline);			
 	};
 	
 	return {
+		"getLastServerData": function() { return lastServerData; },
 		"read": read,
 		"update": update,
 		"isFirstGeneration": function() { return remoteDoc.isFirstGeneration(); }
