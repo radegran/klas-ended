@@ -2,25 +2,19 @@ var initialize = function(remoteDoc)
 {	
 	var $table = $("<table>");
 	var $header = $("<div/>").addClass("header");
+	var $messageContainer = $("<div/>").addClass("messagecontainer");
 	
 	$(document.body).append(
 		$("<div/>").addClass("root").append(
-			$("<div/>").addClass("messagecontainer")
-		));
+			$messageContainer,
+			$header,
+			$table));
 		
-	$(document.body).append($("<div/>").css({
-		"display": "inline-block",
-		"min-width": "100%"
-	}).append([
-		$header,
-		$table
-	]));
-	
-	var startupInfo;
-	var t;
-	
 	remoteDoc.read(function(data) 
 	{
+		var startupInfo;
+		var table;
+	
 		var model = Model(data, function(newdata) 
 		{ 
 			if (startupInfo)
@@ -29,7 +23,7 @@ var initialize = function(remoteDoc)
 				startupInfo = null;
 			}
 			
-			t.update(newdata);
+			table.update(newdata);
 
 			var conflictCallback = function(theirdata)
 			{
@@ -39,8 +33,8 @@ var initialize = function(remoteDoc)
 			remoteDoc.update(newdata, conflictCallback);
 		});
 		
-		t = Table($header, $table, model);
-		t.update(data);
+		table = Table($header, $table, model);
+		table.update(data);
 
 		// First time? Show info...
 		if (remoteDoc.isFirstGeneration())
