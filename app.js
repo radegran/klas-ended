@@ -9,33 +9,36 @@ var initialize = function(remoteDoc)
 			$messageContainer,
 			$header,
 			$table));
+
+	var startupInfo;
+	var table;
+
+	var model = Model(function(newdata) 
+	{ 
+		table.update(newdata);
+		
+		if (startupInfo)
+		{
+			startupInfo.hide();
+			startupInfo = null;
+		}
+		
+		var conflictCallback = function(theirdata)
+		{
+			model.reset(theirdata);
+			table.update(theirdata);
+		};
+	
+		remoteDoc.update(newdata, conflictCallback);
+	});
+	
+	table = Table($header, $table, model);
 		
 	remoteDoc.read(function(data) 
 	{
-		var startupInfo;
-		var table;
-	
-		var model = Model(data, function(newdata) 
-		{ 
-			if (startupInfo)
-			{
-				startupInfo.hide();
-				startupInfo = null;
-			}
-			
-			table.update(newdata);
-
-			var conflictCallback = function(theirdata)
-			{
-				model.reset(theirdata);
-			};
-		
-			remoteDoc.update(newdata, conflictCallback);
-		});
-		
-		table = Table($header, $table, model);
+		model.reset(data);
 		table.update(data);
-
+		
 		// First time? Show info...
 		if (remoteDoc.isFirstGeneration())
 		{			

@@ -100,10 +100,11 @@ var toValidCellValue = function(text)
 	return isNaN(parseFloat(trimmed)) ? null : parseFloat(trimmed);
 };
 
-var Model = function(initdata, onChangedCallback)
+var Model = function(onChangedCallback)
 {
-	var undoStack = [initdata];
-	var undoStackCursor = 0;
+	// Expecting a "reset" call to be initialized
+	var undoStack;
+	var undoStackCursor;
 	
 	var currentData = function()
 	{
@@ -134,7 +135,7 @@ var Model = function(initdata, onChangedCallback)
 	{
 		undoStack = [data];
 		undoStackCursor = 0;
-		onChangedCallback(data);
+		// Let's not call onChangedCallback(data); 
 	};
 	
 	var addColumn = function()

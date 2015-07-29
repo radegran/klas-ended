@@ -39,21 +39,22 @@ var makeEditable = function($td, currentValue, onNewValue)
 var Table = function($header, $table, model)
 {
 	var newRow = function() { return $("<tr>"); };
-
-	var $addColumnCell = addButtonCell(function()
-	{
-		model.addColumn();
-		$(this).prev().find("div").text("").focus();
-	});
-	var $addRowCell = addButtonCell(function() 
-	{ 
-		model.addRow(); 
-		$(this).parent().prev().find("td:first").find("div").text("").focus();
-	});
 	
 	// Setup clean table
 	var setup = function()
 	{
+		var $addColumnCell = addButtonCell(function()
+		{
+			model.addColumn();
+			$(this).prev().find("div").text("").focus();
+		});
+		
+		var $addRowCell = addButtonCell(function() 
+		{ 
+			model.addRow(); 
+			$(this).parent().prev().find("td:first").find("div").text("").focus();
+		});
+		
 		$table.empty().append(
 			newRow().addClass("column-header-row").append(
 				$("<td/>"),
