@@ -44,7 +44,7 @@ describe("Net", function()
 		var makeRemoteDoc = function()
 		{
 			var errorHandler = {"fatal": $.noop, "info": $.noop};
-			var net = Net(JobQueue(), errorHandler);
+			var net = Net(JobQueue(), errorHandler, NetworkStatus());
 			infoSpy = spyOn(errorHandler, "info");
 			fatalSpy = spyOn(errorHandler, "fatal");
 			spyOn($, "ajax");
@@ -77,6 +77,10 @@ describe("Net", function()
 		it("should update", function() 
 		{
 			var remoteDoc = makeRemoteDoc();
+			
+			remoteDoc.read($.noop);
+			prevAjaxCall().success({"data": 42, "generation": 0});
+			
 			remoteDoc.update(99, $.noop);
 			expect(prevAjaxData()).toEqual(jasmine.objectContaining({"data": 99, "generation": 1}));
 
@@ -91,7 +95,7 @@ describe("Net", function()
 			var conflictHandler = jasmine.createSpy('h');
 			
 			var remoteDoc = makeRemoteDoc();
-			remoteDoc.update(99, conflictHandler);
+			remoteDoc.update(99, conflictHandler, $.noop);
 
 			prevAjaxCall().success({"data": 101, "generation": 3});
 			
@@ -111,34 +115,30 @@ describe("Net", function()
 			expect(fatalSpy).toHaveBeenCalled();			
 		});
 		
-		it("should call fatal error handler when ajax call fails", function()
+		it("should call info error handler when ajax call fails", function()
 		{
+			var errHandler = jasmine.createSpy('h');
+			
 			var remoteDoc = makeRemoteDoc();
-			remoteDoc.update(43, $.noop);
+			remoteDoc.update(43, $.noop, errHandler);
 			
 			prevAjaxCall().error({"err": "..."});
 			
-			expect(infoSpy).not.toHaveBeenCalled();
-			expect(fatalSpy).toHaveBeenCalled();					
+			expect(errHandler).toHaveBeenCalled();
+			expect(infoSpy).toHaveBeenCalled();
+			expect(fatalSpy).not.toHaveBeenCalled();					
 		});
 		
 		it("should tell if its the first generation", function()
 		{
 			var remoteDoc = makeRemoteDoc();
+			
+			remoteDoc.read($.noop);
+			prevAjaxCall().success({"data": 42, "generation": 0});
 			expect(remoteDoc.isFirstGeneration()).toBe(true);
 			
 			remoteDoc.update(43, $.noop);
 			expect(remoteDoc.isFirstGeneration()).toBe(false);
-		});
-		
-		it("should discard updating if data has not changed", function()
-		{
-			var rd = makeRemoteDoc({"klas": "mooo"}, 0);
-			// var ajaxspy = spyOn($, "ajax");
-			
-			// rd.update({"klas": "mooo"}, $.noop);
-			
-			// expect(ajaxspy).not.toHaveBeenCalled();
 		});
 	});
 });

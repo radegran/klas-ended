@@ -1,6 +1,6 @@
 $(document).ready(function() 
 { 
-	var net = Net({}, {});
+	var net = Net({}, {}, {});
 	
 	net.create(function(url) 
 	{ 

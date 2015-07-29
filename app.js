@@ -49,10 +49,14 @@ var initialize = function(remoteDoc)
 
 $(document).ready(function() 
 {	
-	var net = Net(JobQueue(), {"fatal": bailout, "info": info});
+	var networkStatus = NetworkStatus();
+	var net = Net(JobQueue(), 
+				  {"fatal": bailout, "info": info}, 
+				  networkStatus);
 	var id = window.location.pathname.substring(1);
 
-	initialize(RemoteDoc(id, net)); 			
+	var docProxy = DocProxy(LocalDoc(), RemoteDoc(id, net), networkStatus);
+	initialize(docProxy); 			
 	
 	var ajaxTimer = null;
 	var messageObj = {"hide": $.noop};
