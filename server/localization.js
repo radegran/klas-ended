@@ -32,6 +32,14 @@ var Strings =
 		"en": "Could not create the document!",
 		"sv": "Kunde inte skapa dokumentet!"
 	},
+	"OfflineMode": {
+		"en": "Offline mode!",
+		"sv": "Offlineläge!"
+	},
+	"OnlineMode": {
+		"en": "Back online!",
+		"sv": "Online igen!"
+	},
 	"StartData": {
 		"en": {
 			"title": "Type a title here",

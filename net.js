@@ -36,7 +36,12 @@ var Net = function(jobQueue, errorHandler, networkStatus)
 			data: JSON.stringify(data),
 			contentType: "application/json",
 			success: function(o) { networkStatus.isOnline = true; onSuccess(o); },
-			error: function(o) { networkStatus.isOnline = false; onError(o); }
+			error: function(o) 
+			{ 
+				networkStatus.isOnline = false; 
+				onError(o); 
+				window.setTimeout(function() { ajax("ping", {}, function() { info(L.OnlineMode); }, $.noop); }, 3000);
+			}
 		});		
 	};
 	
@@ -97,7 +102,7 @@ var Net = function(jobQueue, errorHandler, networkStatus)
 		
 		var error = function(err)
 		{
-			errorHandler.info("Offline mode!");
+			errorHandler.info(L.OfflineMode);
 			reject();			
 			onError(err);
 		};
@@ -227,7 +232,7 @@ var DocProxy = function(localDoc, remoteDoc, networkStatus)
 	{
 		var rollback = function()
 		{
-			info("Offline mode!");
+			info(L.OfflineMode);
 			updateConflict(lastReadData);			
 		};
 		

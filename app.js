@@ -63,9 +63,12 @@ $(document).ready(function()
 	
 	$(document).ajaxStart(function()
 	{
-		ajaxTimer = setTimeout(function() {
-			messageObj = showMessage(L.Saving);
-		}, 2000);
+		if (networkStatus.isOnline)
+		{
+			ajaxTimer = setTimeout(function() {
+				messageObj = showMessage(L.Saving);
+			}, 2000);			
+		}
 	});
 	
 	$(document).ajaxStop(function()

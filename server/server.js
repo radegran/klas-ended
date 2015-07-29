@@ -327,6 +327,11 @@ var SampleApp = function() {
 		};
 		
 		// P O S T   H A N D L E R S 
+		self.app.post("/ping", function(req, res) 
+		{
+			res.send("pong");
+		});
+		
 		self.app.post("/update", function(req, res) 
 		{
 			console.log("GOT update REQUEST");
