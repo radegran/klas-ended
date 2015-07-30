@@ -8,8 +8,10 @@ var addButtonCell = function(onclick)
 
 var makeEditable = function($td, currentValue, onNewValue)
 {	
+	currentValue = (currentValue === null) ? "" : (currentValue + "");
+
 	// contenteditable not for td elems in IE
-	var $elem = $("<div/>").text(currentValue === null ? "" : currentValue);
+	var $elem = $("<div/>").text(currentValue);
 	$td.html($elem);
 	
 	// Reset any earlier makeEditable for this element

@@ -21,13 +21,21 @@ var JobQueue = function()
 
 var NetworkStatus = function()
 {
-	return {
-		"isOnline": true
+	var listeners = [];
+	
+	var obj = {
+		"isOnline": true,
+		"setOnline": function(isOnline) { obj.isOnline = isOnline; $.each(listeners, function(i, l) { l(isOnline); }); },
+		"onChanged": function(listener) { listeners.push(listener); }
 	};
+	
+	return obj;
 }
 
 var Net = function(jobQueue, errorHandler, networkStatus)
 {
+	var pingTimer = null;
+	
 	var ajax = function(url, data, onSuccess, onError)
 	{
 		$.ajax({
@@ -35,16 +43,19 @@ var Net = function(jobQueue, errorHandler, networkStatus)
 			url: "/" + url,
 			data: JSON.stringify(data),
 			contentType: "application/json",
-			success: function(o) { networkStatus.isOnline = true; onSuccess(o); },
+			success: function(o) { networkStatus.setOnline(true); onSuccess(o); },
 			error: function(o) 
 			{ 
 				if (networkStatus.isOnline)
 				{	
 					errorHandler.info(L.OfflineMode);
+					networkStatus.setOnline(false);  
 				}
-				networkStatus.isOnline = false; 
-				onError(o);  
-				window.setTimeout(function() { ajax("ping", {}, function() { info(L.OnlineMode); }, $.noop); }, 3000);
+				
+				window.clearTimeout(pingTimer);
+				pingTimer = window.setTimeout(function() { ajax("ping", {}, function() { info(L.OnlineMode); }, $.noop); }, 3000);
+									
+				onError(o); 
 			}
 		});		
 	};
@@ -106,7 +117,7 @@ var Net = function(jobQueue, errorHandler, networkStatus)
 		
 		var error = function(err)
 		{
-			reject();			
+			resolve();			
 			onError(err);
 		};
 		
@@ -254,11 +265,13 @@ var DocProxy = function(localDoc, remoteDoc, networkStatus, errorHandler)
 	
 	var update = function(data, updateConflict)
 	{
-		var accepted = LocalDiff(lastServerData, data).accepted();
-		
 		var onOffline = function()
-		{
-			if (!accepted)
+		{			
+			if (LocalDiff(lastServerData, data).accepted())
+			{
+				localDoc.update(data);
+			}
+			else
 			{
 				errorHandler.info(L.OfflineMode);
 				updateConflict(localDoc.read());		
@@ -278,16 +291,18 @@ var DocProxy = function(localDoc, remoteDoc, networkStatus, errorHandler)
 			updateConflict(conflictData);
 		};
 
-		if (accepted)
+		if (networkStatus.isOnline)
 		{
-			localDoc.update(data);
+			remoteDoc.update(data, onSuccess, updateConflictInternal, onOffline);			
 		}
-
-		remoteDoc.update(data, onSuccess, updateConflictInternal, onOffline);			
+		else
+		{
+			onOffline();
+		}
 	};
 	
 	return {
-		"getLastServerData": function() { return lastServerData; },
+		"getLocalDiff": function() { return LocalDiff(lastServerData, localDoc.read()); },
 		"read": read,
 		"update": update,
 		"isFirstGeneration": function() { return remoteDoc.isFirstGeneration(); }

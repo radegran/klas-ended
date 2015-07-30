@@ -22,10 +22,6 @@ table {
 	border-spacing: 0px;
 }
 
-.payment-row.even {
-	background-color: beige;
-}
-
 .welcome {
 	margin-top: 20px;
 	font-size: 0.9em;
@@ -53,6 +49,9 @@ td {
 	padding: 0.2em 0 0.2em 0.5em;
 }
 
+/*
+ONLINE
+*/
 .header {
 	color: #f8f8f8;
 	border-bottom: 1px solid #197541;
@@ -77,6 +76,41 @@ td {
 	border-top: 1px solid seagreen;
 }
 
+.payment-row.even {
+	background-color: beige;
+}
+/*
+OFFLINE
+*/
+.offline .header {
+	color: #f8f8f8;
+	border-bottom: 1px solid #B24532;
+	background-color: #CC4F39;
+	padding: 1em 0 1em 1em;
+	font-size: 1.8em;
+	outline:0;
+}
+
+.offline .column-header-row  td,
+.offline .diff-row  td {
+	padding: 0.5em;
+	color: #F8F8F8;
+}
+
+.offline .column-header-row  td {
+	border-top: 1px solid #66281C;
+	background-color: tomato;
+}
+
+.offline .diff-row  td {
+	border-top: 1px solid #B24532;
+}
+
+.offline .payment-row.even {
+	background-color: moccasin;
+}
+
+/**/
 .center
 {
 	margin: 0 auto;

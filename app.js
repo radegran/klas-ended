@@ -56,11 +56,23 @@ $(document).ready(function()
 				  networkStatus);
 	var id = window.location.pathname.substring(1);
 
-	var docProxy = DocProxy(LocalDoc(window.localStorage), 
+	var docProxy = DocProxy(LocalDoc(window.localStorage || {}), 
 							RemoteDoc(id, net), 
 							networkStatus,
 							errorHandler);
 	initialize(docProxy); 			
+	
+	networkStatus.onChanged(function(isOnline) 
+	{
+		if (isOnline)
+		{
+			$(".root").removeClass("offline");
+		}
+		else
+		{
+			$(".root").addClass("offline");
+		}
+	});
 	
 	var ajaxTimer = null;
 	var messageObj = {"hide": $.noop};
