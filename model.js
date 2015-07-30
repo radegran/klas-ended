@@ -102,15 +102,8 @@ var toValidCellValue = function(text)
 
 var LocalDiff = function(serverData, localData)
 {
-	var accepted = function()
+	var sameNamesAndPayments = function()
 	{
-		if (serverData.title != localData.title ||
-		    localData.names.length < serverData.names.length ||
-		    localData.payments.length < serverData.payments.length)
-		{
-			return false;
-		}
-		
 		var acc = true;
 		
 		// check names diff
@@ -144,6 +137,30 @@ var LocalDiff = function(serverData, localData)
 		
 		return acc;
 	};
+
+	var accepted = function()
+	{
+		if (serverData.title != localData.title ||
+		    localData.names.length < serverData.names.length ||
+		    localData.payments.length < serverData.payments.length)
+		{
+			return false;
+		}
+		
+		return sameNamesAndPayments();
+	};
+	
+	var empty = function()
+	{
+		if (serverData.title != localData.title ||
+		    localData.names.length != serverData.names.length ||
+		    localData.payments.length != serverData.payments.length)
+		{
+			return false;
+		}
+		
+		return sameNamesAndPayments();
+	};
 	
 	var paymentStats = function(index)
 	{
@@ -161,6 +178,7 @@ var LocalDiff = function(serverData, localData)
 	
 	return {
 		"accepted": accepted,
+		"empty": empty,
 		"payment": paymentStats,
 		"name": nameStats
 	};

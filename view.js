@@ -336,3 +336,15 @@ var info = function(message, delay)
 {
 	return showMessage(message, delay);
 };
+
+var setOnlineCss = function(isOnline) 
+{
+	if (isOnline)
+	{
+		$(".root").removeClass("offline");
+	}
+	else
+	{
+		$(".root").addClass("offline");
+	}
+};

@@ -87,5 +87,17 @@ describe("Model", function()
 			expect(d.payment(2).localOnly).toBe(false);
 			expect(d.payment(3).localOnly).toBe(true);
 		});
+				
+		it("knows if the diff is empty", function()
+		{
+			var m = makeModel();
+			m.updatePaymentValue(999, 1, 1);
+			
+			var d1 = LocalDiff(getTestData(), getTestData());
+			var d2 = LocalDiff(getTestData(), localData);
+			
+			expect(d1.empty()).toBe(true);
+			expect(d2.empty()).toBe(false);
+		});
 	});	
 });

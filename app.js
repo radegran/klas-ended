@@ -51,6 +51,7 @@ $(document).ready(function()
 {	
 	var errorHandler = {"fatal": bailout, "info": info};
 	var networkStatus = NetworkStatus();
+	
 	var net = Net(JobQueue(), 
 				  errorHandler, 
 				  networkStatus);
@@ -60,19 +61,17 @@ $(document).ready(function()
 							RemoteDoc(id, net), 
 							networkStatus,
 							errorHandler);
-	initialize(docProxy); 			
 	
-	networkStatus.onChanged(function(isOnline) 
-	{
-		if (isOnline)
-		{
-			$(".root").removeClass("offline");
-		}
-		else
-		{
-			$(".root").addClass("offline");
-		}
-	});
+	networkStatus.onChanged(setOnlineCss);
+	// networkStatus.onChanged(function(isOnline)
+	// {
+		// if (isOnline)
+		// {
+			// docProxy.anyLocalChanges();
+		// }
+	// });
+	
+	initialize(docProxy); 			
 	
 	var ajaxTimer = null;
 	var messageObj = {"hide": $.noop};

@@ -302,7 +302,7 @@ var DocProxy = function(localDoc, remoteDoc, networkStatus, errorHandler)
 	};
 	
 	return {
-		"getLocalDiff": function() { return LocalDiff(lastServerData, localDoc.read()); },
+		"anyLocalChanges": function() { return !LocalDiff(lastServerData, localDoc.read()).isEmpty(); },
 		"read": read,
 		"update": update,
 		"isFirstGeneration": function() { return remoteDoc.isFirstGeneration(); }
