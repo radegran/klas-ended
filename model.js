@@ -100,7 +100,7 @@ var toValidCellValue = function(text)
 	return isNaN(parseFloat(trimmed)) ? null : parseFloat(trimmed);
 };
 
-var LocalDiff = function(serverData, localData)
+var DataDiff = function(serverData, localData)
 {
 	var sameNamesAndPayments = function()
 	{
@@ -141,7 +141,7 @@ var LocalDiff = function(serverData, localData)
 	var accepted = function()
 	{
 		if (serverData.title != localData.title ||
-		    localData.names.length < serverData.names.length ||
+		    localData.names.length != serverData.names.length ||
 		    localData.payments.length < serverData.payments.length)
 		{
 			return false;
@@ -176,11 +176,67 @@ var LocalDiff = function(serverData, localData)
 		};
 	};
 	
+	var rebaseable = function()
+	{
+		// ... meaning that its ok to push an accepted local diff onto this diff
+		var serverNewData = localData;
+		
+		if (serverData.names.length != serverNewData.names.length)
+		{
+			return false;
+		}
+		
+		for (var i = 0; i < serverData.names.length; i++)
+		{
+			if (serverData.names[i] != serverNewData.names[i])
+			{
+				return false;
+			}
+		}
+		
+		return true;
+	};
+	
+	var applyTo = function(otherData)
+	{
+		var serverDiff = DataDiff(serverData, otherData);
+		if (!serverDiff.rebaseable())
+		{
+			// console.log("Couldn't merge!");
+			return null;
+		}
+		
+		var mergedData = otherData;
+		var m = Model(function(d) { mergedData = d; });
+		m.reset(otherData);
+		
+		var addPayment = function(payment)
+		{
+			var rowIndex = mergedData.payments.length;
+			m.addRow();
+			m.updatePaymentText(payment.text, rowIndex);
+			
+			for (var j = 0; j < payment.values.length; j++)
+			{
+				m.updatePaymentValue(payment.values[j], rowIndex, j);
+			}
+		}
+		
+		for (var i = serverData.payments.length; i < localData.payments.length; i++)
+		{
+			addPayment(localData.payments[i]);
+		}
+		
+		return mergedData;
+	};
+	
 	return {
 		"accepted": accepted,
+		"rebaseable": rebaseable,
 		"isEmpty": isEmpty,
 		"payment": paymentStats,
-		"name": nameStats
+		"name": nameStats,
+		"applyTo": applyTo
 	};
 };
 

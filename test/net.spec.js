@@ -319,34 +319,38 @@ describe("Net", function()
 				expect(errorHandler.fatal).not.toHaveBeenCalled();
 			});
 			
-			it("local:42, remote:99 -> 42 and then 99", function()
+			it("local:testData, remote:modifiedData -> testData and then modifiedData", function()
 			{
+				var m = makeModel();
+				m.addRow();
+				m.updatePaymentText("mama", 3);
+				
 				var dp = makeDocProxy();
-				storage.data = "42";
-				remoteMock.read = function(onData,a) { onData(99); };
+				storage.data = JSON.stringify(getTestData());
+				remoteMock.read = function(onData,a) { onData(localData); };
 				
 				var handler = jasmine.createSpy('h');
 				dp.onData(handler);
 				dp.read();
 				
-				expect(handler.calls.argsFor(0)[0]).toBe(42);
-				expect(handler.calls.argsFor(1)[0]).toBe(99);
+				expect(handler.calls.argsFor(0)[0]).toEqual(jasmine.objectContaining(getTestData()));
+				expect(handler.calls.argsFor(1)[0]).toEqual(jasmine.objectContaining(localData));
 				expect(handler.calls.count()).toBe(2);
 				expect(errorHandler.info).not.toHaveBeenCalled();
 				expect(errorHandler.fatal).not.toHaveBeenCalled();
 			});
 			
-			it("local:{a:{b:42}}, remote:{a:{b:42}} -> {a:{b:42}} only once", function()
+			it("local:testData, remote:testData -> testData only once", function()
 			{
 				var dp = makeDocProxy();
-				storage.data = JSON.stringify({a:{b:42}});
-				remoteMock.read = function(onData,a) { onData({a:{b:42}}); };
+				storage.data = JSON.stringify(getTestData());
+				remoteMock.read = function(onData,a) { onData(getTestData()); };
 				
 				var handler = jasmine.createSpy('h');
 				dp.onData(handler);
 				dp.read();
 				
-				expect(handler.calls.mostRecent().args[0]).toEqual(jasmine.objectContaining({a:{b:42}}));
+				expect(handler.calls.mostRecent().args[0]).toEqual(jasmine.objectContaining(getTestData()));
 				expect(handler.calls.count()).toBe(1);
 				expect(errorHandler.info).not.toHaveBeenCalled(); 
 				expect(errorHandler.fatal).not.toHaveBeenCalled();
@@ -364,6 +368,73 @@ describe("Net", function()
 				expect(handler).not.toHaveBeenCalled();
 				expect(errorHandler.info).not.toHaveBeenCalled(); 
 				expect(errorHandler.fatal).toHaveBeenCalled();
+			});
+						
+			it("merges data (no server change)", function()
+			{
+				var m = makeModel();
+				m.addRow();
+				m.updatePaymentText("mama", 3);
+				
+				var dp = makeDocProxy();
+				remoteMock.read = function(onData,a) { onData(getTestData()); };
+				
+				dp.read();
+				
+				// Some local offline changes
+				online(false);
+				storage.data = JSON.stringify(localData);
+				
+				var handler = jasmine.createSpy('h');
+				dp.onData(handler);
+				
+				// Reconnect and merge (trivially)
+				online(true);
+				dp.read();
+				
+				expect(storage.data).toEqual(JSON.stringify(localData));
+				expect(handler.calls.count()).toBe(1);
+				expect(handler).toHaveBeenCalledWith(jasmine.objectContaining(localData));
+			});
+			
+			it("merges data (with server change)", function()
+			{
+				var m = makeModel();
+				m.addRow();
+				m.updatePaymentText("mama", 3);
+				
+				var dp = makeDocProxy();
+				remoteMock.read = function(onData,a) { onData(getTestData()); };
+				
+				dp.read();
+				
+				// Some local offline changes
+				online(false);
+				storage.data = JSON.stringify(localData);
+				
+				var handler = jasmine.createSpy('h');
+				dp.onData(handler);
+				
+				// server changes
+				var m2 = makeModel();
+				m2.addRow();
+				m2.updatePaymentText("mama-server", 3);
+				remoteMock.read = function(onData,a) { onData(localData); };
+				
+				// Reconnect and merge (trivially)
+				online(true);
+				dp.read();
+				
+				// expected merged data
+				var m3 = makeModel();
+				m3.addRow();
+				m3.addRow();
+				m3.updatePaymentText("mama-server", 3);
+				m3.updatePaymentText("mama", 4);
+				
+				expect(storage.data).toEqual(JSON.stringify(localData));
+				expect(handler.calls.count()).toBe(1);
+				expect(handler).toHaveBeenCalledWith(jasmine.objectContaining(localData));
 			});
 		});
 	});

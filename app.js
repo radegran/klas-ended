@@ -64,7 +64,7 @@ $(document).ready(function()
 	{
 		if (isOnline)
 		{
-			docProxy.updateAnyLocalChanges();
+			docProxy.read();
 		}
 	});
 	

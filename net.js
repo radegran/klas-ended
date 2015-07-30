@@ -25,7 +25,14 @@ var NetworkStatus = function()
 	
 	var obj = {
 		"isOnline": true,
-		"setOnline": function(isOnline) { obj.isOnline = isOnline; $.each(listeners, function(i, l) { l(isOnline); }); },
+		"setOnline": function(isOnline) 
+		{ 
+			if (obj.isOnline != isOnline)
+			{
+				obj.isOnline = isOnline; 
+				$.each(listeners, function(i, l) { l(isOnline); }); 				
+			}
+		},
 		"onChanged": function(listener) { listeners.push(listener); }
 	};
 	
@@ -235,9 +242,11 @@ var DocProxy = function(localDoc, remoteDoc, networkStatus, errorHandler)
 		}
 	};
 	
+	var update = $.noop;
+	
 	var read = function() 
 	{
-		if (localDoc.exists())
+		if (!lastServerData && localDoc.exists())
 		{
 			lastServerData = localDoc.read();
 			onDataInternal(lastServerData);
@@ -247,6 +256,31 @@ var DocProxy = function(localDoc, remoteDoc, networkStatus, errorHandler)
 		{	
 			var onRemoteDocData = function(data)
 			{
+
+				if (lastServerData)
+				{
+					var localDiff = DataDiff(lastServerData, localDoc.read());
+					var anyLocalChanges = !localDiff.isEmpty();
+					
+					if (anyLocalChanges)
+					{
+						if (DataDiff(lastServerData, data).rebaseable())
+						{
+							// Merge
+							//     base: lastServerData
+							//   theirs: data
+							//     mine: localDoc.read()	
+							data = localDiff.applyTo(data);
+							update(data);
+						}
+						else
+						{
+							// Cannot merge
+							errorHandler.info("Could not merge local changes!");
+						}
+					}
+				}
+
 				if (JSON.stringify(data) != JSON.stringify(lastServerData))
 				{
 					lastServerData = data;
@@ -272,11 +306,11 @@ var DocProxy = function(localDoc, remoteDoc, networkStatus, errorHandler)
 		}
 	};
 	
-	var update = function(data)
+	update = function(data)
 	{
 		var onOffline = function()
 		{			
-			if (LocalDiff(lastServerData, data).accepted())
+			if (DataDiff(lastServerData, data).accepted())
 			{
 				localDoc.update(data);
 			}
@@ -320,17 +354,7 @@ var DocProxy = function(localDoc, remoteDoc, networkStatus, errorHandler)
 		onData = f;
 	};
 	
-	var updateAnyLocalChanges = function()
-	{
-		var anyChanges = !LocalDiff(lastServerData, localDoc.read()).isEmpty();
-		if (anyChanges)
-		{
-			update(localDoc.read());
-		}
-	};
-	
 	return {
-		"updateAnyLocalChanges": updateAnyLocalChanges,
 		"read": read,
 		"update": update,
 		"onData": setOnData,
