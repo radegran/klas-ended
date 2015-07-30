@@ -151,6 +151,11 @@ describe("Net", function()
 			
 			return DocProxy(LocalDoc(storage), remoteMock, status, errorHandler);
 		};
+		
+		var verifyStorage = function(storageKey, obj)
+		{
+			expect(storage[storageKey]).toBe(JSON.stringify(obj));
+		};
 				
 		describe("update function", function() 
 		{
@@ -165,7 +170,7 @@ describe("Net", function()
 				dp.onData(onData);
 				dp.update(getTestData());
 				
-				expect(JSON.parse(storage.data)).toEqual(jasmine.objectContaining(getTestData()));
+				verifyStorage("data", getTestData());
 				expect(onData).not.toHaveBeenCalled();		
 			});
 			
@@ -183,7 +188,7 @@ describe("Net", function()
 				dp.onData(onData);
 				dp.update(getTestData());
 				
-				expect(JSON.parse(storage.data)).toEqual(jasmine.objectContaining(localData));
+				verifyStorage("data", localData);
 				expect(onData).toHaveBeenCalledWith(jasmine.objectContaining(localData));
 			});
 			
@@ -222,7 +227,7 @@ describe("Net", function()
 				dp.onData(onData);
 				dp.update(modifiedData1);
 				
-				expect(JSON.parse(storage.data)).toEqual(jasmine.objectContaining(merged));
+				verifyStorage("data", merged);
 				expect(onData).toHaveBeenCalledWith(jasmine.objectContaining(merged));
 			});
 			
@@ -237,7 +242,7 @@ describe("Net", function()
 				
 				// Arrange to get local:testData
 				dp.read();				
-				expect(JSON.parse(storage.data)).toEqual(jasmine.objectContaining(getTestData()));
+				verifyStorage("data", getTestData());
 				
 				// Make some modification, write to 'localData' variable
 				m.updatePaymentValue(999, 1, 1);
@@ -246,7 +251,7 @@ describe("Net", function()
 				dp.onData(onData);
 				dp.update(localData);
 				
-				expect(JSON.parse(storage.data)).toEqual(jasmine.objectContaining(getTestData()));
+				verifyStorage("data", getTestData());
 				expect(onData).toHaveBeenCalledWith(jasmine.objectContaining(getTestData()));
 			});
 			
@@ -265,7 +270,7 @@ describe("Net", function()
 				dp.onData(onData);
 				dp.update(localData);
 				
-				expect(JSON.parse(storage.data)).toEqual(jasmine.objectContaining(localData));
+				verifyStorage("data", localData);
 				expect(onData).not.toHaveBeenCalled();
 			});
 			
@@ -284,13 +289,13 @@ describe("Net", function()
 				dp.onData(onData);		
 				dp.update(localData);
 				var acceptedData = localData;
-				expect(JSON.parse(storage.data)).toEqual(jasmine.objectContaining(acceptedData));
+				verifyStorage("data", acceptedData);
 				expect(onData).not.toHaveBeenCalled();
 				
 				m.updatePaymentValue(999, 1, 1);
 				dp.update(localData);
 				
-				expect(JSON.parse(storage.data)).toEqual(jasmine.objectContaining(acceptedData));
+				verifyStorage("data", acceptedData);
 				expect(onData).toHaveBeenCalledWith(jasmine.objectContaining(acceptedData));
 			});
 		});
@@ -415,7 +420,7 @@ describe("Net", function()
 				online(true);
 				dp.read();
 				
-				expect(storage.data).toEqual(JSON.stringify(localData));
+				verifyStorage("data", localData);
 				expect(handler.calls.count()).toBe(1);
 				expect(handler).toHaveBeenCalledWith(jasmine.objectContaining(localData));
 			});
@@ -455,7 +460,7 @@ describe("Net", function()
 				m3.updatePaymentText("mama-server", 3);
 				m3.updatePaymentText("mama", 4);
 				
-				expect(storage.data).toEqual(JSON.stringify(localData));
+				verifyStorage("data", localData);
 				expect(handler.calls.count()).toBe(1);
 				expect(handler).toHaveBeenCalledWith(jasmine.objectContaining(localData));
 			});

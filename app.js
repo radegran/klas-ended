@@ -69,10 +69,6 @@ $(document).ready(function()
 	});
 	
 	initialize(docProxy); 	
-
-
-
-	
 	
 	var ajaxTimer = null;
 	var messageObj = {"hide": $.noop};
