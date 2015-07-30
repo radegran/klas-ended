@@ -150,7 +150,7 @@ var LocalDiff = function(serverData, localData)
 		return sameNamesAndPayments();
 	};
 	
-	var empty = function()
+	var isEmpty = function()
 	{
 		if (serverData.title != localData.title ||
 		    localData.names.length != serverData.names.length ||
@@ -178,7 +178,7 @@ var LocalDiff = function(serverData, localData)
 	
 	return {
 		"accepted": accepted,
-		"empty": empty,
+		"isEmpty": isEmpty,
 		"payment": paymentStats,
 		"name": nameStats
 	};

@@ -60,6 +60,13 @@ $(document).ready(function()
 							errorHandler);
 	
 	networkStatus.onChanged(setOnlineCss);
+	networkStatus.onChanged(function(isOnline)
+	{
+		if (isOnline)
+		{
+			docProxy.updateAnyLocalChanges();
+		}
+	});
 	
 	initialize(docProxy); 	
 

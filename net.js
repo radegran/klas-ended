@@ -320,8 +320,17 @@ var DocProxy = function(localDoc, remoteDoc, networkStatus, errorHandler)
 		onData = f;
 	};
 	
+	var updateAnyLocalChanges = function()
+	{
+		var anyChanges = !LocalDiff(lastServerData, localDoc.read()).isEmpty();
+		if (anyChanges)
+		{
+			update(localDoc.read());
+		}
+	};
+	
 	return {
-		"anyLocalChanges": function() { return !LocalDiff(lastServerData, localDoc.read()).isEmpty(); },
+		"updateAnyLocalChanges": updateAnyLocalChanges,
 		"read": read,
 		"update": update,
 		"onData": setOnData,

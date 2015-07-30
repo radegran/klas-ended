@@ -96,8 +96,8 @@ describe("Model", function()
 			var d1 = LocalDiff(getTestData(), getTestData());
 			var d2 = LocalDiff(getTestData(), localData);
 			
-			expect(d1.empty()).toBe(true);
-			expect(d2.empty()).toBe(false);
+			expect(d1.isEmpty()).toBe(true);
+			expect(d2.isEmpty()).toBe(false);
 		});
 	});	
 });
