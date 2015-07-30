@@ -272,7 +272,7 @@ var DocProxy = function(localDoc, remoteDoc, networkStatus, errorHandler)
 		}
 	};
 	
-	var update = function(data, updateConflict)
+	var update = function(data)
 	{
 		var onOffline = function()
 		{			
@@ -283,7 +283,7 @@ var DocProxy = function(localDoc, remoteDoc, networkStatus, errorHandler)
 			else
 			{
 				errorHandler.info(L.OfflineMode);
-				updateConflict(localDoc.read());		
+				onDataInternal(localDoc.read());		
 			}
 		};
 		
@@ -297,7 +297,7 @@ var DocProxy = function(localDoc, remoteDoc, networkStatus, errorHandler)
 		{
 			lastServerData = conflictData;
 			localDoc.update(conflictData);
-			updateConflict(conflictData);
+			onDataInternal(conflictData);
 		};
 
 		if (networkStatus.isOnline)

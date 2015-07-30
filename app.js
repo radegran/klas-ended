@@ -22,14 +22,8 @@ var initialize = function(docProxy)
 			startupInfo.hide();
 			startupInfo = null;
 		}
-		
-		var conflictCallback = function(theirdata)
-		{
-			model.reset(theirdata);
-			table.update(theirdata);
-		};
 	
-		docProxy.update(newdata, conflictCallback);
+		docProxy.update(newdata);
 	});
 	
 	table = Table($header, $table, model);
