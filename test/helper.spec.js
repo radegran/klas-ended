@@ -1,3 +1,7 @@
+var L = {};
+var log = $.noop;
+var logData = $.noop;
+
 var localData;
 
 var getTestData = function()

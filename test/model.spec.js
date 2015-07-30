@@ -1,5 +1,3 @@
-L = {};
-
 describe("Model", function()
 {	
 	describe("DataDiff", function()

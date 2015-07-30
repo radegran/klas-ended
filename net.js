@@ -109,7 +109,7 @@ var Net = function(jobQueue, errorHandler, networkStatus)
 			}
 			else
 			{
-				errorHandler.info(L.SomeoneMadeAChangeTryAgain);
+				//errorHandler.info(L.SomeoneMadeAChangeTryAgain);
 				
 				var serverDoc = {
 					"data": response.data,
@@ -230,7 +230,7 @@ var LocalDoc = function(storage)
 };
 
 var DocProxy = function(localDoc, remoteDoc, networkStatus, errorHandler)
-{
+{	
 	var lastServerData;
 	var onData;
 	
@@ -246,6 +246,8 @@ var DocProxy = function(localDoc, remoteDoc, networkStatus, errorHandler)
 	
 	var read = function() 
 	{
+		log("Read...");
+		
 		if (!lastServerData && localDoc.exists())
 		{
 			lastServerData = localDoc.read();
@@ -256,7 +258,7 @@ var DocProxy = function(localDoc, remoteDoc, networkStatus, errorHandler)
 		{	
 			var onRemoteDocData = function(data)
 			{
-
+				logData(data, "Read onData");
 				if (lastServerData)
 				{
 					var localDiff = DataDiff(lastServerData, localDoc.read());
@@ -266,6 +268,9 @@ var DocProxy = function(localDoc, remoteDoc, networkStatus, errorHandler)
 					{
 						if (DataDiff(lastServerData, data).rebaseable())
 						{
+							logData(lastServerData, "Merge base ");
+							logData(data, "Merge their");
+							logData(localDoc.read(), "Merge mine ");
 							// Merge
 							//     base: lastServerData
 							//   theirs: data
@@ -291,6 +296,7 @@ var DocProxy = function(localDoc, remoteDoc, networkStatus, errorHandler)
 			
 			var onRemoteDocError = function(err)
 			{
+				log("Read onError!")
 				if (!lastServerData)
 				{
 					errorHandler.fatal("Oooops!");
@@ -308,8 +314,11 @@ var DocProxy = function(localDoc, remoteDoc, networkStatus, errorHandler)
 	
 	update = function(data)
 	{
+		logData(data, "Update...");
+		
 		var onOffline = function()
-		{			
+		{		
+			log("Update offline!");
 			if (DataDiff(lastServerData, data).accepted())
 			{
 				localDoc.update(data);
@@ -323,15 +332,32 @@ var DocProxy = function(localDoc, remoteDoc, networkStatus, errorHandler)
 		
 		var onSuccess = function()
 		{
+			logData(data, "Update success")
 			lastServerData = data;
 			localDoc.update(data);
 		};
 		
 		var updateConflictInternal = function(conflictData)
 		{
-			lastServerData = conflictData;
-			localDoc.update(conflictData);
-			onDataInternal(conflictData);
+			logData(conflictData, "Update conflict!");
+			
+			var serverDiff = DataDiff(lastServerData, conflictData);
+			var localDiff = DataDiff(lastServerData, data);
+				
+			if (serverDiff.rebaseable() && localDiff.accepted())
+			{
+				var mergeData = localDiff.applyTo(conflictData);
+				update(mergeData);
+				onDataInternal(mergeData);
+			}
+			else
+			{
+				errorHandler.info(L.SomeoneMadeAChangeTryAgain);
+				
+				lastServerData = conflictData;
+				localDoc.update(conflictData);
+				onDataInternal(conflictData);				
+			}
 		};
 
 		if (networkStatus.isOnline)

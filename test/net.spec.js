@@ -1,5 +1,3 @@
-var L = {};
-
 describe("Net", function()
 {
 	describe("JobQueue", function() 
@@ -87,20 +85,6 @@ describe("Net", function()
 			prevAjaxCall().success({ok:true});
 			
 			expect(infoSpy).not.toHaveBeenCalled();
-			expect(fatalSpy).not.toHaveBeenCalled();			
-		});
-		
-		it("should trigger conflict callback", function()
-		{
-			var conflictHandler = jasmine.createSpy('h');
-			
-			var remoteDoc = makeRemoteDoc();
-			remoteDoc.update(99, $.noop, conflictHandler, $.noop);
-
-			prevAjaxCall().success({"data": 101, "generation": 3});
-			
-			expect(conflictHandler).toHaveBeenCalledWith(101);
-			expect(infoSpy).toHaveBeenCalled();
 			expect(fatalSpy).not.toHaveBeenCalled();			
 		});
 		
@@ -201,6 +185,45 @@ describe("Net", function()
 				
 				expect(JSON.parse(storage.data)).toEqual(jasmine.objectContaining(localData));
 				expect(onData).toHaveBeenCalledWith(jasmine.objectContaining(localData));
+			});
+			
+			it("(MERGE) update(modifiedData1), remote conflict(modifiedData2) -> merge, local:merge", function()
+			{
+				var m = makeModel();
+				m.addRow();
+				m.updatePaymentText("local row", 3);
+				var modifiedData1 = localData;
+				
+				m = makeModel();
+				m.updatePaymentValue(999, 1, 1);
+				m.addRow();
+				m.updatePaymentText("server row", 3);
+				var modifiedData2 = localData;
+
+				m = makeModel();
+				m.updatePaymentValue(999, 1, 1);
+				m.addRow();
+				m.addRow();
+				m.updatePaymentText("server row", 3);
+				m.updatePaymentText("local row", 4);
+				var merged = localData;
+				
+				var dp = makeDocProxy();
+				var onData = jasmine.createSpy('onData');
+				remoteMock.read = function(onData, e) { onData(getTestData()); };
+				dp.read();
+			
+				var updateCalls = 0;
+				remoteMock.read = function(onData, e) { onData(modifiedData2); }; // Needed?
+				remoteMock.update = function(d, success, conflict, e) { 
+					(updateCalls++ == 0) ? conflict(modifiedData2) : success(); 
+				};
+				
+				dp.onData(onData);
+				dp.update(modifiedData1);
+				
+				expect(JSON.parse(storage.data)).toEqual(jasmine.objectContaining(merged));
+				expect(onData).toHaveBeenCalledWith(jasmine.objectContaining(merged));
 			});
 			
 			// TODO: some local changes should be accepted!

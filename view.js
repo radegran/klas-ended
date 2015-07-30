@@ -348,3 +348,26 @@ var setOnlineCss = function(isOnline)
 		$(".root").addClass("offline");
 	}
 };
+
+var log = function(message)
+{
+	if (false)
+	{
+		console.log(message);
+	}
+};
+
+var logData = function(data, message)
+{
+	if (message)
+	{
+		log(message);
+	}
+	
+	var str = "";
+	for (var i = 0; i < data.payments.length; i++)
+	{
+		str += data.payments[i].text + ", ";
+	}
+	log(" - " + str);
+};
