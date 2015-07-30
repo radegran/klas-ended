@@ -1,4 +1,4 @@
-var initialize = function(remoteDoc)
+var initialize = function(docProxy)
 {	
 	var $table = $("<table>");
 	var $header = $("<div/>").addClass("header");
@@ -29,22 +29,25 @@ var initialize = function(remoteDoc)
 			table.update(theirdata);
 		};
 	
-		remoteDoc.update(newdata, conflictCallback);
+		docProxy.update(newdata, conflictCallback);
 	});
 	
 	table = Table($header, $table, model);
-		
-	remoteDoc.read(function(data) 
+	
+	var onData = function(data) 
 	{
 		model.reset(data);
 		table.update(data);
 		
 		// First time? Show info...
-		if (remoteDoc.isFirstGeneration())
+		if (docProxy.isFirstGeneration())
 		{			
 			startupInfo = info(L.AllChangesAreSaved, 9999999999);
 		}		
-	});
+	};
+	
+	docProxy.onData(onData);
+	docProxy.read();
 };
 
 $(document).ready(function() 
@@ -63,15 +66,12 @@ $(document).ready(function()
 							errorHandler);
 	
 	networkStatus.onChanged(setOnlineCss);
-	// networkStatus.onChanged(function(isOnline)
-	// {
-		// if (isOnline)
-		// {
-			// docProxy.anyLocalChanges();
-		// }
-	// });
 	
-	initialize(docProxy); 			
+	initialize(docProxy); 	
+
+
+
+	
 	
 	var ajaxTimer = null;
 	var messageObj = {"hide": $.noop};

@@ -177,7 +177,7 @@ describe("Net", function()
 				remoteMock.read = function(onData, e) { onData(getTestData()); };
 				remoteMock.update = function(d, c, e) {};
 				
-				dp.read($.noop);
+				dp.read();
 				dp.update(getTestData(), h.onConflict);
 				
 				expect(JSON.parse(storage.data)).toEqual(jasmine.objectContaining(getTestData()));
@@ -194,7 +194,7 @@ describe("Net", function()
 				remoteMock.read = function(onData, e) { onData(getTestData()); };
 				remoteMock.update = function(d, s, conflict, e) { conflict(localData); };
 				
-				dp.read($.noop);
+				dp.read();
 				dp.update(getTestData(), h.onConflict);
 				
 				expect(JSON.parse(storage.data)).toEqual(jasmine.objectContaining(localData));
@@ -211,7 +211,7 @@ describe("Net", function()
 				remoteMock.update = function(d, s, c, error) { error(); };
 				
 				// Arrange to get local:testData
-				dp.read($.noop);				
+				dp.read();				
 				expect(JSON.parse(storage.data)).toEqual(jasmine.objectContaining(getTestData()));
 				
 				// Make some modification, write to 'localData' variable
@@ -236,7 +236,7 @@ describe("Net", function()
 				
 				var h = jasmine.createSpyObj('h', ['onConflict']);
 				
-				dp.read($.noop);				
+				dp.read();				
 				dp.update(localData, h.onConflict);
 				
 				expect(JSON.parse(storage.data)).toEqual(jasmine.objectContaining(localData));
@@ -254,7 +254,7 @@ describe("Net", function()
 				remoteMock.update = function(d, s, c, error) { error(); };
 				var h = jasmine.createSpyObj('h', ['onConflict']);
 				
-				dp.read($.noop);				
+				dp.read();				
 				dp.update(localData, h.onConflict);
 				var acceptedData = localData;
 				expect(JSON.parse(storage.data)).toEqual(jasmine.objectContaining(acceptedData));
@@ -275,7 +275,8 @@ describe("Net", function()
 				remoteMock.read = function(a,onError) { onError(); };
 				
 				var handler = jasmine.createSpy('h');
-				dp.read(handler);
+				dp.onData(handler);
+				dp.read();
 				
 				expect(handler).not.toHaveBeenCalled();
 				expect(errorHandler.info).not.toHaveBeenCalled();
@@ -288,7 +289,8 @@ describe("Net", function()
 				remoteMock.read = function(onData,a) { onData(42); };
 				
 				var handler = jasmine.createSpy('h');
-				dp.read(handler);
+				dp.onData(handler);
+				dp.read();
 				
 				expect(handler).toHaveBeenCalledWith(42);
 				expect(handler.calls.count()).toBe(1);
@@ -303,7 +305,8 @@ describe("Net", function()
 				remoteMock.read = function(a,onError) { onError(); };
 				
 				var handler = jasmine.createSpy('h');
-				dp.read(handler);
+				dp.onData(handler);
+				dp.read();
 				
 				expect(handler).toHaveBeenCalledWith(42);
 				expect(handler.calls.count()).toBe(1);
@@ -318,7 +321,8 @@ describe("Net", function()
 				remoteMock.read = function(onData,a) { onData(99); };
 				
 				var handler = jasmine.createSpy('h');
-				dp.read(handler);
+				dp.onData(handler);
+				dp.read();
 				
 				expect(handler.calls.argsFor(0)[0]).toBe(42);
 				expect(handler.calls.argsFor(1)[0]).toBe(99);
@@ -334,7 +338,8 @@ describe("Net", function()
 				remoteMock.read = function(onData,a) { onData({a:{b:42}}); };
 				
 				var handler = jasmine.createSpy('h');
-				dp.read(handler);
+				dp.onData(handler);
+				dp.read();
 				
 				expect(handler.calls.mostRecent().args[0]).toEqual(jasmine.objectContaining({a:{b:42}}));
 				expect(handler.calls.count()).toBe(1);

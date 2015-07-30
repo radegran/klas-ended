@@ -225,13 +225,22 @@ var LocalDoc = function(storage)
 var DocProxy = function(localDoc, remoteDoc, networkStatus, errorHandler)
 {
 	var lastServerData;
+	var onData;
 	
-	var read = function(onData) 
+	var onDataInternal = function(data)
+	{
+		if (onData)
+		{
+			onData(data);
+		}
+	};
+	
+	var read = function() 
 	{
 		if (localDoc.exists())
 		{
 			lastServerData = localDoc.read();
-			onData(lastServerData);
+			onDataInternal(lastServerData);
 		}
 		
 		if (networkStatus.isOnline)
@@ -242,7 +251,7 @@ var DocProxy = function(localDoc, remoteDoc, networkStatus, errorHandler)
 				{
 					lastServerData = data;
 					localDoc.update(data);
-					onData(data);					
+					onDataInternal(data);					
 				}
 			};
 			
@@ -301,10 +310,21 @@ var DocProxy = function(localDoc, remoteDoc, networkStatus, errorHandler)
 		}
 	};
 	
+	var setOnData = function(f)
+	{
+		if (onData)
+		{
+			errorHandler.fatal("Internal error: Must not set multiple onData handlers.")
+		}
+		
+		onData = f;
+	};
+	
 	return {
 		"anyLocalChanges": function() { return !LocalDiff(lastServerData, localDoc.read()).isEmpty(); },
 		"read": read,
 		"update": update,
+		"onData": setOnData,
 		"isFirstGeneration": function() { return remoteDoc.isFirstGeneration(); }
 	}
 };
