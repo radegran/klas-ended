@@ -170,7 +170,7 @@ describe("Net", function()
 				dp.onData(onData);
 				dp.update(getTestData());
 				
-				verifyStorage("data", getTestData());
+				verifyStorage("mine", getTestData());
 				expect(onData).not.toHaveBeenCalled();		
 			});
 			
@@ -188,7 +188,7 @@ describe("Net", function()
 				dp.onData(onData);
 				dp.update(getTestData());
 				
-				verifyStorage("data", localData);
+				verifyStorage("mine", localData);
 				expect(onData).toHaveBeenCalledWith(jasmine.objectContaining(localData));
 			});
 			
@@ -227,7 +227,7 @@ describe("Net", function()
 				dp.onData(onData);
 				dp.update(modifiedData1);
 				
-				verifyStorage("data", merged);
+				verifyStorage("mine", merged);
 				expect(onData).toHaveBeenCalledWith(jasmine.objectContaining(merged));
 			});
 			
@@ -242,7 +242,7 @@ describe("Net", function()
 				
 				// Arrange to get local:testData
 				dp.read();				
-				verifyStorage("data", getTestData());
+				verifyStorage("mine", getTestData());
 				
 				// Make some modification, write to 'localData' variable
 				m.updatePaymentValue(999, 1, 1);
@@ -251,7 +251,7 @@ describe("Net", function()
 				dp.onData(onData);
 				dp.update(localData);
 				
-				verifyStorage("data", getTestData());
+				verifyStorage("mine", getTestData());
 				expect(onData).toHaveBeenCalledWith(jasmine.objectContaining(getTestData()));
 			});
 			
@@ -270,7 +270,7 @@ describe("Net", function()
 				dp.onData(onData);
 				dp.update(localData);
 				
-				verifyStorage("data", localData);
+				verifyStorage("mine", localData);
 				expect(onData).not.toHaveBeenCalled();
 			});
 			
@@ -289,13 +289,13 @@ describe("Net", function()
 				dp.onData(onData);		
 				dp.update(localData);
 				var acceptedData = localData;
-				verifyStorage("data", acceptedData);
+				verifyStorage("mine", acceptedData);
 				expect(onData).not.toHaveBeenCalled();
 				
 				m.updatePaymentValue(999, 1, 1);
 				dp.update(localData);
 				
-				verifyStorage("data", acceptedData);
+				verifyStorage("mine", acceptedData);
 				expect(onData).toHaveBeenCalledWith(jasmine.objectContaining(acceptedData));
 			});
 		});
@@ -334,7 +334,7 @@ describe("Net", function()
 			it("local:42, remote:error -> 42", function()
 			{
 				var dp = makeDocProxy();
-				storage.data = "42";
+				storage.mine = "42";
 				remoteMock.read = function(a,onError) { onError(); };
 				
 				var handler = jasmine.createSpy('h');
@@ -354,7 +354,7 @@ describe("Net", function()
 				m.updatePaymentText("mama", 3);
 				
 				var dp = makeDocProxy();
-				storage.data = JSON.stringify(getTestData());
+				storage.mine = JSON.stringify(getTestData());
 				remoteMock.read = function(onData,a) { onData(localData); };
 				
 				var handler = jasmine.createSpy('h');
@@ -371,7 +371,7 @@ describe("Net", function()
 			it("local:testData, remote:testData -> testData only once", function()
 			{
 				var dp = makeDocProxy();
-				storage.data = JSON.stringify(getTestData());
+				storage.mine = JSON.stringify(getTestData());
 				remoteMock.read = function(onData,a) { onData(getTestData()); };
 				
 				var handler = jasmine.createSpy('h');
@@ -411,7 +411,7 @@ describe("Net", function()
 				
 				// Some local offline changes
 				online(false);
-				storage.data = JSON.stringify(localData);
+				storage.mine = JSON.stringify(localData);
 				
 				var handler = jasmine.createSpy('h');
 				dp.onData(handler);
@@ -420,7 +420,7 @@ describe("Net", function()
 				online(true);
 				dp.read();
 				
-				verifyStorage("data", localData);
+				verifyStorage("mine", localData);
 				expect(handler.calls.count()).toBe(1);
 				expect(handler).toHaveBeenCalledWith(jasmine.objectContaining(localData));
 			});
@@ -438,7 +438,7 @@ describe("Net", function()
 				
 				// Some local offline changes
 				online(false);
-				storage.data = JSON.stringify(localData);
+				storage.mine = JSON.stringify(localData);
 				
 				var handler = jasmine.createSpy('h');
 				dp.onData(handler);
@@ -460,7 +460,7 @@ describe("Net", function()
 				m3.updatePaymentText("mama-server", 3);
 				m3.updatePaymentText("mama", 4);
 				
-				verifyStorage("data", localData);
+				verifyStorage("mine", localData);
 				expect(handler.calls.count()).toBe(1);
 				expect(handler).toHaveBeenCalledWith(jasmine.objectContaining(localData));
 			});

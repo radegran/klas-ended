@@ -351,7 +351,7 @@ var setOnlineCss = function(isOnline)
 
 var log = function(message)
 {
-	if (true)
+	if (false)
 	{
 		console.log(message);
 	}

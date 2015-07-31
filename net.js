@@ -199,27 +199,27 @@ var LocalDoc = function(storage)
 		return storage !== undefined;
 	};
 	
-	var exists = function()
+	var exists = function(key)
 	{
-		return supported() && storage.data !== undefined;
+		return supported() && storage[key] !== undefined;
 	};
 
-	var update = function(data)
-	{
+	var update = function(key, data)
+	{	
 		if (supported())
 		{
-			storage.data = JSON.stringify(data);
+			storage[key] = JSON.stringify(data);
 		}
 	};
 	
-	var read = function()
+	var read = function(key)
 	{
-		if (!exists())
+		if (!exists(key))
 		{
 			throw "local doc does not exist!";
 		}
 		
-		return JSON.parse(storage.data);
+		return JSON.parse(storage[key]);
 	};
 	
 	return {
@@ -248,9 +248,9 @@ var DocProxy = function(localDoc, remoteDoc, networkStatus, errorHandler)
 	{
 		log("Read...");
 		
-		if (!lastServerData && localDoc.exists())
+		if (!lastServerData && localDoc.exists("mine"))
 		{
-			lastServerData = localDoc.read();
+			lastServerData = localDoc.read("mine");
 			onDataInternal(lastServerData);
 		}
 		
@@ -261,7 +261,7 @@ var DocProxy = function(localDoc, remoteDoc, networkStatus, errorHandler)
 				logData(data, "Read onData");
 				if (lastServerData)
 				{
-					var localDiff = DataDiff(lastServerData, localDoc.read());
+					var localDiff = DataDiff(lastServerData, localDoc.read("mine"));
 					var anyLocalChanges = !localDiff.isEmpty();
 					
 					if (anyLocalChanges)
@@ -270,18 +270,18 @@ var DocProxy = function(localDoc, remoteDoc, networkStatus, errorHandler)
 						{
 							logData(lastServerData, "Merge base ");
 							logData(data, "Merge their");
-							logData(localDoc.read(), "Merge mine ");
+							logData(localDoc.read("mine"), "Merge mine ");
 							// Merge
 							//     base: lastServerData
 							//   theirs: data
-							//     mine: localDoc.read()	
+							//     mine: localDoc.read("mine")	
 							data = localDiff.applyTo(data);
 							update(data);
 						}
 						else
 						{
 							// Cannot merge
-							errorHandler.info("Could not merge local changes!");
+							errorHandler.info("Internal Error: Could not merge local changes!");
 						}
 					}
 				}
@@ -289,7 +289,7 @@ var DocProxy = function(localDoc, remoteDoc, networkStatus, errorHandler)
 				if (JSON.stringify(data) != JSON.stringify(lastServerData))
 				{
 					lastServerData = data;
-					localDoc.update(data);
+					localDoc.update("mine", data);
 					onDataInternal(data);					
 				}
 			};
@@ -321,12 +321,12 @@ var DocProxy = function(localDoc, remoteDoc, networkStatus, errorHandler)
 			log("Update offline!");
 			if (DataDiff(lastServerData, data).accepted())
 			{
-				localDoc.update(data);
+				localDoc.update("mine", data);
 			}
 			else
 			{
 				errorHandler.info(L.OfflineMode);
-				onDataInternal(localDoc.read());		
+				onDataInternal(localDoc.read("mine"));		
 			}
 		};
 		
@@ -334,7 +334,7 @@ var DocProxy = function(localDoc, remoteDoc, networkStatus, errorHandler)
 		{
 			logData(data, "Update success")
 			lastServerData = data;
-			localDoc.update(data);
+			localDoc.update("mine", data);
 		};
 		
 		var updateConflictInternal = function(conflictData)
@@ -355,7 +355,7 @@ var DocProxy = function(localDoc, remoteDoc, networkStatus, errorHandler)
 				errorHandler.info(L.SomeoneMadeAChangeTryAgain);
 				
 				lastServerData = conflictData;
-				localDoc.update(conflictData);
+				localDoc.update("mine", conflictData);
 				onDataInternal(conflictData);				
 			}
 		};
