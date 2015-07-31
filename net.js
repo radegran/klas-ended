@@ -108,9 +108,7 @@ var Net = function(jobQueue, errorHandler, networkStatus)
 				onSuccess();
 			}
 			else
-			{
-				//errorHandler.info(L.SomeoneMadeAChangeTryAgain);
-				
+			{				
 				var serverDoc = {
 					"data": response.data,
 					"generation": response.generation,
@@ -208,7 +206,14 @@ var LocalDoc = function(storage)
 	{	
 		if (supported())
 		{
-			storage[key] = JSON.stringify(data);
+			if (data === undefined)
+			{
+				delete storage[key];
+			}
+			else
+			{
+				storage[key] = JSON.stringify(data);
+			}
 		}
 	};
 	
@@ -231,6 +236,7 @@ var LocalDoc = function(storage)
 
 var DocProxy = function(localDoc, remoteDoc, networkStatus, errorHandler)
 {	
+	var isFirstRead = true;
 	var lastServerData;
 	var onData;
 	
@@ -248,10 +254,23 @@ var DocProxy = function(localDoc, remoteDoc, networkStatus, errorHandler)
 	{
 		log("Read...");
 		
-		if (!lastServerData && localDoc.exists("mine"))
+		if (isFirstRead)
 		{
-			lastServerData = localDoc.read("mine");
-			onDataInternal(lastServerData);
+			isFirstRead = false;
+			
+			if (localDoc.exists("mine") != localDoc.exists("theirs"))
+			{
+				// Just to make sure this case does not lead to evil
+				localDoc.update("mine");
+				localDoc.update("theirs");
+			}
+			
+			if (localDoc.exists("mine"))
+			{
+				// Initialize from an earlier session
+				lastServerData = localDoc.read("theirs");
+				onDataInternal(localDoc.read("mine"));
+			}
 		}
 		
 		if (networkStatus.isOnline)
@@ -288,10 +307,12 @@ var DocProxy = function(localDoc, remoteDoc, networkStatus, errorHandler)
 
 				if (JSON.stringify(data) != JSON.stringify(lastServerData))
 				{
-					lastServerData = data;
-					localDoc.update("mine", data);
 					onDataInternal(data);					
 				}
+			
+				lastServerData = data;
+				localDoc.update("mine", data);
+				localDoc.update("theirs", data);
 			};
 			
 			var onRemoteDocError = function(err)
@@ -306,7 +327,7 @@ var DocProxy = function(localDoc, remoteDoc, networkStatus, errorHandler)
 			remoteDoc.read(onRemoteDocData, onRemoteDocError);
 		}
 		
-		if (!lastServerData && !networkStatus.online)
+		if (!lastServerData && !networkStatus.isOnline)
 		{
 			errorHandler.fatal("Ooooops!");
 		}
@@ -335,6 +356,7 @@ var DocProxy = function(localDoc, remoteDoc, networkStatus, errorHandler)
 			logData(data, "Update success")
 			lastServerData = data;
 			localDoc.update("mine", data);
+			localDoc.update("theirs", data);
 		};
 		
 		var updateConflictInternal = function(conflictData)
@@ -347,6 +369,9 @@ var DocProxy = function(localDoc, remoteDoc, networkStatus, errorHandler)
 			if (serverDiff.rebaseable() && localDiff.accepted())
 			{
 				var mergeData = localDiff.applyTo(conflictData);
+				localDoc.update("mine", mergeData);
+				localDoc.update("theirs", conflictData);
+				lastServerData = conflictData;
 				update(mergeData);
 				onDataInternal(mergeData);
 			}
@@ -356,6 +381,7 @@ var DocProxy = function(localDoc, remoteDoc, networkStatus, errorHandler)
 				
 				lastServerData = conflictData;
 				localDoc.update("mine", conflictData);
+				localDoc.update("theirs", conflictData);
 				onDataInternal(conflictData);				
 			}
 		};

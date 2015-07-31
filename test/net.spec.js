@@ -182,7 +182,8 @@ describe("Net", function()
 				var dp = makeDocProxy();
 				var onData = jasmine.createSpy('onData');
 				remoteMock.read = function(onData, e) { onData(getTestData()); };
-				remoteMock.update = function(d, s, conflict, e) { conflict(localData); };
+				var updateCalls = 0;
+				remoteMock.update = function(d, success, conflict, e) { (updateCalls++ == 0) ? conflict(localData) : success(); };
 				
 				dp.read();
 				dp.onData(onData);
@@ -334,7 +335,7 @@ describe("Net", function()
 			it("local:42, remote:error -> 42", function()
 			{
 				var dp = makeDocProxy();
-				storage.mine = "42";
+				storage.mine = storage.theirs = "42";
 				remoteMock.read = function(a,onError) { onError(); };
 				
 				var handler = jasmine.createSpy('h');
@@ -354,7 +355,7 @@ describe("Net", function()
 				m.updatePaymentText("mama", 3);
 				
 				var dp = makeDocProxy();
-				storage.mine = JSON.stringify(getTestData());
+				storage.mine = storage.theirs = JSON.stringify(getTestData());
 				remoteMock.read = function(onData,a) { onData(localData); };
 				
 				var handler = jasmine.createSpy('h');
