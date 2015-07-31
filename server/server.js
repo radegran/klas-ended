@@ -152,11 +152,11 @@ var SampleApp = function() {
         };
     };
 
-	var eachJsAndCssFiles = function(cb)
+	var eachJsAndCssAndPngFiles = function(cb)
 	{
 		var files = fs.readdirSync('.')
 					.filter(function(v){
-						return (/.(js|css)$/).test(v);
+						return (/.(js|css|png)$/).test(v);
 					});
 					
 		for (var i = 0; i < files.length; i++)
@@ -177,7 +177,7 @@ var SampleApp = function() {
 	    self.zcache['app.html'] = fs.readFileSync('./app.html');
 	    self.zcache['app.appcache'] = fs.readFileSync('./app.appcache');
 		
-		eachJsAndCssFiles(function(file)
+		eachJsAndCssAndPngFiles(function(file)
 		{
 			self.zcache[file] = fs.readFileSync("./" + file);
 		});
@@ -278,11 +278,15 @@ var SampleApp = function() {
             res.send(self.cache_get('app.html') );			
 		};
 		
-		eachJsAndCssFiles(function(file)
+		eachJsAndCssAndPngFiles(function(file)
 		{	
 			self.routes['/' + file] = function(req, res)
 			{
-				if (file.search("css") > -1)
+				if (file.search("png") > -1)
+				{
+					res.setHeader('Content-Type', 'image/png');
+				}
+				else if (file.search("css") > -1)
 				{
 					res.setHeader('Content-Type', 'text/css');
 				}
