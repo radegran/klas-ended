@@ -149,12 +149,17 @@ describe("Net", function()
 			
 			errorHandler = jasmine.createSpyObj('errorHandler', ['info', 'fatal']);
 			
-			return DocProxy(LocalDoc(storage), remoteMock, status, errorHandler);
+			return DocProxy(LocalDoc("1234", storage), remoteMock, status, errorHandler);
 		};
 		
 		var verifyStorage = function(storageKey, obj)
 		{
-			expect(storage[storageKey]).toBe(JSON.stringify(obj));
+			expect(storage["1234_" + storageKey]).toBe(JSON.stringify(obj));
+		};
+		
+		var setStorage = function(storageKey, obj)
+		{
+			storage["1234_" + storageKey] = JSON.stringify(obj);
 		};
 				
 		describe("update function", function() 
@@ -335,7 +340,8 @@ describe("Net", function()
 			it("local:42, remote:error -> 42", function()
 			{
 				var dp = makeDocProxy();
-				storage.mine = storage.theirs = "42";
+				setStorage("mine", 42);
+				setStorage("theirs", 42);
 				remoteMock.read = function(a,onError) { onError(); };
 				
 				var handler = jasmine.createSpy('h');
@@ -355,7 +361,9 @@ describe("Net", function()
 				m.updatePaymentText("mama", 3);
 				
 				var dp = makeDocProxy();
-				storage.mine = storage.theirs = JSON.stringify(getTestData());
+				
+				setStorage("mine", getTestData());
+				setStorage("theirs", getTestData());
 				remoteMock.read = function(onData,a) { onData(localData); };
 				
 				var handler = jasmine.createSpy('h');
@@ -372,7 +380,7 @@ describe("Net", function()
 			it("local:testData, remote:testData -> testData only once", function()
 			{
 				var dp = makeDocProxy();
-				storage.mine = JSON.stringify(getTestData());
+				setStorage("mine", getTestData());
 				remoteMock.read = function(onData,a) { onData(getTestData()); };
 				
 				var handler = jasmine.createSpy('h');
@@ -412,7 +420,7 @@ describe("Net", function()
 				
 				// Some local offline changes
 				online(false);
-				storage.mine = JSON.stringify(localData);
+				setStorage("mine", localData);
 				
 				var handler = jasmine.createSpy('h');
 				dp.onData(handler);
@@ -439,7 +447,7 @@ describe("Net", function()
 				
 				// Some local offline changes
 				online(false);
-				storage.mine = JSON.stringify(localData);
+				setStorage("mine", localData);
 				
 				var handler = jasmine.createSpy('h');
 				dp.onData(handler);

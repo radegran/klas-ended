@@ -190,7 +190,7 @@ var RemoteDoc = function(id, net)
 	};
 };
 
-var LocalDoc = function(storage)
+var LocalDoc = function(id, storage)
 {	
 	var supported = function()
 	{
@@ -199,7 +199,7 @@ var LocalDoc = function(storage)
 	
 	var exists = function(key)
 	{
-		return supported() && storage[key] !== undefined;
+		return supported() && storage[id + "_" + key] !== undefined;
 	};
 
 	var update = function(key, data)
@@ -208,11 +208,11 @@ var LocalDoc = function(storage)
 		{
 			if (data === undefined)
 			{
-				delete storage[key];
+				delete storage[id + "_" + key];
 			}
 			else
 			{
-				storage[key] = JSON.stringify(data);
+				storage[id + "_" + key] = JSON.stringify(data);
 			}
 		}
 	};
@@ -224,7 +224,7 @@ var LocalDoc = function(storage)
 			throw "local doc does not exist!";
 		}
 		
-		return JSON.parse(storage[key]);
+		return JSON.parse(storage[id + "_" + key]);
 	};
 	
 	return {

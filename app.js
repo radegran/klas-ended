@@ -54,7 +54,7 @@ $(document).ready(function()
 				  networkStatus);
 	var id = window.location.pathname.substring(1);
 
-	var docProxy = DocProxy(LocalDoc(window.localStorage || {}), 
+	var docProxy = DocProxy(LocalDoc(id, window.localStorage || {}), 
 							RemoteDoc(id, net), 
 							networkStatus,
 							errorHandler);
