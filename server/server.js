@@ -247,14 +247,18 @@ var SampleApp = function() {
         self.routes['/stats'] = function(req, res) 
 		{
             res.setHeader('Content-Type', 'text/html');
-			var response = "<html><body>";
+			var response = "<html><head><meta charset='UTF-8'></head><body>";
             db.stats(function(docs) 
 			{
 				for (var i = 0; i < docs.length; i++)
 				{
 					var d = docs[i];
 					var ageDays = Math.floor((d.lastUpdated - (d.created || d.lastUpdated)) / 1000 / 60 / 60 / 24);
-					response += (new Date(d.lastUpdated)).toString().substring(0, 33) + " : age " + ageDays + ", gen " + d.generation + "<br/>";
+					response += (new Date(d.lastUpdated)).toString().substring(0, 33) + 
+						" : age " + ageDays + 
+						", gen " + d.generation + 
+						", " + d.data.title +
+						"<br/>";
 				}
 				
 				res.send(response + "</body></html>");
