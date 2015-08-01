@@ -38,7 +38,7 @@ var makeEditable = function($td, currentValue, onNewValue)
 	});	
 };
 
-var Table = function($header, $table, model)
+var Table = function($header, $table, model, help)
 {
 	var newRow = function() { return $("<tr>"); };
 	
@@ -59,13 +59,12 @@ var Table = function($header, $table, model)
 		
 		$table.empty().append(
 			newRow().addClass("column-header-row").append(
-				$("<td/>"),
+				$("<td/>").append(help.getShowHelpButton()),
 				$addColumnCell.addClass("add-column-cell")),
 			newRow().addClass("add-row-row").append(
 				$addRowCell.addClass("add-row-cell")),
 			newRow().addClass("diff-row").append(
 				$("<td/>")));
-
 
 		$table.off("keydown");
 		$table.on("keydown", function(e)
@@ -76,7 +75,7 @@ var Table = function($header, $table, model)
 				return false;
 			}
 		});
-		
+
 		$(window).off("keydown");
 		$(window).on("keydown", function(e)
 		{
@@ -289,6 +288,86 @@ var Table = function($header, $table, model)
 
 	return {
 		"update": update
+	};
+};
+
+var Help = function($helpContainer, highlightHelpButtonFunc)
+{
+	$helpContainer.addClass("help-container yellow");
+	
+	var text = function(content)
+	{
+		return $("<div/>").addClass("help-text").append($("<span/>").html(content));
+	};
+	
+	var header = function(content)
+	{
+		return $("<div/>").addClass("help-header").append($("<span/>").html(content));
+	};
+	
+	$helpContainer.append(
+		header("&nbsp;"),
+		header("Hur tar jag bort en utgift eller en person?"),
+		text("Sudda ut utgiftsbeskrivning eller namnet."),
+		header("Om en person inte berörs av en utgift?"),
+		text("Sudda ut siffran i den cellen."),
+		header("Hur sparar jag?"),
+		text("Allt sparas automatiskt. Kopiera bara adressen, den tar dig eller andra till just den här sidan."),
+		header("Om jag inte har något internet?"),
+		text("I offlineläge kan du lägga till nya utgifter som sparas på din telefon/dator. När du går online sparas allt och blir synligt för omvärlden!"),
+		header("Finns någon app att ladda hem?"),
+		text("Öppna sidan på telefonen och lägg till den på hemskärmen!"),
+		text("&nbsp;"));
+		
+	var visible = false;
+
+	var toggle = function()
+	{
+		if (visible)
+		{
+			$helpContainer.slideUp();			
+		}
+		else
+		{
+			$helpContainer.slideDown();
+		}
+		
+		visible = !visible;
+	};
+	
+	var getShowHelpButton = function()
+	{	
+		var $highlighter = $("<span/>").html("&nbsp;&nbsp;&nbsp;&#x2190;&nbsp;" + L.Help).hide();
+	
+		var $helpButton = $("<span/>").append(
+			$("<span/>").html("&nbsp;&#x2261;&nbsp;"),
+			$highlighter
+		).css("cursor", "pointer").on("click", function() {
+			highlightHelpButtonFunc = function() { return false; },
+			toggle();
+		});
+		
+		var toggleHighlight = function()
+		{
+			if (highlightHelpButtonFunc())
+			{
+				$highlighter.fadeToggle('fast');
+			}
+			else
+			{
+				$highlighter.hide();
+			}
+
+			setTimeout(toggleHighlight, 750);
+		}
+		
+		toggleHighlight();
+		
+		return $helpButton;
+	};
+	
+	return {
+		"getShowHelpButton": getShowHelpButton
 	};
 };
 

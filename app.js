@@ -2,42 +2,35 @@ var initialize = function(docProxy)
 {	
 	var $table = $("<table>");
 	var $header = $("<div/>").addClass("header");
+	var $helpContainer = $("<div/>").hide();
 	var $messageContainer = $("<div/>").addClass("messagecontainer");
 	
 	$(document.body).append(
 		$("<div/>").addClass("root").append(
 			$messageContainer,
 			$header,
+			$helpContainer,
 			$table));
 
-	var startupInfo;
 	var table;
-
+	
 	var model = Model(function(newdata) 
 	{ 
 		table.update(newdata);
-		
-		if (startupInfo)
-		{
-			startupInfo.hide();
-			startupInfo = null;
-		}
-	
 		docProxy.update(newdata);
 	});
 	
-	table = Table($header, $table, model);
+	var isFirstTimeHere = function()
+	{
+		return docProxy.isFirstGeneration();
+	};
+	
+	table = Table($header, $table, model, Help($helpContainer, isFirstTimeHere));
 	
 	var onData = function(data) 
 	{
 		model.reset(data);
 		table.update(data);
-		
-		// First time? Show info...
-		if (docProxy.isFirstGeneration())
-		{			
-			startupInfo = info(L.AllChangesAreSaved, 9999999999);
-		}		
 	};
 	
 	docProxy.onData(onData);

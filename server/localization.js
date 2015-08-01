@@ -16,6 +16,10 @@ var Strings =
 		"en": "to",
 		"sv": "till"
 	},
+	"Help": {
+		"en": "Help",
+		"sv": "Hjälp"
+	},
 	"SomeoneMadeAChangeTryAgain": {
 		"en": "Someone has made a change, please try again.",
 		"sv": "Någon har gjort en ändring, försök igen."
@@ -40,6 +44,46 @@ var Strings =
 		"en": "Back online!",
 		"sv": "Online igen!"
 	},
+	"HelpHeader1": {
+		"en": "How do I remove an expense or a person",
+		"sv": "Hur tar jag bort en utgift eller en person?"
+	},
+	"HelpText1": {
+		"en": "Erase the expense description or the name.",
+		"sv": "Sudda ut utgiftsbeskrivning eller namnet."
+	},
+	"HelpHeader2": {
+		"en": "If a person is not affected by an expense?",
+		"sv": "Om en person inte berörs av en utgift?"
+	},
+	"HelpText2": {
+		"en": "Erase the number in that cell.",
+		"sv": "Sudda ut siffran i den cellen."
+	},
+	"HelpHeader3": {
+		"en": "How do I save?",
+		"sv": "Hur sparar jag?"
+	},
+	"HelpText3": {
+		"en": "All changes are saved automatically. Just copy the link in the address bar, it takes you or others to this page.",
+		"sv": "Allt sparas automatiskt. Kopiera bara länken i adressfältet, den tar dig eller andra till just den här sidan."
+	},
+	"HelpHeader4": {
+		"en": "What if I don't have an internet connection?",
+		"sv": "Om jag inte har något internet?"
+	},
+	"HelpText4": {
+		"en": "You can add an expense in offline mode, it's saved onto your phone/computer. When you get online everything is synchronized in the cloud!",
+		"sv": "I offlineläge kan du lägga till nya utgifter som sparas på din telefon/dator. När du går online synkas allt och blir synligt för omvärlden!"
+	},
+	"HelpHeader5": {
+		"en": "Is there an app to download?",
+		"sv": "Finns någon app att ladda hem?"
+	},
+	"HelpText5": {
+		"en": "Open this page on your phone and add it to the home screen!",
+		"sv": "Öppna sidan på telefonen och lägg till den på hemskärmen!"
+	},	
 	"StartData": {
 		"en": {
 			"title": "Type a title here",

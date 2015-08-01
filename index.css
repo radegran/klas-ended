@@ -22,9 +22,18 @@ table {
 	border-spacing: 0px;
 }
 
-.welcome {
-	margin-top: 20px;
-	font-size: 0.9em;
+.help-container {
+	min-width: 100%;
+}
+
+.help-header {
+	padding: 0 1em 0 1em;
+	font-size: 1.2em;
+}
+
+.help-text {
+	padding: 0 2em 0.5em 2em;
+	color: #505050;
 }
 
 .payment-text {
