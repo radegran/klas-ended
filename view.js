@@ -96,6 +96,9 @@ var Table = function($header, $table, model)
 	var updatePaymentPlan = function(data, plan)
 	{
 		$table.find(".transfer-plan").remove();
+		
+		// Some sp
+		$table.append($("<tr><td>&nbsp;</td></tr>").addClass("transfer-plan"));
 	
 		$.each(plan, function(i, moneyTransfer)
 		{
