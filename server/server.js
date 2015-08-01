@@ -152,11 +152,11 @@ var SampleApp = function() {
         };
     };
 
-	var eachJsAndCssAndPngFiles = function(cb)
+	var eachJsAndCssAndImageFiles = function(cb)
 	{
 		var files = fs.readdirSync('.')
 					.filter(function(v){
-						return (/.(js|css|png)$/).test(v);
+						return (/.(js|css|png|ico)$/).test(v);
 					});
 					
 		for (var i = 0; i < files.length; i++)
@@ -177,7 +177,7 @@ var SampleApp = function() {
 	    self.zcache['app.html'] = fs.readFileSync('./app.html');
 	    self.zcache['app.appcache'] = fs.readFileSync('./app.appcache');
 		
-		eachJsAndCssAndPngFiles(function(file)
+		eachJsAndCssAndImageFiles(function(file)
 		{
 			self.zcache[file] = fs.readFileSync("./" + file);
 		});
@@ -278,11 +278,15 @@ var SampleApp = function() {
             res.send(self.cache_get('app.html') );			
 		};
 		
-		eachJsAndCssAndPngFiles(function(file)
+		eachJsAndCssAndImageFiles(function(file)
 		{	
 			self.routes['/' + file] = function(req, res)
 			{
-				if (file.search("png") > -1)
+				if (file.search("ico") > -1)
+				{
+					res.setHeader('Content-Type', 'image/x-icon');
+				}
+				else if (file.search("png") > -1)
 				{
 					res.setHeader('Content-Type', 'image/png');
 				}
