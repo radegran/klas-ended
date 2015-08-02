@@ -53,7 +53,7 @@ var Strings =
 		"sv": "Online igen!"
 	},
 	"HelpHeader1": {
-		"en": "How do I remove an expense or a person",
+		"en": "How do I remove an expense or a person?",
 		"sv": "Hur tar jag bort en utgift eller en person?"
 	},
 	"HelpText1": {
@@ -81,17 +81,21 @@ var Strings =
 		"sv": "Om jag inte har något internet?"
 	},
 	"HelpText4": {
-		"en": "You can add an expense in offline mode, it's saved onto your phone/computer. When you get online everything is synchronized in the cloud!",
-		"sv": "I offlineläge kan du lägga till nya utgifter som sparas på din telefon/dator. När du går online synkas allt och blir synligt för omvärlden!"
+		"en": "You can add an expense in offline mode, it's saved onto your phone/computer. When you get online everything is synchronized in the cloud.",
+		"sv": "I offlineläge kan du lägga till nya utgifter som sparas på din telefon/dator. När du går online synkas allt och blir synligt för omvärlden."
 	},
 	"HelpHeader5": {
 		"en": "Is there an app to download?",
 		"sv": "Finns någon app att ladda hem?"
 	},
 	"HelpText5": {
-		"en": "Open this page on your phone and add it to the home screen!",
-		"sv": "Öppna sidan på telefonen och lägg till den på hemskärmen!"
-	},	
+		"en": "Open this page on your phone and add it to the home screen.",
+		"sv": "Öppna sidan på telefonen och lägg till den på hemskärmen."
+	},
+	"ExampleEmail": {
+		"en": "mail@domain.com",
+		"sv": "mail@domän.com"
+	},
 	"StartData": {
 		"en": {
 			"title": "Type a title here",

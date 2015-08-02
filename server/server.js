@@ -4,7 +4,7 @@ var fs      = require('fs');
 var crypto  = require('crypto');
 var mongoClient = require('mongodb').MongoClient;
 var L = require('./localization');
-var sendgrid = require("sendgrid")("klas", "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");
+var sendgrid = require("sendgrid")("klas", "qwerQWER1234");
 
 var DB = function(mongoClient, url)
 {
@@ -347,17 +347,19 @@ var SampleApp = function() {
 		
 		self.app.post("/sendmail", function(req, res)
 		{
-			var email = new sendgrid.Email();
+			var payload   = {
+				to      : 'jesper.radegran@gmail.com',
+				from    : req.body.from,
+				subject : 'Meddelande från klas-ended-sajten!',
+				text    : req.body.message
+			};
 
-			email.addTo("jesper.radegran@gmail.com");
-			email.setFrom("someone@somewhere.com");
-			email.setSubject("Meddelande från klas-ended-sajten!");
-			email.setHtml(req.body.message);
-			sendgrid.send(email, function(err, json)
+			console.log("Sending email...");
+			sendgrid.send(payload, function(err, json)
 			{
 				if (err) 
 				{ 
-					res.send({"reply": "error... " + err}); 
+					res.send({"reply": "err" + err}); 
 				}
 				else
 				{

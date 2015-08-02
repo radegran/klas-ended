@@ -307,39 +307,55 @@ var Help = function($helpContainer, net, networkStatus, highlightHelpButtonFunc)
 	
 	$helpContainer.append(
 		header("&nbsp;"),
-		header("Hur tar jag bort en utgift eller en person?"),
-		text("Sudda ut utgiftsbeskrivning eller namnet."),
-		header("Om en person inte berörs av en utgift?"),
-		text("Sudda ut siffran i den cellen."),
-		header("Hur sparar jag?"),
-		text("Allt sparas automatiskt. Kopiera bara adressen, den tar dig eller andra till just den här sidan."),
-		header("Om jag inte har något internet?"),
-		text("I offlineläge kan du lägga till nya utgifter som sparas på din telefon/dator. När du går online sparas allt och blir synligt för omvärlden!"),
-		header("Finns någon app att ladda hem?"),
-		text("Öppna sidan på telefonen och lägg till den på hemskärmen!"),
+		header(L.HelpHeader1),
+		text(L.HelpText1),
+		header(L.HelpHeader2),
+		text(L.HelpText2),
+		header(L.HelpHeader3),
+		text(L.HelpText3),
+		header(L.HelpHeader4),
+		text(L.HelpText4),
+		header(L.HelpHeader5),
+		text(L.HelpText5),
 		text("&nbsp;"));
+	
+	var $comment = $("<span/>");
+	var emailSent = false;
+	var updateSubmitButton;
 	
 	var $textArea = $("<textarea/>")
 		.addClass("help-submit")
-		.attr("cols", 50)
-		.attr("rows", 8);
+		.attr("cols", 40)
+		.attr("rows", 8)
+		.on("input paste", function() { updateSubmitButton(); });
+	var $inputEmail = $("<input/>")
+		.addClass("help-submit")
+		.attr("placeholder", L.ExampleEmail)
+		.on("input paste", function() { updateSubmitButton(); });
 	var $submit = $("<button/>").html(L.SubmitFeedback).addClass("help-submit").on("click", function() {
-		net.sendmail({"message": $textArea.val()});
-		$submit.attr("disabled", true);
-		$textArea.val("");
+		net.sendmail({"message": $textArea.val(), "from": $inputEmail.val()});
+		emailSent = true;
+		updateSubmitButton();
 		$submit.html(L.ThankYou);
-		setTimeout(function() { 
-			$submit.attr("disabled", false).html(L.SubmitFeedback); 
-		}, 3000);
+		
+		setTimeout(function() 
+		{ 				
+			$textArea.val("");
+			emailSent = false;
+			$submit.html(L.SubmitFeedback);
+			updateSubmitButton();
+		}, 2000);
 	});
 	
-	networkStatus.onChanged(function(isOnline) { $submit.attr("disabled", !isOnline); });
+	updateSubmitButton = function()
+	{
+		var enabled =(networkStatus.isOnline && $textArea.val() != "" && !emailSent && $inputEmail.val().search(/^[a-zA-Z0-9\.]+@[a-zA-Z0-9]+\.[a-zA-Z]+$/) > -1)
+		$submit.attr("disabled", !enabled);
+	};
 	
-	
-	// TODO
-	//$helpContainer.append($textArea, $("<br/>"), $submit);
-	window.sm = function(message) { net.sendmail({"message": message}); };
-	
+	networkStatus.onChanged(function() { updateSubmitButton(); });
+	$helpContainer.append($comment.append($textArea, $("<br/>"), $inputEmail, $("<br/>"), $submit));
+	updateSubmitButton();
 	
 	var visible = false;
 
