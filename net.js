@@ -136,10 +136,16 @@ var Net = function(jobQueue, errorHandler, networkStatus)
 		});
 	};
 	
+	var sendmail = function(message)
+	{
+		ajax("sendmail", message, $.noop, $.noop);
+	};
+	
 	return {
 		"create": create,
 		"update": update,
-		"read": read
+		"read": read,
+		"sendmail": sendmail
 	};
 };
 

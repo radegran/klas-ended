@@ -32,6 +32,14 @@ var Strings =
 		"en": "Saving ...",
 		"sv": "Sparar ..."
 	},
+	"ThankYou": {
+		"en": "Thank you!",
+		"sv": "Tack!"
+	},
+	"SubmitFeedback": {
+		"en": "Submit feedback",
+		"sv": "Skicka kommentar"
+	},
 	"CouldNotCreateDocument": {
 		"en": "Could not create the document!",
 		"sv": "Kunde inte skapa dokumentet!"

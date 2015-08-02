@@ -36,6 +36,11 @@ table {
 	color: #505050;
 }
 
+.help-submit {
+	padding: 0.5em;
+	margin: 0 2em 1.5em 2em;
+}
+
 .payment-text {
 	white-space: nowrap;
 }

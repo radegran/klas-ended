@@ -4,6 +4,7 @@ var fs      = require('fs');
 var crypto  = require('crypto');
 var mongoClient = require('mongodb').MongoClient;
 var L = require('./localization');
+var sendgrid = require("sendgrid")("klas", "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");
 
 var DB = function(mongoClient, url)
 {
@@ -342,6 +343,27 @@ var SampleApp = function() {
 		self.app.post("/ping", function(req, res) 
 		{
 			res.send("pong");
+		});
+		
+		self.app.post("/sendmail", function(req, res)
+		{
+			var email = new sendgrid.Email();
+
+			email.addTo("jesper.radegran@gmail.com");
+			email.setFrom("someone@somewhere.com");
+			email.setSubject("Meddelande från klas-ended-sajten!");
+			email.setHtml(req.body.message);
+			sendgrid.send(email, function(err, json)
+			{
+				if (err) 
+				{ 
+					res.send({"reply": "error... " + err}); 
+				}
+				else
+				{
+					res.send({"reply": "ok"});
+				}
+			});	
 		});
 		
 		self.app.post("/update", function(req, res) 

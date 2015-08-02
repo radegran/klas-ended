@@ -291,7 +291,7 @@ var Table = function($header, $table, model, help)
 	};
 };
 
-var Help = function($helpContainer, highlightHelpButtonFunc)
+var Help = function($helpContainer, net, networkStatus, highlightHelpButtonFunc)
 {
 	$helpContainer.addClass("help-container yellow");
 	
@@ -318,7 +318,29 @@ var Help = function($helpContainer, highlightHelpButtonFunc)
 		header("Finns någon app att ladda hem?"),
 		text("Öppna sidan på telefonen och lägg till den på hemskärmen!"),
 		text("&nbsp;"));
-		
+	
+	var $textArea = $("<textarea/>")
+		.addClass("help-submit")
+		.attr("cols", 50)
+		.attr("rows", 8);
+	var $submit = $("<button/>").html(L.SubmitFeedback).addClass("help-submit").on("click", function() {
+		net.sendmail({"message": $textArea.val()});
+		$submit.attr("disabled", true);
+		$textArea.val("");
+		$submit.html(L.ThankYou);
+		setTimeout(function() { 
+			$submit.attr("disabled", false).html(L.SubmitFeedback); 
+		}, 3000);
+	});
+	
+	networkStatus.onChanged(function(isOnline) { $submit.attr("disabled", !isOnline); });
+	
+	
+	// TODO
+	//$helpContainer.append($textArea, $("<br/>"), $submit);
+	window.sm = function(message) { net.sendmail({"message": message}); };
+	
+	
 	var visible = false;
 
 	var toggle = function()

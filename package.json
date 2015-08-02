@@ -25,7 +25,8 @@
   "dependencies": {
     "bson": "^0.3.2",
     "express": "~3.4.4",
-    "mongodb": "^2.0.33"
+    "mongodb": "^2.0.33",
+    "sendgrid": "^1.9.2"
   },
   "devDependencies": {},
   "bundleDependencies": [],

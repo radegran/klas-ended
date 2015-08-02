@@ -1,4 +1,4 @@
-var initialize = function(docProxy)
+var initialize = function(docProxy, net, networkStatus)
 {	
 	var $table = $("<table>");
 	var $header = $("<div/>").addClass("header");
@@ -25,7 +25,7 @@ var initialize = function(docProxy)
 		return docProxy.isFirstGeneration();
 	};
 	
-	table = Table($header, $table, model, Help($helpContainer, isFirstTimeHere));
+	table = Table($header, $table, model, Help($helpContainer, net, networkStatus, isFirstTimeHere));
 	
 	var onData = function(data) 
 	{
@@ -63,7 +63,7 @@ $(document).ready(function()
 		}
 	});
 	
-	initialize(docProxy); 	
+	initialize(docProxy, net, networkStatus); 	
 	
 	var ajaxTimer = null;
 	var messageObj = {"hide": $.noop};
