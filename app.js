@@ -39,6 +39,8 @@ var initialize = function(docProxy)
 
 $(document).ready(function() 
 {	
+	FastClick.attach(document.body);
+
 	var errorHandler = {"fatal": bailout, "info": info};
 	var networkStatus = NetworkStatus();
 	
