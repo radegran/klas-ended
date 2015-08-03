@@ -28,12 +28,12 @@ table {
 
 .help-header {
 	padding: 0 1em 0 1em;
-	font-size: 1.2em;
 }
 
 .help-text {
 	padding: 0 2em 0.5em 2em;
 	color: #505050;
+	font-size: 0.85em;
 }
 
 .help-submit {
