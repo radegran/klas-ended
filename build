@@ -1,0 +1,5 @@
+#!/bin/sh
+time uglifyjs client/*.js --source-map client/dist/source.js.map --source-map-url "source.js.map" -o client/dist/source.js
+
+cat client/app.appcache.template > client/dist/app.appcache
+echo "# `date`" >> client/dist/app.appcache

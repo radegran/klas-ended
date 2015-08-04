@@ -1,2 +1,0 @@
-#!/bin/sh
-cat app.appcache.template > app.appcache; echo '# ' `date` >> app.appcache; main.js

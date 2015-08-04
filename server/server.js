@@ -5,6 +5,7 @@ var crypto  = require('crypto');
 var mongoClient = require('mongodb').MongoClient;
 var L = require('./localization');
 var sendgrid = require("sendgrid")("klas", "qwerQWER1234");
+var clientDistDir = "./client/dist/";
 
 var DB = function(mongoClient, url)
 {
@@ -153,11 +154,11 @@ var SampleApp = function() {
         };
     };
 
-	var eachJsAndCssAndImageFiles = function(cb)
+	var eachResource = function(cb)
 	{
-		var files = fs.readdirSync('.')
+		var files = fs.readdirSync(clientDistDir)
 					.filter(function(v){
-						return (/.(js|css|png|ico)$/).test(v);
+						return (/.(js|css|png|ico|map)$/).test(v);
 					});
 					
 		for (var i = 0; i < files.length; i++)
@@ -174,13 +175,13 @@ var SampleApp = function() {
 		self.zcache = {};
         
         //  Local cache for static content.
-        self.zcache['index.html'] = fs.readFileSync('./index.html');
-	    self.zcache['app.html'] = fs.readFileSync('./app.html');
-	    self.zcache['app.appcache'] = fs.readFileSync('./app.appcache');
+        self.zcache['index.html'] = fs.readFileSync(clientDistDir + 'index.html');
+	    self.zcache['app.html'] = fs.readFileSync(clientDistDir + 'app.html');
+	    self.zcache['app.appcache'] = fs.readFileSync(clientDistDir + 'app.appcache');
 		
-		eachJsAndCssAndImageFiles(function(file)
+		eachResource(function(file)
 		{
-			self.zcache[file] = fs.readFileSync("./" + file);
+			self.zcache[file] = fs.readFileSync(clientDistDir + file);
 		});
     };
 
@@ -279,7 +280,7 @@ var SampleApp = function() {
             res.send(self.cache_get('app.html') );			
 		};
 		
-		eachJsAndCssAndImageFiles(function(file)
+		eachResource(function(file)
 		{	
 			self.routes['/' + file] = function(req, res)
 			{
@@ -395,6 +396,8 @@ var SampleApp = function() {
 
 		self.app.post("/create", function(req, res) 
 		{
+			return;
+			
 			var startData = function()
 			{
 				return L.getTranslator(req)("StartData");
