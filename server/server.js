@@ -396,8 +396,6 @@ var SampleApp = function() {
 
 		self.app.post("/create", function(req, res) 
 		{
-			return;
-			
 			var startData = function()
 			{
 				return L.getTranslator(req)("StartData");

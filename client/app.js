@@ -37,8 +37,9 @@ var initialize = function(docProxy, net, networkStatus)
 	docProxy.read();
 };
 
-$(document).ready(function() 
-{	
+// called from app.html
+var startApp = function()
+{
 	FastClick.attach(document.body);
 
 	var errorHandler = {"fatal": bailout, "info": info};
@@ -83,5 +84,15 @@ $(document).ready(function()
 		clearTimeout(ajaxTimer);
 		messageObj.hide();
 	});
+};
+
+// called from index.html
+var loadApp = function()
+{
+	var net = Net({}, {}, NetworkStatus());
 	
-});
+	net.create(function(url) 
+	{ 
+		window.location.href = url;
+	});
+};
