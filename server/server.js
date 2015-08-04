@@ -151,6 +151,7 @@ var SampleApp = function() {
             //  allows us to run/test the app locally.
             console.warn('No OPENSHIFT_NODEJS_IP var, using 127.0.0.1');
             self.ipaddress = "127.0.0.1";
+			self.isDevelEnv = true;
         };
     };
 
@@ -190,7 +191,17 @@ var SampleApp = function() {
      *  Retrieve entry (content) from cache.
      *  @param {string} key  Key identifying content to retrieve from cache.
      */
-    self.cache_get = function(key) { return self.zcache[key]; };
+    self.cache_get = function(key) 
+	{ 
+		if (self.isDevelEnv)
+		{
+			return fs.readFileSync(clientDistDir + key);
+		}
+		else
+		{
+			return self.zcache[key]; 			
+		}
+	};
 
 
     /**

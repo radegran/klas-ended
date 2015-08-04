@@ -17,6 +17,7 @@ var initialize = function(docProxy, net, networkStatus)
 	var model = Model(function(newdata) 
 	{ 
 		table.update(newdata);
+		paymentWizard.update(newdata);
 		docProxy.update(newdata);
 	});
 	
@@ -25,12 +26,20 @@ var initialize = function(docProxy, net, networkStatus)
 		return docProxy.isFirstGeneration();
 	};
 	
-	table = Table($header, $table, model, Help($helpContainer, net, networkStatus, isFirstTimeHere));
+	var paymentWizard = PaymentWizard();
+	
+	table = Table($header, 
+		          $table, 
+				  model, 
+				  Help($helpContainer, net, networkStatus, isFirstTimeHere),
+				  paymentWizard);
 	
 	var onData = function(data) 
 	{
+		// DRY...
 		model.reset(data);
 		table.update(data);
+		paymentWizard.update(data);
 	};
 	
 	docProxy.onData(onData);

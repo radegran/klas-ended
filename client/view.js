@@ -38,9 +38,9 @@ var makeEditable = function($td, currentValue, onNewValue)
 	});	
 };
 
-var Table = function($header, $table, model, help)
+var Table = function($header, $table, model, help, paymentWizard)
 {
-	var newRow = function() { return $("<tr>"); };
+	var newRow = function() { return $("<tr/>"); };
 	
 	// Setup clean table
 	var setup = function()
@@ -53,8 +53,10 @@ var Table = function($header, $table, model, help)
 		
 		var $addRowCell = addButtonCell(function() 
 		{ 
-			model.addRow(); 
-			$(this).parent().prev().find("td:first").find("div").text("").focus();
+			paymentWizard.start($table.find(".add-row-row"));
+		
+			//model.addRow(); 
+			//$(this).parent().prev().find("td:first").find("div").text("").focus();
 		});
 		
 		$table.empty().append(
