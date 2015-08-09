@@ -53,10 +53,10 @@ var Table = function($header, $table, model, help, paymentWizard)
 		
 		var $addRowCell = addButtonCell(function() 
 		{ 
-			paymentWizard.start($table.find(".add-row-row"));
+			//paymentWizard.start($table.find(".add-row-row"));
 		
-			//model.addRow(); 
-			//$(this).parent().prev().find("td:first").find("div").text("").focus();
+			model.addRow(); 
+			$(this).parent().prev().find("td:first").find("div").text("").focus();
 		});
 		
 		$table.empty().append(
