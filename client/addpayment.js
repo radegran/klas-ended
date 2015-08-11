@@ -1,3 +1,16 @@
+var toNonNegativeNumber = function(str)
+{
+	str = str.trim().replace(",", ".");
+	var parsed = parseFloat(str);
+	
+	if (str.search(/[^0-9\.]/) > -1 || isNaN(parsed))
+	{
+		return null;
+	}
+	
+	return parsed;
+};
+
 var Wizard = function($container)
 {
     var self;
@@ -61,9 +74,30 @@ var Wizard = function($container)
     
     var input = function(description, defaultValue, onchange)
     {
-        append(".wiz-inputs", $("<span/>").append(
+		var $input = $("<input/>")
+			.val(defaultValue)
+			.on("input paste", function() 
+			{ 
+				var value = $input.val();
+				var parsed = toNonNegativeNumber(value);
+				
+				if (parsed !== null)
+				{
+					$input.removeClass("wiz-invalid-input");
+				}
+				else
+				{
+					$input.addClass("wiz-invalid-input");
+				}	
+			
+				onchange(parsed); 
+			});
+		
+        append(".wiz-inputs", $("<div/>").append(
             $("<span/>").text(description),
-            $("<input/>").val(defaultValue).on("input paste", function() { onchange($(this).val()); })));
+            $input));
+			
+		return $input;
     };
 
     self = {
@@ -171,17 +205,15 @@ var WWhat = function(wPayment, wTransaction)
 
 var WInvolved = function(wWhoPay, paymentState)
 {
-    var names = paymentState.names;
-    
     var show = function(wizard)
     {
         wizard.question("Vilka gäller det?");
         
-        $.each(names, function(i, name) 
+        paymentState.each({}, function(p) 
         {
-            wizard.selectable(name, function(isSelected)
+            wizard.selectable(p.val("name"), function(isSelected)
             {
-                paymentState.involved[i] = isSelected;
+                p.val("involved", isSelected);
             });
         });
         
@@ -202,15 +234,24 @@ var WWhoPay = function(wAllSpentSame, paymentState)
         
         var updateNextButton = function()
         {
-            $nextButton.attr("disabled", true);
+            $nextButton.attr("disabled", false);
             var p = paymentState.paying;
+			var allZeroes = true;
+			
             for (var i = 0; i < p.length; i++)
             {
-                if (p[i] != 0)
+                if (p[i] === null)
                 {
-                    $nextButton.attr("disabled", false);
+                    $nextButton.attr("disabled", true);
+					return;
                 }
+				else if (p[i] !== 0)
+				{
+					allZeroes = false;
+				}
             }
+			
+			$nextButton.attr("disabled", allZeroes);
         };
         
         updateNextButton();
@@ -222,10 +263,10 @@ var WWhoPay = function(wAllSpentSame, paymentState)
                 return;
             }
             
-            wizard.input(name, paymentState.paying[i], function(value)
+            var $input = wizard.input(name, paymentState.paying[i], function(value)
             {
-                paymentState.paying[i] = value;
-                updateNextButton();
+				paymentState.paying[i] = value;
+				updateNextButton();						
             });
         });        
     };
@@ -301,12 +342,64 @@ var makeArray = function(value, count)
 var transactionState = {
     "names": names
 };
-var paymentState = {
-    "involved": makeArray(false, names.length),
-    "paying": makeArray(0, names.length),
-    "spending": makeArray(0, names.length),    
-    "names": names
+var PaymentState = function(names)
+{
+	var list = [];
+	
+	for (var i = 0; i < names.length; i++)
+	{
+		list.push({"name": names[i], "index": i});
+	}
+	
+	var val = function(elem, key, value)
+	{
+		if (value === undefined)
+		{
+			return elem[key];
+		}
+		else
+		{
+			elem[key] = value;
+		}
+	}
+	
+	var each = function(filter, callback)
+	{
+		var i, elem;
+		
+		var validateFilter = function(elem)
+		{
+			for (var key in filter)
+			{
+				if (filter.hasOwnProperty(key) && filter[key] !== elem[key])
+				{
+					return false;
+				}
+			}	
+			return true;
+		};
+		
+		for (i = 0; i < list.length; i++)
+		{
+			elem = list[i];
+			
+			if (!validateFilter(elem))
+			{
+				continue;
+			}
+			
+			callback({
+				"val": function(key, value) { return val(elem, key, value); }
+			});
+		}
+	};
+	
+	return {
+		"each": each
+	};
 };
+
+var paymentState = PaymentState(names);
 
 $(document).ready(function() 
 {
