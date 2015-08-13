@@ -1,3 +1,17 @@
+// TODO: use toNonNegativeNumber
+var toNonNegativeNumber = function(str)
+{
+	str = str.trim().replace(",", ".");
+	var parsed = parseFloat(str);
+	
+	if (str.search(/[^0-9\.]/) > -1 || isNaN(parsed))
+	{
+		return null;
+	}
+	
+	return parsed;
+};
+
 var transferPlan = function(balances)
 {
 	var MoneyTransfer = function(fromIndex, toIndex, amount)
@@ -63,6 +77,12 @@ var transferPlan = function(balances)
 		while (!pIsSatisfied && n)
 			
 		p = positives.pop();
+	}
+	
+	// key needed?
+	for (var i = 0; i < plan.length; i++)
+	{
+		plan[i].key = plan[i].from + "_" + plan[i].to + "_" + plan[i].amount;
 	}
 	
 	return plan;
@@ -278,83 +298,16 @@ var Model = function(onChangedCallback)
 		// Let's not call onChangedCallback(data); 
 	};
 	
-	var addColumn = function()
+	var getDataHelper = function()
 	{
-		var data = currentData();
-		data.names.push(" ");
-		$.each(data.payments, function(i, p) {
-			p.values.push(null);
-		});
-		onChanged(data);
-	};
-	
-	var addRow = function()
-	{
-		var data = currentData();
-		var numNames = data.names.length;
-		var payment = {"text": " ", "values": []};
-		for (var i = 0; i < numNames; i++)
-		{
-			payment.values.push(0);
-		}
-		data.payments.push(payment);
-		onChanged(data);
-	};
-	
-	var updateName = function(newName, i)
-	{
-		var data = currentData();
-		if (newName === "")
-		{
-			data.names.splice(i, 1);
-			$.each(data.payments, function(j, p) {
-				p.values.splice(i, 1);
-			});
-		}
-		else
-		{
-			data.names[i] = newName;			
-		}
-		onChanged(data);
-	};
-	
-	var updateTitle = function(newTitle)
-	{
-		var data = currentData();
-		data.title = newTitle;
-		onChanged(data);
-	};
-	
-	var updatePaymentText = function(newText, i)
-	{
-		var data = currentData();
-		if (newText === "")
-		{
-			data.payments.splice(i, 1);
-		}
-		else
-		{
-			data.payments[i].text = newText;
-		}
-		onChanged(data);
-	};
-	
-	var updatePaymentValue = function(newValue, i, j)
-	{
-		var data = currentData();
-		data.payments[i].values[j] = newValue;
-		onChanged(data);
+		var current = currentData();
+		return DataHelper(currentData);
 	};
 	
 	return {
-		"addColumn": addColumn,
-		"addRow": addRow,
-		"updateName": updateName,
-		"updatePaymentText": updatePaymentText,
-		"updatePaymentValue": updatePaymentValue,
-		"updateTitle": updateTitle,
 		"undo": undo,
 		"redo": redo,
-		"reset": reset
+		"reset": reset,
+		"getDataHelper": getDataHelper
 	};
 };
