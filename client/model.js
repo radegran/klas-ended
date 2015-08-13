@@ -12,6 +12,16 @@ var toNonNegativeNumber = function(str)
 	return parsed;
 };
 
+var makeArray = function(length, defaultValue)
+{
+	var a = new Array(length);
+	for (var i = 0; i < a.length; i++)
+	{
+		a[i] = defaultValue;
+	}
+	return a;
+};
+
 var transferPlan = function(balances)
 {
 	var MoneyTransfer = function(fromIndex, toIndex, amount)
@@ -145,9 +155,10 @@ var DataDiff = function(serverData, localData)
 				return false;
 			}
 			
-			$.each(payment.values, function(j, value)
+			$.each(payment.values, function(j, valuePair)
 			{
-				if (value !== localData.payments[i].values[j])
+				var localValuePair = localData.payments[i].values[j];
+				if (valuePair[0] !== localValuePair[0] || valuePair[1] !== localValuePair[1])
 				{
 					acc = false;
 					return false;
@@ -230,22 +241,15 @@ var DataDiff = function(serverData, localData)
 		var m = Model(function(d) { mergedData = d; });
 		m.reset(otherData);
 		
-		var addPayment = function(payment)
-		{
-			var rowIndex = mergedData.payments.length;
-			m.addRow();
-			m.updatePaymentText(payment.text, rowIndex);
-			
-			for (var j = 0; j < payment.values.length; j++)
-			{
-				m.updatePaymentValue(payment.values[j], rowIndex, j);
-			}
-		}
+		var dh = m.getDataHelper();
 		
 		for (var i = serverData.payments.length; i < localData.payments.length; i++)
 		{
-			addPayment(localData.payments[i]);
+			var p = localData.payments[i];
+			dh.addPayment(p.text, p.values);
 		}
+		
+		dh.commit();
 		
 		return mergedData;
 	};
@@ -259,6 +263,209 @@ var DataDiff = function(serverData, localData)
 		"applyTo": applyTo
 	};
 };
+
+// DataHelper
+
+var DataHelper = function(data, onChange, onCommit)
+{
+	var eachPerson = function(callback)
+	{
+		var makePerson = function(name, diff, nameIndex)
+		{
+			var eachPayment = function(callback2)
+			{
+				var makePayment = function(paymentIndex)
+				{
+					var text = function(str)
+					{
+						if (str === undefined)
+						{
+							return data.payments[paymentIndex].text;
+						}
+						data.payments[paymentIndex].text = str;
+					};
+										
+					var valuePair = function(pair)
+					{
+						if (pair === undefined)
+						{
+							return data.payments[paymentIndex].values[nameIndex];
+						}
+						data.payments[paymentIndex].values[nameIndex] = pair;
+					};
+				
+					return {
+						"text": text,
+						"valuePair": valuePair
+					}
+				};
+			
+				for (var j = 0; j < data.payments.length; j++)
+				{
+					var v = data.payments[j].values[nameIndex];
+					callback2(makePayment(j));
+				}
+			};
+			
+			var setName = function(newName)
+			{
+				if (data.names[nameIndex] !== newName)
+				{						
+					data.names[nameIndex] = newName;
+					onChange();
+				}
+			};
+			
+			var remove = function()
+			{
+				alert("not implemented!");
+				return;
+				
+				// data.names.splice(nameIndex, 1);
+				// $.each(data.payments, function(j, p) {
+					// p.values.splice(nameIndex, 1);
+				// });
+				// onChange();
+			};
+			
+			callback({
+				"key": nameIndex,
+				"name": name,
+				"diff": diff,
+				"eachPayment": eachPayment,
+				"setName": setName,
+				"remove": remove
+			});
+		};
+		
+		for (var i = 0; i < data.names.length; i++)
+		{
+			var name = data.names[i];
+			var diff = 0;
+			
+			for (var j = 0; j < data.payments.length; j++)
+			{
+				diff += data.payments[j].values[i][0];
+				diff -= data.payments[j].values[i][1];
+			}
+			
+			makePerson(name, diff, i);
+		}
+	};
+	
+	var name = function(index)
+	{
+		return data.names[index];
+	};
+	
+	var addPerson = function(name)
+	{
+		data.names.push(name || "XXX");
+		$.each(data.payments, function(i, p) {
+			p.values.push([0,0]);
+		});
+		onChange();
+	};
+	
+	var addPayment = function(text, values)
+	{	
+		data.payments.push({
+			"text": text || "...",
+			"values": values || makeArray(data.names.length, [0,0])
+		});
+	};
+	
+	var title = function(value)
+	{
+		if (value === undefined)
+		{
+			return data.title;
+		}
+		
+		data.title = value;
+		onChange();
+	};
+	
+	var eachPayment = function(callback)
+	{
+		var makePayment = function(index)
+		{
+			var payment = data.payments[index];
+			
+			var cost = function()
+			{
+				var c = 0;
+				
+				for (var i = 0; i < payment.values.length; i++)
+				{
+					c += payment.values[i][0];
+				}
+				
+				return c;
+			};
+			
+			var text = function(str)
+			{
+				if (str === undefined)
+				{
+					return payment.text;
+				}
+				payment.text = str;
+				onChange();
+			};
+			
+			var remove = function()
+			{
+				payment.remove = true;
+			};
+			
+			callback({
+				"cost": cost,
+				"text": text,
+				"remove": remove
+			});
+		};
+		
+		for (var j = 0; j < data.payments.length; j++)
+		{
+			makePayment(j);
+		}
+		
+		data.payments = data.payments.filter(function(p) { return !p.remove; });
+	};
+	
+	var emptyPayment = function()
+	{
+		var p = {
+			"text": "Beskrivning...",
+			"values": []
+		};
+		
+		for (var i = 0; i < data.names.length; i++)
+		{
+			p.values.push([0, 0]);
+		}
+		
+		return p;
+	};
+	
+	var commit = function()
+	{
+		(onCommit || $.noop)();
+	};
+	
+	return {
+		"eachPerson": eachPerson,
+		"eachPayment": eachPayment,
+		"name": name,
+		"addPerson": addPerson,
+		"addPayment": addPayment,
+		"title": title,
+		"names": function() { return data.names; },
+		"emptyPayment": emptyPayment,
+		"commit": commit
+	};
+}
 
 var Model = function(onChangedCallback)
 {
@@ -298,10 +505,20 @@ var Model = function(onChangedCallback)
 		// Let's not call onChangedCallback(data); 
 	};
 	
-	var getDataHelper = function()
+	var getDataHelper = function(onDataHelperChange)
 	{
+		// TODO: Invalidate data helper, kind of, if model is changed
+	
 		var current = currentData();
-		return DataHelper(currentData);
+		
+		var onCommit = function()
+		{
+			onChanged(current);
+		};
+		
+		return DataHelper(current, 
+						  onDataHelperChange || $.noop, 
+						  onCommit);
 	};
 	
 	return {

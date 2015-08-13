@@ -50,7 +50,7 @@ describe("Model", function()
 		it("does not accept updating payment value", function()
 		{
 			var m = makeModel();
-			m.updatePaymentValue(999, 1, 1);
+			m.updatePaymentValue([999,999], 1, 1);
 			
 			var d = DataDiff(getTestData(), localData);
 			expect(d.accepted()).toBe(false);
@@ -86,7 +86,7 @@ describe("Model", function()
 		it("knows if the diff is empty", function()
 		{
 			var m = makeModel();
-			m.updatePaymentValue(999, 1, 1);
+			m.updatePaymentValue([999,999], 1, 1);
 			
 			var d1 = DataDiff(getTestData(), getTestData());
 			var d2 = DataDiff(getTestData(), localData);
@@ -101,7 +101,7 @@ describe("Model", function()
 			var m = makeModel();
 			m.addRow();
 			m.updatePaymentText("T3", 3);
-			m.updatePaymentValue(999, 3, 2);
+			m.updatePaymentValue([999,999], 3, 2);
 			
 			var diff = DataDiff(getTestData(), localData);
 			
@@ -109,7 +109,7 @@ describe("Model", function()
 			var m2 = makeModel();
 			m2.updatePaymentText("", 2);
 			m2.updatePaymentText("New payment text!", 1);
-			m2.updatePaymentValue(666, 1, 1);
+			m2.updatePaymentValue([666,666], 1, 1);
 			expect(localData.payments.length).toBe(2);
 			
 			var mergedData = diff.applyTo(localData);
@@ -117,8 +117,8 @@ describe("Model", function()
 			expect(mergedData.payments.length).toBe(3);
 			expect(mergedData.payments[1].text).toEqual("New payment text!");
 			expect(mergedData.payments[2].text).toEqual("T3");
-			expect(mergedData.payments[1].values[1]).toBe(666);
-			expect(mergedData.payments[2].values[2]).toBe(999);			
+			expect(mergedData.payments[1].values[1]).toEqual([666,666]);
+			expect(mergedData.payments[2].values[2]).toEqual([999,999]);			
 		});
 		
 		it("Merging fails when a name is changed on the server", function()
@@ -127,7 +127,7 @@ describe("Model", function()
 			var m = makeModel();
 			m.addRow();
 			m.updatePaymentText("T3", 3);
-			m.updatePaymentValue(999, 3, 2);
+			m.updatePaymentValue([999,999], 3, 2);
 			
 			var diff = DataDiff(getTestData(), localData);
 			
@@ -145,7 +145,7 @@ describe("Model", function()
 			var m = makeModel();
 			m.addRow();
 			m.updatePaymentText("T3", 3);
-			m.updatePaymentValue(999, 3, 2);
+			m.updatePaymentValue([999,999], 3, 2);
 			
 			var diff = DataDiff(getTestData(), localData);
 			
@@ -164,7 +164,7 @@ describe("Model", function()
 			var m = makeModel();
 			m.addRow();
 			m.updatePaymentText("T3", 3);
-			m.updatePaymentValue(999, 3, 2);
+			m.updatePaymentValue([999, 999], 3, 2);
 			
 			var diff = DataDiff(getTestData(), localData);
 			
