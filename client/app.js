@@ -1,45 +1,27 @@
 var initialize = function(docProxy, net, networkStatus)
 {	
-	var $table = $("<table>");
-	var $header = $("<div/>").addClass("header");
-	var $helpContainer = $("<div/>").hide();
-	var $messageContainer = $("<div/>").addClass("messagecontainer");
+////// ______
 	
-	$(document.body).append(
-		$("<div/>").addClass("root").append(
-			$messageContainer,
-			$header,
-			$helpContainer,
-			$table));
-
-	var table;
+	var ui;
 	
 	var model = Model(function(newdata) 
 	{ 
-		table.update(newdata);
-		paymentWizard.update(newdata);
+		ui.update();
 		docProxy.update(newdata);
 	});
 	
-	var isFirstTimeHere = function()
-	{
-		return docProxy.isFirstGeneration();
-	};
+	var ui = MainUI(StatsUI(model), 
+				    PaymentUI(AddWizard(), model), 
+					PeopleUI(model),
+					model);
 	
-	var paymentWizard = PaymentWizard();
-	
-	table = Table($header, 
-		          $table, 
-				  model, 
-				  Help($helpContainer, net, networkStatus, isFirstTimeHere),
-				  paymentWizard);
+	ui.create($(document.body));
 	
 	var onData = function(data) 
 	{
 		// DRY...
 		model.reset(data);
-		table.update(data);
-		paymentWizard.update(data);
+		ui.update();
 	};
 	
 	docProxy.onData(onData);

@@ -196,7 +196,7 @@ var PayModel = function(names, payment, allActiveDefault, onRemove)
 	};
 };
 
-var AddWizard = function(dataHelper)
+var AddWizard = function()
 {
 	var Nav = function(rollback)
 	{
@@ -275,7 +275,7 @@ var AddWizard = function(dataHelper)
 	};
 };
 
-var PaymentUI = function(addWizard, dataHelper)
+var PaymentUI = function(addWizard, model)
 {
 	var $addButton = null;
 	var $history = null;
@@ -290,7 +290,8 @@ var PaymentUI = function(addWizard, dataHelper)
 	
 	var createAddWizard = function()
 	{
-		var payModel = PayModel(dataHelper.names(), dataHelper.emptyPayment(), true, function() { hideWizard(); });
+		var dh = model.getDataHelper();
+		var payModel = PayModel(dh.names(), dh.emptyPayment(), true, function() { hideWizard(); });
 		
 		$addButton.hide();
 		$history.hide();
@@ -313,8 +314,9 @@ var PaymentUI = function(addWizard, dataHelper)
 	{
 		$history.empty();
 		hideWizard();	
+		var dh = model.getDataHelper();
 		
-		dataHelper.eachPayment(function(payment)
+		dh.eachPayment(function(payment)
 		{
 			var $p = $("<div/>");
 			var $label = $("<span/>").html(payment.text());

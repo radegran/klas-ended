@@ -36,7 +36,7 @@ var editable = function(text, onChange)
 	}
 };	
 
-var StatsUI = function(dataHelper)
+var StatsUI = function(model)
 {
 	var $stats = null;
 	var $transferPlan = null;
@@ -48,15 +48,18 @@ var StatsUI = function(dataHelper)
 		
 		var balances = [];
 		
-		dataHelper.eachPerson(function(person)
+		var dh = model.getDataHelper();
+		
+		dh.eachPerson(function(person)
 		{
 			balances.push(person.diff);
 
 			var $details = $("<div/>").css("font-size", "0.7em").hide();
-			person.eachPayment(function(text, diff)
+			person.eachPayment(function(payment)
 			{
+				var diff = payment.valuePair[1] - payment.valuePair[0];
 				$details.append($("<div/>").append(
-					$("<span/>").text(text),
+					$("<span/>").text(payment.text),
 					$("<span/>").text(diff)));
 			});
 			
@@ -76,11 +79,11 @@ var StatsUI = function(dataHelper)
 		{
 			// Improve UI
 			var $plan = $("<div/>").text(
-				dataHelper.name(transfer.from) +
+				dh.name(transfer.from) +
 				" ska ge " +
 				transfer.amount + 
 				" till " +
-				dataHelper.name(transfer.to));
+				dh.name(transfer.to));
 			
 			$transferPlan.append($plan);
 		});
@@ -99,7 +102,7 @@ var StatsUI = function(dataHelper)
 	};
 };
 
-var PeopleUI = function(dataHelper)
+var PeopleUI = function(model)
 {
 	var $names = $();
 	var $add = $();
@@ -110,7 +113,7 @@ var PeopleUI = function(dataHelper)
 		$add = $("<div/>")
 			.addClass("add-button")
 			.text("(+)")
-			.on("click", function() { dataHelper.addPerson(); });
+			.on("click", function() { var dh = model.getDataHelper(); dh.addPerson(); dh.commit(); });
 		
 		$parent.append($names, $add);
 	};
@@ -119,14 +122,16 @@ var PeopleUI = function(dataHelper)
 	{
 		$names.empty();
 		
-		dataHelper.eachPerson(function(person)
+		var dh = model.getDataHelper();
+		
+		dh.eachPerson(function(person)
 		{
 			var $name = $("<div/>");
 			
-			var editableName = editable(person.name, function(newName) { person.setName(newName)});
+			var editableName = editable(person.name, function(newName) { person.setName(newName); dh.commit(); });
 			var $name = editableName.element();
 			var $edit = $("<span/>").text("(...)").on("click", function() { editableName.editMode() });
-			var $remove = $("<span/>").text("(X)").on("click", function() { person.remove(); });
+			var $remove = $("<span/>").text("(X)").on("click", function() { person.remove(); dh.commit(); });
 			
 			$row = $("<div/>").addClass("flex-horizontal-container").append(
 				$name,
@@ -143,7 +148,7 @@ var PeopleUI = function(dataHelper)
 	};
 };
 
-var MainUI = function(statsUI, paymentUI, peopleUI, dataHelper)
+var MainUI = function(statsUI, paymentUI, peopleUI, model)
 {
 	var $header = null;
 	
@@ -200,10 +205,14 @@ var MainUI = function(statsUI, paymentUI, peopleUI, dataHelper)
 	
 	var update = function()
 	{
+		vad dataHelper = model.getDataHelper();
+		
 		var editableHeader = editable(dataHelper.title(), function(newValue)
 		{
-			dataHelper.title(newValue)
+			dataHelper.title(newValue);
+			dataHelper.commit();
 		});
+		
 		$header.empty();
 		$header.append(editableHeader.element().on("click", function() { editableHeader.editMode(); }));
 		
@@ -227,20 +236,3 @@ var data = {
 		{"text": "Klas ger 100 kr till Göran", "values": [[100, 0], [0, 100], [0, 0]]}
 	]
 };
-
-$(document).ready(function () 
-{
-	$(function() { FastClick.attach(document.body); });
-	
-	var ui;
-	
-	var dataHelper = DataHelper(data, function() { ui.update(); });
-	
-	var ui = MainUI(StatsUI(dataHelper), 
-				    PaymentUI(AddWizard(dataHelper), dataHelper), 
-					PeopleUI(dataHelper),
-					dataHelper);
-	
-	ui.create($(document.body));
-	ui.update();
-});
