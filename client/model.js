@@ -472,6 +472,7 @@ var Model = function(onChangedCallback)
 	// Expecting a "reset" call to be initialized
 	var undoStack;
 	var undoStackCursor;
+	var gen = 0;
 	
 	var currentData = function()
 	{
@@ -489,30 +490,36 @@ var Model = function(onChangedCallback)
 	var undo = function()
 	{
 		undoStackCursor = Math.max(0, undoStackCursor - 1);
+		gen++;
 		onChangedCallback(undoStack[undoStackCursor]);
 	};
 	
 	var redo = function()
 	{
 		undoStackCursor = Math.min(undoStack.length - 1, undoStackCursor + 1);
+		gen++;
 		onChangedCallback(undoStack[undoStackCursor]);
 	};
 	
 	var reset = function(data)
 	{
 		undoStack = [data];
-		undoStackCursor = 0;
+		undoStackCursor = 0
+		gen++;;
 		// Let's not call onChangedCallback(data); 
 	};
 	
 	var getDataHelper = function(onDataHelperChange)
 	{
-		// TODO: Invalidate data helper, kind of, if model is changed
-	
 		var current = currentData();
+		var validAtGen = gen;
 		
 		var onCommit = function()
 		{
+			if (validAtGen !== gen)
+			{
+				throw "Tried to commit from an old dataHelper";
+			}
 			onChanged(current);
 		};
 		

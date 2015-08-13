@@ -182,7 +182,7 @@ describe("Net", function()
 			it("update(testData), remote conflict(modifiedData) -> modifiedData, local:modifiedData", function()
 			{
 				var m = makeModel();
-				m.updatePaymentValue(999, 1, 1);
+				m.updatePaymentValue([999,999], 1, 1);
 				
 				var dp = makeDocProxy();
 				var onData = jasmine.createSpy('onData');
@@ -206,13 +206,13 @@ describe("Net", function()
 				var modifiedData1 = localData;
 				
 				m = makeModel();
-				m.updatePaymentValue(999, 1, 1);
+				m.updatePaymentValue([999, 999], 1, 1);
 				m.addRow();
 				m.updatePaymentText("server row", 3);
 				var modifiedData2 = localData;
 
 				m = makeModel();
-				m.updatePaymentValue(999, 1, 1);
+				m.updatePaymentValue([999, 999], 1, 1);
 				m.addRow();
 				m.addRow();
 				m.updatePaymentText("server row", 3);
@@ -251,7 +251,7 @@ describe("Net", function()
 				verifyStorage("mine", getTestData());
 				
 				// Make some modification, write to 'localData' variable
-				m.updatePaymentValue(999, 1, 1);
+				m.updatePaymentValue([999, 999], 1, 1);
 				
 				var onData = jasmine.createSpy('onData');
 				dp.onData(onData);
@@ -291,14 +291,22 @@ describe("Net", function()
 				remoteMock.update = function(d, s, c, error) { error(); };
 				var onData = jasmine.createSpy('onData');
 				
+				// Read gets testData
 				dp.read();				
-				dp.onData(onData);		
+				dp.onData(onData);	
+
+				// try to update localData (with "mama" payment) but fail due to offline
 				dp.update(localData);
 				var acceptedData = localData;
+				
+				// local changes in mine storage
 				verifyStorage("mine", acceptedData);
 				expect(onData).not.toHaveBeenCalled();
 				
-				m.updatePaymentValue(999, 1, 1);
+				m = makeModel();
+				m.addRow();
+				m.updatePaymentText("mama", 3);
+				m.updatePaymentValue([999, 999], 1, 1);
 				dp.update(localData);
 				
 				verifyStorage("mine", acceptedData);
