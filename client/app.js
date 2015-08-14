@@ -8,8 +8,10 @@ var initialize = function(docProxy, net, networkStatus)
 		docProxy.update(newdata);
 	});
 	
-	var ui = MainUI(StatsUI(model), 
-				    PaymentUI(AddWizard(model), model), 
+	var addWizard = AddWizard(model);
+	
+	var ui = MainUI(StatsUI(addWizard, model), 
+				    PaymentUI(addWizard, model), 
 					PeopleUI(model),
 					model);
 	

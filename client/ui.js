@@ -36,10 +36,26 @@ var editable = function(text, onChange)
 	}
 };	
 
-var StatsUI = function(model)
+var StatsUI = function(addWizard, model)
 {
+	var $addWizard = null;
 	var $stats = null;
 	var $transferPlan = null;
+	
+	var hideWizard = function()
+	{
+		$addWizard.hide();
+		$stats.show();
+		$transferPlan.show();
+	}
+	
+	var editPayment = function(index)
+	{
+		$addWizard.show();
+		$stats.hide();
+		$transferPlan.hide();
+		addWizard.show($addWizard.empty(), hideWizard, index);
+	};
 	
 	var update = function()
 	{
@@ -55,20 +71,29 @@ var StatsUI = function(model)
 			balances.push(person.diff);
 
 			var $details = $("<div/>").css("font-size", "0.7em").hide();
+			
 			person.eachPayment(function(payment)
-			{
-				var diff = payment.valuePair[1] - payment.valuePair[0];
-				$details.append($("<div/>").append(
-					$("<span/>").text(payment.text),
-					$("<span/>").text(diff)));
+			{	
+				var diff = payment.valuePair()[0] - payment.valuePair()[1];
+				var $detail = $("<div/>").append(
+					$("<span/>").text(payment.text()),
+					$("<span/>").text("(diff:" + diff + ")")).on("click", function()
+					{
+						editPayment(payment.index);
+					});
+					
+				$details.append($detail);
 			});
 			
-			var $stat = $("<div/>").append(
+			$personSummary = $("<span/>").append(
 				$("<span/>").text(person.name),
-				$("<span/>").text(person.diff),
+				$("<span/>").text(person.diff));
+			
+			var $stat = $("<div/>").append(
+				$personSummary,
 				$details);
 				
-			$stat.on("click", function() { $details.slideToggle('fast'); });
+			$personSummary.on("click", function() { $details.slideToggle('fast'); });
 				
 			$stats.append($stat);
 		});
@@ -93,7 +118,8 @@ var StatsUI = function(model)
 	{
 		$stats = $("<div/>");
 		$transferPlan = $("<div/>");
-		$parent.append($stats, $transferPlan);
+		$addWizard = $("<div/>").hide();
+		$parent.append($addWizard, $stats, $transferPlan);
 	};
 	
 	return {

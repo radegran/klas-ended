@@ -296,7 +296,8 @@ var DataHelper = function(data, onChange, onCommit)
 				
 					return {
 						"text": text,
-						"valuePair": valuePair
+						"valuePair": valuePair,
+						"index": paymentIndex
 					}
 				};
 			
@@ -388,6 +389,13 @@ var DataHelper = function(data, onChange, onCommit)
 	
 	var eachPayment = function(callback)
 	{
+		var cleanupPayments = function()
+		{
+			data.payments = data.payments.filter(function(p) { return !p.remove; });
+		};
+		
+		var stillEnumerating = true;
+		
 		var makePayment = function(index)
 		{
 			var payment = data.payments[index];
@@ -417,12 +425,17 @@ var DataHelper = function(data, onChange, onCommit)
 			var remove = function()
 			{
 				payment.remove = true;
+				if (!stillEnumerating)
+				{
+					cleanupPayments();
+				}
 			};
 			
 			callback({
 				"cost": cost,
 				"text": text,
-				"remove": remove
+				"remove": remove,
+				"index": index
 			});
 		};
 		
@@ -431,7 +444,9 @@ var DataHelper = function(data, onChange, onCommit)
 			makePayment(j);
 		}
 		
-		data.payments = data.payments.filter(function(p) { return !p.remove; });
+		stillEnumerating = false;
+		
+		cleanupPayments();
 	};
 	
 	var emptyPayment = function()
@@ -449,6 +464,11 @@ var DataHelper = function(data, onChange, onCommit)
 		return p;
 	};
 	
+	var paymentByIndex = function(index)
+	{
+		return data.payments[index];
+	}
+	
 	var commit = function()
 	{
 		(onCommit || $.noop)();
@@ -458,6 +478,7 @@ var DataHelper = function(data, onChange, onCommit)
 		"eachPerson": eachPerson,
 		"eachPayment": eachPayment,
 		"name": name,
+		"payment": paymentByIndex,
 		"addPerson": addPerson,
 		"addPayment": addPayment,
 		"title": title,

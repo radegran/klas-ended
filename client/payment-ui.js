@@ -217,17 +217,23 @@ var AddWizard = function(model)
 	
 	var $table;
 	
-	var show = function($parent, onClose)
+	var show = function($parent, onClose, paymentIndex)
 	{	
+		var isNewPayment = paymentIndex === undefined;
+	
 		var dh = model.getDataHelper();
-		var payment = dh.emptyPayment();
+		var payment = isNewPayment ? dh.emptyPayment() : dh.payment(paymentIndex);
 		var values = payment.values;
-		var payModel = PayModel(dh.names(), payment, true);
+		var payModel = PayModel(dh.names(), payment, isNewPayment);
 		
 		
 		var onSave = function()
 		{
-			dh.addPayment($title.html(), values);
+			if (isNewPayment)
+			{
+				dh.addPayment(payment.text, values);
+			}
+
 			dh.commit();
 			onClose();
 		};
@@ -321,11 +327,12 @@ var PaymentUI = function(addWizard, model)
 		$addWizard.hide();
 	};
 	
-	var createAddWizard = function()
+	var showAddWizard = function(paymentIndex)
 	{
+		// paymentIndex might be null. Then its a new payment
 		$addButton.hide();
 		$history.hide();
-		addWizard.show($addWizard.empty().show(), hideWizard);
+		addWizard.show($addWizard.empty().show(), hideWizard, paymentIndex);
 	};
 	
 	var create = function($parent)
@@ -335,7 +342,7 @@ var PaymentUI = function(addWizard, model)
 		$addButton = $("<div/>")
 			.addClass("add-button")
 			.text("New payment")
-			.on("click", createAddWizard);
+			.on("click", showAddWizard);
 		
 		$parent.append($addButton, $history, $addWizard);
 	};
@@ -350,9 +357,15 @@ var PaymentUI = function(addWizard, model)
 		{
 			var $p = $("<div/>");
 			var $label = $("<span/>").html(payment.text());
-			var $cost = $("<span/>").html(payment.cost());
+			var $cost = $("<span/>").html("(cost:" + payment.cost() + ")");
+			var $remove = $("<span/>").html("(X)").on("click", function() { payment.remove(); dh.commit(); });
 			
-			$history.append($p.append($label, $cost));
+			$p.on("click", function()
+			{
+				showAddWizard(payment.index);
+			});
+			
+			$history.append($p.append($label, $cost, $remove));
 		});
 	};
 	
