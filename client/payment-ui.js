@@ -1,4 +1,4 @@
-var PayModel = function(names, payment, allActiveDefault, onRemove)
+var PayModel = function(names, payment, allActiveDefault)
 {
 	var persons = [];
 	
@@ -13,7 +13,12 @@ var PayModel = function(names, payment, allActiveDefault, onRemove)
 				"pay": payment.values[i][0],
 				"expense": payment.values[i][1],
 				"isLocked": false,
-				"update": function() { updateCallback(p.isActive, p.pay, p.expense, p.isLocked); }
+				"update": function() 
+				{ 
+					payment.values[i][0] = p.pay;
+					payment.values[i][1] = p.expense;
+					updateCallback(p.isActive, p.pay, p.expense, p.isLocked); 
+				}
 			};
 			
 			var onUpdate = function(updateCallback_)
@@ -191,19 +196,19 @@ var PayModel = function(names, payment, allActiveDefault, onRemove)
 	};
 	
 	return {
-		"remove": onRemove,
 		"eachPerson": eachPerson
 	};
 };
 
-var AddWizard = function()
+var AddWizard = function(model)
 {
-	var Nav = function(rollback)
+	var Nav = function(onSave, onClose)
 	{
-		var $close = $("<span/>").text("(X)").on("click", rollback);
+		var $close = $("<span/>").text("(X)").on("click", onClose);
+		var $save = $("<span/>").text("(Save)").on("click", onSave);
 		var $next = $("<span/>").text("(>)").on("click", $.noop);
 		
-		var $nav = $("<div/>").append($next, $close);
+		var $nav = $("<div/>").append($next, $save, $close);
 		
 		return {
 			"element": function() { return $nav; }
@@ -212,19 +217,47 @@ var AddWizard = function()
 	
 	var $table;
 	
-	var show = function($parent, payModel)
-	{
-		var nav = Nav(payModel.remove);
+	var show = function($parent, onClose)
+	{	
+		var dh = model.getDataHelper();
+		var payment = dh.emptyPayment();
+		var values = payment.values;
+		var payModel = PayModel(dh.names(), payment, true);
 		
-		var editableTitle = editable("title...");
+		
+		var onSave = function()
+		{
+			dh.addPayment($title.html(), values);
+			dh.commit();
+			onClose();
+		};
+		
+		var nav = Nav(onSave, onClose);
+		
+		var editableTitle = editable(payment.text, function(value) { payment.text = value;});
 		var $title = editableTitle.element().on("click", editableTitle.editMode);
-		
 		$table = $("<table/>");
 		
 		payModel.eachPerson(function(person)
 		{
-			var editablePayment = editable(0, function(value) { person.pay(value); });
-			var editableExpense = editable(0, function(value) { person.expense(value); });
+			var editablePayment = editable(0, function(value) 
+			{
+				var parsed = toNonNegativeNumber(value);
+				if (parsed === null)
+				{
+					alert("ILLEGAL NUMBER!!!.   Todo här att fixa...");
+				}
+				person.pay(parsed); 
+			});
+			var editableExpense = editable(0, function(value) 
+			{ 
+				var parsed = toNonNegativeNumber(value);
+				if (parsed === null)
+				{
+					alert("ILLEGAL NUMBER!!!.   Todo här att fixa...");
+				}
+				person.expense(parsed); 
+			});
 			var locked = false;
 						
 			var $active = $("<span/>");
@@ -290,12 +323,9 @@ var PaymentUI = function(addWizard, model)
 	
 	var createAddWizard = function()
 	{
-		var dh = model.getDataHelper();
-		var payModel = PayModel(dh.names(), dh.emptyPayment(), true, function() { hideWizard(); });
-		
 		$addButton.hide();
 		$history.hide();
-		addWizard.show($addWizard.empty().show(), payModel);
+		addWizard.show($addWizard.empty().show(), hideWizard);
 	};
 	
 	var create = function($parent)

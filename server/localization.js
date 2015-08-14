@@ -99,21 +99,13 @@ var Strings =
 	"StartData": {
 		"en": {
 			"title": "Type a title here",
-			"names": ["Claude", "Gary", "Betty"],
-			"payments": [
-				{"text": "Example 1 - Betty buys pizza for everyone", "values": [0, 0, 30]},
-				{"text": "Example 2 - Gary buys drinks for himself and Betty", "values": [null, 29, 0]},
-				{"text": "Example 3 - Claude gives 40 to Gary", "values": [40, -40, null]}
-			]
+			"names": [],
+			"payments": []
 		},
 		"sv": {
 			"title": "Skriv en titel här",
-			"names": ["Klas", "Göran", "Berit"],
-			"payments": [
-				{"text": "Exempel 1 - Berit köper pizza till allihop", "values": [0, 0, 210]},
-				{"text": "Exempel 2 - Göran köper öl till sig själv och Berit", "values": [null, 140, 0]},
-				{"text": "Exempel 3 - Klas ger 100 kr till Göran", "values": [100, -100, null]}
-			]
+			"names": [],
+			"payments": []
 		},
 	}
 };

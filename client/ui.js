@@ -205,7 +205,7 @@ var MainUI = function(statsUI, paymentUI, peopleUI, model)
 	
 	var update = function()
 	{
-		vad dataHelper = model.getDataHelper();
+		var dataHelper = model.getDataHelper();
 		
 		var editableHeader = editable(dataHelper.title(), function(newValue)
 		{
@@ -225,14 +225,4 @@ var MainUI = function(statsUI, paymentUI, peopleUI, model)
 		"create": create,
 		"update": update
 	};
-};
-
-var data = {
-	"title": "Skriv en titel här",
-	"names": ["Klas", "Göran", "Berit"],
-	"payments": [
-		{"text": "Berit köper pizza till allihop", "values": [[0, 70], [0, 70], [210, 70]]},
-		{"text": "Göran köper öl till sig själv och Berit", "values": [[0, 0], [140, 70], [0, 70]]},
-		{"text": "Klas ger 100 kr till Göran", "values": [[100, 0], [0, 100], [0, 0]]}
-	]
 };

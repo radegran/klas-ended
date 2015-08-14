@@ -1,7 +1,5 @@
 var initialize = function(docProxy, net, networkStatus)
 {	
-////// ______
-	
 	var ui;
 	
 	var model = Model(function(newdata) 
@@ -11,7 +9,7 @@ var initialize = function(docProxy, net, networkStatus)
 	});
 	
 	var ui = MainUI(StatsUI(model), 
-				    PaymentUI(AddWizard(), model), 
+				    PaymentUI(AddWizard(model), model), 
 					PeopleUI(model),
 					model);
 	

@@ -1,5 +1,7 @@
 #!/bin/sh
 
+cd "$(dirname "$0")"
+
 time uglifyjs client/*.js --source-map client/dist/source.js.map --source-map-url "source.js.map" -o client/dist/source.js
 # cat client/*.js > client/dist/source.js
 

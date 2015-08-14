@@ -8,5 +8,8 @@ icon-144.png
 favicon.ico
 source.js
 localization.js
-
-# Tue Aug  4 20:49:55 WEDT 2015
+startapp.js
+fastclick.js
+d3.min.js
+jquery-1.11.3.min.js
+# Fri Aug 14 09:29:48 WEDT 2015

@@ -291,6 +291,13 @@ var SampleApp = function() {
             res.send(self.cache_get('app.html') );			
 		};
 		
+		// DEBUG
+		self.routes["/[.]*.js"] = function(req, res)
+		{
+			console.log("ALL-JS-MATCH: " + req.url)
+			res.send("");
+		};
+		
 		eachResource(function(file)
 		{	
 			self.routes['/' + file] = function(req, res)
