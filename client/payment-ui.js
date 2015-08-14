@@ -1,4 +1,4 @@
-var PayModel = function(names, payment, allActiveDefault)
+﻿var PayModel = function(names, payment, allActiveDefault)
 {
 	var persons = [];
 	
@@ -316,12 +316,12 @@ var AddWizard = function(model)
 var PaymentUI = function(addWizard, model)
 {
 	var $addButton = null;
-	var $history = null;
+	var $historyContainer = null;
 	var $addWizard = null;
 	
 	var hideWizard = function()
 	{
-		$history.show();
+		$historyContainer.show();
 		$addButton.show();
 		$addWizard.hide();
 	};
@@ -330,13 +330,15 @@ var PaymentUI = function(addWizard, model)
 	{
 		// paymentIndex might be null. Then its a new payment
 		$addButton.hide();
-		$history.hide();
+		$historyContainer.hide();
 		addWizard.show($addWizard.empty().show(), hideWizard, paymentIndex);
 	};
 	
 	var create = function($parent)
 	{
-		$history = $("<div/>");
+		var $historyHeader = $("<span/>").text("Tidigare betalningar:");
+		$pastPayments = $("<div/>");
+		$historyContainer = $("<div/>");
 		$addWizard = $("<div/>");
 		$addButton = $("<span/>")
 			.addClass("add-button")
@@ -346,13 +348,14 @@ var PaymentUI = function(addWizard, model)
 		$parent.append(
 			$("<div/>").addClass("flex-horizontal-container flex-justify-center").append(
 				$addButton), 
-			$history, 
+			$historyContainer.append($historyHeader, $pastPayments), 
 			$addWizard);
 	};
 	
 	var update = function()
 	{
-		$history.empty();
+		$pastPayments.empty();
+		$historyContainer.hide();
 		hideWizard();	
 		var dh = model.getDataHelper();
 		
@@ -368,10 +371,12 @@ var PaymentUI = function(addWizard, model)
 				showAddWizard(payment.index);
 			});
 			
-			$history.append($p.append(
+			$pastPayments.append($p.append(
 				$label.addClass("flex-grow"), 
 				$cost, 
 				$remove));
+				
+			$historyContainer.show();
 		});
 	};
 	

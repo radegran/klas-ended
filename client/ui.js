@@ -1,4 +1,4 @@
-var editable = function(text, onChange)
+﻿var editable = function(text, onChange)
 {
 	onChange = onChange || $.noop;
 	
@@ -41,6 +41,7 @@ var StatsUI = function(addWizard, model)
 	var $addWizard = null;
 	var $stats = null;
 	var $transferPlan = null;
+	var $transfers = null;
 	
 	var hideWizard = function()
 	{
@@ -60,7 +61,8 @@ var StatsUI = function(addWizard, model)
 	var update = function()
 	{
 		$stats.empty();
-		$transferPlan.empty();
+		$transfers.empty();
+		$transferPlan.hide();
 		
 		var balances = [];
 		
@@ -75,8 +77,13 @@ var StatsUI = function(addWizard, model)
 			person.eachPayment(function(payment)
 			{	
 				var diff = payment.valuePair()[0] - payment.valuePair()[1];
-				var $detail = $("<div/>").append(
-					$("<span/>").text(payment.text()),
+				if (diff === 0)
+				{
+					return;
+				}
+				
+				var $detail = $("<div/>").addClass("flex-horizontal-container").append(
+					$("<span/>").text(payment.text()).addClass("flex-grow"),
 					$("<span/>").text("(diff:" + diff + ")")).on("click", function()
 					{
 						editPayment(payment.index);
@@ -85,8 +92,8 @@ var StatsUI = function(addWizard, model)
 				$details.append($detail);
 			});
 			
-			$personSummary = $("<span/>").append(
-				$("<span/>").text(person.name),
+			$personSummary = $("<div/>").addClass("flex-horizontal-container").append(
+				$("<span/>").text(person.name).addClass("flex-grow"),
 				$("<span/>").text(person.diff));
 			
 			var $stat = $("<div/>").append(
@@ -110,16 +117,24 @@ var StatsUI = function(addWizard, model)
 				" till " +
 				dh.name(transfer.to));
 			
-			$transferPlan.append($plan);
+			$transfers.append($plan);
+			
+			$transferPlan.show();
 		});
 	};
 	
 	var create = function($parent)
 	{
+		var $transferHeader = $("<span/>").text("Överföringar:");
 		$stats = $("<div/>");
 		$transferPlan = $("<div/>");
+		$transfers = $("<div/>");
 		$addWizard = $("<div/>").hide();
-		$parent.append($addWizard, $stats, $transferPlan);
+		$parent.append(
+			$addWizard, 
+			$("<div/>").addClass("flex-horizontal-container flex-justify-center").append($stats), 
+			$("<div/>").addClass("flex-horizontal-container flex-justify-center").append(
+				$transferPlan.append($transferHeader, $transfers)));
 	};
 	
 	return {
