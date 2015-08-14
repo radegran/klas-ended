@@ -174,14 +174,42 @@ var PeopleUI = function(model)
 	};
 };
 
-var MainUI = function(statsUI, paymentUI, peopleUI, model)
+var HeaderUI = function(model)
 {
 	var $header = null;
 	
+	var update = function()
+	{
+		var dataHelper = model.getDataHelper();
+		
+		var editableHeader = editable(dataHelper.title(), function(newValue)
+		{
+			dataHelper.title(newValue);
+			dataHelper.commit();
+		});
+		
+		$header.empty();
+		$header.append(editableHeader.element().on("click", function() { editableHeader.editMode(); }));
+		
+	};
+	
+	var init = function($headerElem)
+	{
+		$header = $headerElem;
+	};
+	
+	return {
+		"update": update,
+		"init": init
+	};
+};
+
+var MainUI = function(statsUI, paymentUI, peopleUI, headerUI)
+{
 	var create = function($parent)
 	{
 		var $root = $("<div/>").addClass("ui-root flex-vertical-container");
-		$header = $("<div/>").addClass("ui-header small-padding");
+		var $header = $("<div/>").addClass("ui-header small-padding");
 		var $topNavigation = $("<div/>").addClass("ui-navigation-bar flex-horizontal-container small-padding");
 		var $statusBar = $("<div/>").addClass("ui-status-bar small-padding").text("status").hide();
 		var $contentContainer = $("<div/>").addClass("scrollable ui-content-container flex-grow small-padding");
@@ -201,6 +229,7 @@ var MainUI = function(statsUI, paymentUI, peopleUI, model)
 		statsUI.create($statsContent);
 		paymentUI.create($paymentContent);
 		peopleUI.create($peopleContent);
+		headerUI.init($header);
 		
 		$parent.empty().addClass("ui-parent");
 		$parent.append(
@@ -231,17 +260,7 @@ var MainUI = function(statsUI, paymentUI, peopleUI, model)
 	
 	var update = function()
 	{
-		var dataHelper = model.getDataHelper();
-		
-		var editableHeader = editable(dataHelper.title(), function(newValue)
-		{
-			dataHelper.title(newValue);
-			dataHelper.commit();
-		});
-		
-		$header.empty();
-		$header.append(editableHeader.element().on("click", function() { editableHeader.editMode(); }));
-		
+		headerUI.update();
 		statsUI.update();
 		paymentUI.update();
 		peopleUI.update();
