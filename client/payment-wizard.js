@@ -112,6 +112,8 @@ var PayModel = function(names, payment, allActiveDefault)
 					return;
 				}
 				
+				iteratePersons(function(p) { p.isLocked = false; });
+				
 				var expense = p.expense;
 				var pay = p.pay;
 				var contrib = pay - expense;

@@ -249,4 +249,25 @@ describe("PayModel", function()
 		verifyOut("bbb", true, 0, 33, false);
 		verifyOut("ccc", true, 0, 33, false);
 	});
+	
+	it("inactivate should drop payment/expense for other locked persons", function()
+	{
+		var pm = makePM(true, [0,0], [0,0], [0,0]);
+		
+		modify("aaa", "pay", 30);	
+		verifyOut("aaa", true, 30, 10, false);
+		verifyOut("bbb", true, 0, 10, false);
+		verifyOut("ccc", true, 0, 10, false);
+		
+		modify("bbb", "expense", 12);	
+		verifyOut("aaa", true, 30, 9, false);
+		verifyOut("bbb", true, 0, 12, true);
+		verifyOut("ccc", true, 0, 9, false);
+		
+		modify("aaa", "toggleActive");	
+		verifyOut("aaa", false, 0, 0, false);
+		verifyOut("bbb", true, 0, 0, false);
+		verifyOut("ccc", true, 0, 0, false);
+		
+	});
 });
