@@ -206,9 +206,8 @@ var AddWizard = function(model)
 	{
 		var $close = $("<span/>").text("(X)").on("click", onClose);
 		var $save = $("<span/>").text("(Save)").on("click", onSave);
-		var $next = $("<span/>").text("(>)").on("click", $.noop);
 		
-		var $nav = $("<div/>").append($next, $save, $close);
+		var $nav = $("<div/>").append($save, $close);
 		
 		return {
 			"element": function() { return $nav; }
@@ -339,12 +338,16 @@ var PaymentUI = function(addWizard, model)
 	{
 		$history = $("<div/>");
 		$addWizard = $("<div/>");
-		$addButton = $("<div/>")
+		$addButton = $("<span/>")
 			.addClass("add-button")
 			.text("New payment")
-			.on("click", showAddWizard);
+			.on("click", function() { showAddWizard(); });
 		
-		$parent.append($addButton, $history, $addWizard);
+		$parent.append(
+			$("<div/>").addClass("flex-horizontal-container flex-justify-center").append(
+				$addButton), 
+			$history, 
+			$addWizard);
 	};
 	
 	var update = function()
@@ -355,7 +358,7 @@ var PaymentUI = function(addWizard, model)
 		
 		dh.eachPayment(function(payment)
 		{
-			var $p = $("<div/>");
+			var $p = $("<div/>").addClass("flex-horizontal-container");
 			var $label = $("<span/>").html(payment.text());
 			var $cost = $("<span/>").html("(cost:" + payment.cost() + ")");
 			var $remove = $("<span/>").html("(X)").on("click", function() { payment.remove(); dh.commit(); });
@@ -365,7 +368,10 @@ var PaymentUI = function(addWizard, model)
 				showAddWizard(payment.index);
 			});
 			
-			$history.append($p.append($label, $cost, $remove));
+			$history.append($p.append(
+				$label.addClass("flex-grow"), 
+				$cost, 
+				$remove));
 		});
 	};
 	

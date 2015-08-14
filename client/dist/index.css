@@ -213,6 +213,13 @@ OFFLINE
     flex-direction: row;
 }
 
+.flex-justify-center {
+	-webkit-align-items: center;
+	align-items: center;
+	-webkit-justify-content: center;
+	justify-content: center;
+}
+
 .flex-grow {
 	-webkit-box-flex: 1;      /* OLD - iOS 6-, Safari 3.1-6 */
 	-moz-box-flex: 1;         /* OLD - Firefox 19- */

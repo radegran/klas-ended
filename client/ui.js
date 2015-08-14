@@ -136,7 +136,7 @@ var PeopleUI = function(model)
 	var create = function($parent)
 	{
 		$names = $("<div/>");
-		$add = $("<div/>")
+		$add = $("<span/>")
 			.addClass("add-button")
 			.text("(+)")
 			.on("click", function() { var dh = model.getDataHelper(); dh.addPerson(); dh.commit(); });
@@ -160,7 +160,7 @@ var PeopleUI = function(model)
 			var $remove = $("<span/>").text("(X)").on("click", function() { person.remove(); dh.commit(); });
 			
 			$row = $("<div/>").addClass("flex-horizontal-container").append(
-				$name,
+				$name.addClass("flex-grow"),
 				$edit,
 				$remove);
 
@@ -209,22 +209,27 @@ var MainUI = function(statsUI, paymentUI, peopleUI, headerUI)
 	var create = function($parent)
 	{
 		var $root = $("<div/>").addClass("ui-root flex-vertical-container");
-		var $header = $("<div/>").addClass("ui-header small-padding");
-		var $topNavigation = $("<div/>").addClass("ui-navigation-bar flex-horizontal-container small-padding");
+		var $header = $("<div/>");
+		var $topNavigation = $("<div/>").addClass("ui-navigation-bar flex-horizontal-container flex-justify-center small-padding");
 		var $statusBar = $("<div/>").addClass("ui-status-bar small-padding").text("status").hide();
 		var $contentContainer = $("<div/>").addClass("scrollable ui-content-container flex-grow small-padding");
 		
-		var $statsContent = $("<div/>").addClass("ui-content");
-		var $paymentContent = $("<div/>").addClass("ui-content");
-		var $peopleContent = $("<div/>").addClass("ui-content");
+		var $paymentContentFlex = $("<div/>").addClass("ui-content flex-horizontal-container flex-justify-center");
+		var $peopleContentFlex = $("<div/>").addClass("ui-content flex-horizontal-container flex-justify-center");
+		var $statsContentFlex = $("<div/>").addClass("ui-content flex-horizontal-container flex-justify-center");
+		var $headerFlex = $("<div/>").addClass("ui-header small-padding flex-horizontal-container flex-justify-center");
 		
-		var $overviewNav = $("<div/>").addClass("flex-grow").text("stats");
-		var $paymentsNav = $("<div/>").addClass("flex-grow").text("payments");
-		var $peopleNav = $("<div/>").addClass("flex-grow").text("people");
+		var $peopleContent = $("<div/>");
+		var $paymentContent = $("<div/>");
+		var $statsContent = $("<div/>");
+		
+		var $overviewNav = $("<div/>").text("(stats)");
+		var $paymentsNav = $("<div/>").text("(payments)");
+		var $peopleNav = $("<div/>").text("(people)");
 
-		$overviewNav.on("click", function() { $(".ui-content").hide(); $statsContent.show().focus(); });
-		$paymentsNav.on("click", function() { $(".ui-content").hide(); $paymentContent.show().focus(); });
-		$peopleNav.on("click", function() { $(".ui-content").hide(); $peopleContent.show().focus(); });
+		$overviewNav.on("click", function() { $(".ui-content").hide(); $statsContentFlex.show().focus(); });
+		$paymentsNav.on("click", function() { $(".ui-content").hide(); $paymentContentFlex.show().focus(); });
+		$peopleNav.on("click", function() { $(".ui-content").hide(); $peopleContentFlex.show().focus(); });
 		
 		statsUI.create($statsContent);
 		paymentUI.create($paymentContent);
@@ -234,16 +239,16 @@ var MainUI = function(statsUI, paymentUI, peopleUI, headerUI)
 		$parent.empty().addClass("ui-parent");
 		$parent.append(
 			$root.append(
-				$header,
+				$headerFlex.append($header),
 				$topNavigation.append(
 					$overviewNav,
 					$paymentsNav,
 					$peopleNav),
 				$statusBar,
 				$contentContainer.append(
-					$statsContent,
-					$paymentContent,
-					$peopleContent)));
+					$statsContentFlex.append($statsContent),
+					$paymentContentFlex.append($paymentContent),
+					$peopleContentFlex.append($peopleContent))));
 					
 		// Remove...
 		$paymentsNav.trigger("click");
