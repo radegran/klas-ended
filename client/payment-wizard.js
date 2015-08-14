@@ -214,8 +214,8 @@ var PersonPayment = function(person)
 	var $payLabel = $("<div/>").text("Betalat").addClass("flex-grow");
 	var $expenseLabel = $("<div/>").text("Konsumerat").addClass("flex-grow");
 	
-	var $payInput = $("<input type='number' pattern='[0-9]+([\.|,][0-9]+)?' step='none'/>");
-	var $expenseInput = $("<input type='number' pattern='[0-9]+([\.|,][0-9]+)?' step='none'/>");
+	var $payInput = $("<input type='number' pattern='[0-9]+([\.|,][0-9]+)?' step='none'/>").css("width", "4em");
+	var $expenseInput = $("<input type='number' pattern='[0-9]+([\.|,][0-9]+)?' step='none'/>").css("width", "4em");
 	var $locked = $("<div/>");
 	
 	var isLockedState;
