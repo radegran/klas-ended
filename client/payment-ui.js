@@ -355,8 +355,8 @@ var PaymentUI = function(addWizard, model)
 	var update = function()
 	{
 		$pastPayments.empty();
-		$historyContainer.hide();
 		hideWizard();	
+		$historyContainer.hide();
 		var dh = model.getDataHelper();
 		
 		dh.eachPayment(function(payment)
