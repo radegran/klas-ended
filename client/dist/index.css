@@ -213,6 +213,18 @@ OFFLINE
     flex-direction: row;
 }
 
+.flex-vertical-container {
+	display: -webkit-box;
+	display: -moz-box;
+	display: -ms-flexbox;
+	display: -webkit-flex;
+	display: flex;
+    -webkit-flex-direction: column;
+    -ms-flex-direction: column;
+    flex-direction: column;
+}
+
+
 .flex-justify-center {
 	-webkit-align-items: center;
 	align-items: center;
@@ -227,3 +239,5 @@ OFFLINE
 	-ms-flex: 1;              /* IE 10 */
 	flex: 1;                  /* NEW, Spec - Opera 12.1, Firefox 20+ */
 }
+
+input, select, textarea, button{font-family:inherit; font-size:inherit; padding:0 0.25em 0 0.25em; border:none}

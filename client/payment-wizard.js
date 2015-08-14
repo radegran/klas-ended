@@ -200,6 +200,92 @@ var PayModel = function(names, payment, allActiveDefault)
 	};
 };
 
+var PersonPayment = function(person)
+{
+	var $container = $("<div/>");
+	
+	var $nameRow = $("<div/>").addClass("flex-horizontal-container");
+	var $inputRow = $("<div/>").addClass("flex-horizontal-container");
+	
+	var $active = $("<div/>");
+	var $square = $("<div/>").html("&nbsp;&nbsp;");
+	var $name = $("<div/>").addClass("flex-grow").text(person.name);
+	
+	var $payLabel = $("<div/>").text("Betalat").addClass("flex-grow");
+	var $expenseLabel = $("<div/>").text("Konsumerat").addClass("flex-grow");
+	
+	var $payInput = $("<input type='number' pattern='[0-9]+([\.|,][0-9]+)?' step='none'/>");
+	var $expenseInput = $("<input type='number' pattern='[0-9]+([\.|,][0-9]+)?' step='none'/>");
+	var $locked = $("<div/>");
+	
+	var isLockedState;
+	
+	$container.append(
+		$nameRow.append(
+			$active,
+			$name),
+		$inputRow.append(
+			$square.clone(),
+			$("<div/>").addClass("flex-vertical-container").append(
+				$("<div/>").addClass("flex-horizontal-container").append(
+					$payLabel,
+					$payInput),
+				$("<div/>").addClass("flex-horizontal-container").append(
+					$expenseLabel,
+					$expenseInput)		
+			),
+			$("<div/>").addClass("flex-vertical-container").append(
+				$square.clone(),
+				$locked
+			)
+		)
+	);
+	
+	$payInput.on("change paste", function()
+	{
+		var parsed = toNonNegativeNumber($payInput.val());
+		var isNull = parsed === null;
+		
+		if (!isNull)
+		{
+			person.pay(parsed);
+		}
+		
+		$payInput.css("background-color", isNull ? "lightsalmon" : "");
+	});
+		
+	$expenseInput.on("change paste", function()
+	{
+		var parsed = toNonNegativeNumber($expenseInput.val());
+		var isNull = parsed === null;
+		
+		if (!isNull)
+		{
+			person.expense(parsed);
+		}
+		
+		$expenseInput.css("background-color", isNull ? "lightsalmon" : "");
+	});
+	
+	$active.on("click", function() { person.toggleActive(); });
+	$locked.on("click", function() { person.lock(!isLockedState); });
+	
+	person.onUpdate(function(isActive, payValue, expenseValue, isLocked)
+	{
+		isActiveState = isActive;
+		isLockedState = isLocked;
+		
+		$active.html(isActive ? "(A)" : "(-)");
+		$payInput.val(payValue);
+		$expenseInput.val(expenseValue);
+		$locked.html(isLocked ? "(L)" : "(-)");
+	});
+	
+	return {
+		"element": function() { return $container; }
+	};
+};
+
 var AddWizard = function(model)
 {
 	var Nav = function(onSave, onClose)
@@ -214,7 +300,7 @@ var AddWizard = function(model)
 		};
 	}
 	
-	var $table;
+	var $items;
 	
 	var show = function($parent, onClose, paymentIndex)
 	{	
@@ -224,7 +310,6 @@ var AddWizard = function(model)
 		var payment = isNewPayment ? dh.emptyPayment() : dh.payment(paymentIndex);
 		var values = payment.values;
 		var payModel = PayModel(dh.names(), payment, isNewPayment);
-		
 		
 		var onSave = function()
 		{
@@ -241,71 +326,79 @@ var AddWizard = function(model)
 		
 		var editableTitle = editable(payment.text, function(value) { payment.text = value;});
 		var $title = editableTitle.element().on("click", editableTitle.editMode);
-		$table = $("<table/>");
+		$items = $("<div/>");
+		
+		var personPayments = [];
 		
 		payModel.eachPerson(function(person)
 		{
-			var editablePayment = editable(0, function(value) 
-			{
-				var parsed = toNonNegativeNumber(value);
-				if (parsed === null)
-				{
-					alert("ILLEGAL NUMBER!!!.   Todo här att fixa...");
-				}
-				person.pay(parsed); 
-			});
-			var editableExpense = editable(0, function(value) 
-			{ 
-				var parsed = toNonNegativeNumber(value);
-				if (parsed === null)
-				{
-					alert("ILLEGAL NUMBER!!!.   Todo här att fixa...");
-				}
-				person.expense(parsed); 
-			});
-			var locked = false;
+			personPayments.push(PersonPayment(person));
+			// var editablePayment = editable(0, function(value) 
+			// {
+				// var parsed = toNonNegativeNumber(value);
+				// if (parsed === null)
+				// {
+					// alert("ILLEGAL NUMBER!!!.   Todo här att fixa...");
+				// }
+				// person.pay(parsed); 
+			// });
+			// var editableExpense = editable(0, function(value) 
+			// { 
+				// var parsed = toNonNegativeNumber(value);
+				// if (parsed === null)
+				// {
+					// alert("ILLEGAL NUMBER!!!.   Todo här att fixa...");
+				// }
+				// person.expense(parsed); 
+			// });
+			// var locked = false;
 						
-			var $active = $("<span/>");
-			var $payment = editablePayment.element();
-			var $expense = editableExpense.element();
-			var $locked = $("<span/>").on("click", function() { person.lock(!locked);});
+			// var $active = $("<span/>");
+			// var $payment = editablePayment.element();
+			// var $expense = editableExpense.element();
+			// var $locked = $("<span/>").on("click", function() { person.lock(!locked);});
 			
-			var $label = $("<div/>").append($active, $("<span/>").text(person.name))
-				.on("click", person.toggleActive);
+			// var $label = $("<div/>").append($active, $("<span/>").text(person.name))
+				// .on("click", person.toggleActive);
 			
-			person.onUpdate(function(isActiveicipating, payValue, expenseValue, isLocked)
-			{
-				if (isActiveicipating)
-				{
-					$active.text("(y)");
-					$payment.show();
-					$expense.show();
-					$locked.show();
-				}
-				else
-				{
-					$active.text("(n)");
-					$payment.hide();
-					$expense.hide();
-					$locked.hide();
-				}
+			// person.onUpdate(function(isActiveicipating, payValue, expenseValue, isLocked)
+			// {
+				// if (isActiveicipating)
+				// {
+					// $active.text("(y)");
+					// $payment.show();
+					// $expense.show();
+					// $locked.show();
+				// }
+				// else
+				// {
+					// $active.text("(n)");
+					// $payment.hide();
+					// $expense.hide();
+					// $locked.hide();
+				// }
 				
-				editablePayment.set(payValue);
-				editableExpense.set(expenseValue);
-				locked = isLocked;
-				$locked.text(isLocked ? "(L)" : "(N)");
-			});
+				// editablePayment.set(payValue);
+				// editableExpense.set(expenseValue);
+				// locked = isLocked;
+				// $locked.text(isLocked ? "(L)" : "(N)");
+			// });
 			
-			var $row = $("<tr/>").append(
-				$("<td/>").append($label), 
-				$("<td/>").append($payment), 
-				$("<td/>").append($expense),
-				$("<td/>").append($locked));
+			// var $row = $("<tr/>").append(
+				// $("<td/>").append($label), 
+				// $("<td/>").append($payment), 
+				// $("<td/>").append($expense),
+				// $("<td/>").append($locked));
 			
-			$table.append($row);
+			// $items.append($row);
 		});
 		
-		$parent.append($title, $table, nav.element());
+		$.each(personPayments, function(i, pp)
+		{
+			$items.append(pp.element());
+		});
+		
+		$parent.append($title, $items, nav.element());
 	};
 	
 	return {
