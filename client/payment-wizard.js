@@ -216,8 +216,15 @@ var PersonPayment = function(person)
 	var $payLabel = $("<div/>").text("Betalat").addClass("flex-grow");
 	var $expenseLabel = $("<div/>").text("Spenderat").addClass("flex-grow");
 	
-	var $payInput = $("<input type='number' pattern='[0-9]+([\.|,][0-9]+)?' step='none'/>").css("width", "4em");
-	var $expenseInput = $("<input type='number' pattern='[0-9]+([\.|,][0-9]+)?' step='none'/>").css("width", "4em");
+	var moneyInput = function() 
+	{
+		return $("<input type='number' pattern='[0-9]+([\.|,][0-9]+)?' step='none'/>")
+			.css("width", "4em")
+			.on("focus", function() { $(this).val("");});
+	};
+	
+	var $payInput = moneyInput();
+	var $expenseInput = moneyInput();
 	var $locked = $("<div/>");
 	
 	var isLockedState;
