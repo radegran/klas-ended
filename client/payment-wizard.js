@@ -359,7 +359,18 @@ var AddWizard = function(model)
 		
 		var nav = Nav(onSave, onClose);
 		
-		var editableTitle = editable(payment.text, function(value) { payment.text = value;});
+		var editableTitle = editable(payment.text, function(value) 
+		{ 
+			if (value == "")
+			{
+				payment.text = "...";
+				editableTitle.set("...");
+			}
+			else
+			{
+				payment.text = value;
+			}
+		});
 		
 		// Clear title on focus first time, if its a new payment
 		var $title = editableTitle.element()

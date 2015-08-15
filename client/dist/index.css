@@ -149,6 +149,10 @@ OFFLINE
 
 /* NEW UI */
 
+.small-padding {
+	padding: 0.2em;
+}
+
 .ui-parent {
 	margin: 0;
 }
@@ -160,12 +164,13 @@ OFFLINE
 }
 
 .ui-header {
-	color: #f8f8f8;
-	background-color: seagreen;
+	color: white;
+	background-color: mediumaquamarine;
 }
 
 .ui-navigation-bar {
-	background-color: lightseagreen;
+	background-color: mediumaquamarine;
+	padding-bottom: 0.5em;
 }
 
 .ui-content-container {
@@ -185,10 +190,6 @@ OFFLINE
 
 .add-button {
 	background-color: lightgreen;
-}
-
-.small-padding {
-	padding: 0.2em;
 }
 
 .flex-vertical-container {

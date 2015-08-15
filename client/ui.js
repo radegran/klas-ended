@@ -213,7 +213,10 @@ var HeaderUI = function(model)
 	{
 		var dataHelper = model.getDataHelper();
 		
-		var editableHeader = editable(dataHelper.title(), function(newValue)
+		var title = dataHelper.title();
+		title = (title == "") ? "..." : title;
+		
+		var editableHeader = editable(title, function(newValue)
 		{
 			dataHelper.title(newValue);
 			dataHelper.commit();
