@@ -211,10 +211,10 @@ var PersonPayment = function(person)
 	
 	var $active = $("<div/>").addClass("payment-active");
 	var $indent = $("<div/>").addClass("payment-indent");
-	var $name = $("<div/>").addClass("small-text flex-grow flex-justify-center").text(person.name);
+	var $name = $("<div/>").addClass("flex-grow").text(person.name);
 	
-	var $payLabel = $("<div/>").text("Betalat").addClass("small-text flex-grow flex-justify-center");
-	var $expenseLabel = $("<div/>").text("Spenderat").addClass("small-text flex-grow flex-justify-center");
+	var $payLabel = $("<div/>").text("Betalat").addClass("flex-grow");
+	var $expenseLabel = $("<div/>").text("Spenderat").addClass("flex-grow");
 	
 	var moneyInput = function() 
 	{
