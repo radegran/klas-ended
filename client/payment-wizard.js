@@ -360,7 +360,12 @@ var AddWizard = function(model)
 		var nav = Nav(onSave, onClose);
 		
 		var editableTitle = editable(payment.text, function(value) { payment.text = value;});
-		var $title = editableTitle.element().on("click", editableTitle.editMode);
+		
+		// Clear title on focus first time, if its a new payment
+		var $title = editableTitle.element()
+			.one("click", function() { if (isNewPayment) { editableTitle.set("");} })
+			.on("click", editableTitle.editMode);
+			
 		$items = $("<div/>");
 		
 		var personPayments = [];
@@ -368,64 +373,6 @@ var AddWizard = function(model)
 		payModel.eachPerson(function(person)
 		{
 			personPayments.push(PersonPayment(person));
-			// var editablePayment = editable(0, function(value) 
-			// {
-				// var parsed = toNonNegativeNumber(value);
-				// if (parsed === null)
-				// {
-					// alert("ILLEGAL NUMBER!!!.   Todo här att fixa...");
-				// }
-				// person.pay(parsed); 
-			// });
-			// var editableExpense = editable(0, function(value) 
-			// { 
-				// var parsed = toNonNegativeNumber(value);
-				// if (parsed === null)
-				// {
-					// alert("ILLEGAL NUMBER!!!.   Todo här att fixa...");
-				// }
-				// person.expense(parsed); 
-			// });
-			// var locked = false;
-						
-			// var $active = $("<span/>");
-			// var $payment = editablePayment.element();
-			// var $expense = editableExpense.element();
-			// var $locked = $("<span/>").on("click", function() { person.lock(!locked);});
-			
-			// var $label = $("<div/>").append($active, $("<span/>").text(person.name))
-				// .on("click", person.toggleActive);
-			
-			// person.onUpdate(function(isActiveicipating, payValue, expenseValue, isLocked)
-			// {
-				// if (isActiveicipating)
-				// {
-					// $active.text("(y)");
-					// $payment.show();
-					// $expense.show();
-					// $locked.show();
-				// }
-				// else
-				// {
-					// $active.text("(n)");
-					// $payment.hide();
-					// $expense.hide();
-					// $locked.hide();
-				// }
-				
-				// editablePayment.set(payValue);
-				// editableExpense.set(expenseValue);
-				// locked = isLocked;
-				// $locked.text(isLocked ? "(L)" : "(N)");
-			// });
-			
-			// var $row = $("<tr/>").append(
-				// $("<td/>").append($label), 
-				// $("<td/>").append($payment), 
-				// $("<td/>").append($expense),
-				// $("<td/>").append($locked));
-			
-			// $items.append($row);
 		});
 		
 		$.each(personPayments, function(i, pp)
