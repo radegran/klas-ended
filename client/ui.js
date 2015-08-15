@@ -238,13 +238,20 @@ var MainUI = function(statsUI, paymentUI, peopleUI, headerUI)
 		var $paymentContent = $("<div/>");
 		var $statsContent = $("<div/>");
 		
-		var $overviewNav = $("<div/>").text("(stats)");
-		var $paymentsNav = $("<div/>").text("(payments)");
-		var $peopleNav = $("<div/>").text("(people)");
+		var $overviewNav = $("<div/>").addClass("nav nav-stats");
+		var $paymentsNav = $("<div/>").addClass("nav nav-payments");
+		var $peopleNav = $("<div/>").addClass("nav nav-people");
+		
+		var navClick = function()
+		{
+			$(".ui-content").hide();
+			$('.nav').addClass("transparent"); 
+			$(this).removeClass("transparent");
+		};
 
-		$overviewNav.on("click", function() { $(".ui-content").hide(); $statsContentFlex.show().focus(); });
-		$paymentsNav.on("click", function() { $(".ui-content").hide(); $paymentContentFlex.show().focus(); });
-		$peopleNav.on("click", function() { $(".ui-content").hide(); $peopleContentFlex.show().focus(); });
+		$overviewNav.on("click", function() { navClick.call(this); $statsContentFlex.show().focus(); });
+		$paymentsNav.on("click", function() { navClick.call(this); $paymentContentFlex.show().focus(); });
+		$peopleNav.on("click", function() { navClick.call(this); $peopleContentFlex.show().focus(); });
 		
 		statsUI.create($statsContent);
 		paymentUI.create($paymentContent);

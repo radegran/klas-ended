@@ -204,17 +204,17 @@ var PayModel = function(names, payment, allActiveDefault)
 
 var PersonPayment = function(person)
 {
-	var $container = $("<div/>");
+	var $container = $("<div/>").addClass("payment-person-container");
 	
 	var $nameRow = $("<div/>").addClass("flex-horizontal-container");
 	var $inputRow = $("<div/>").addClass("flex-horizontal-container");
 	
-	var $active = $("<div/>");
-	var $square = $("<div/>").html("&nbsp;&nbsp;");
+	var $active = $("<div/>").addClass("payment-active");
+	var $indent = $("<div/>").addClass("payment-indent");
 	var $name = $("<div/>").addClass("flex-grow").text(person.name);
 	
 	var $payLabel = $("<div/>").text("Betalat").addClass("flex-grow");
-	var $expenseLabel = $("<div/>").text("Konsumerat").addClass("flex-grow");
+	var $expenseLabel = $("<div/>").text("Spenderat").addClass("flex-grow");
 	
 	var $payInput = $("<input type='number' pattern='[0-9]+([\.|,][0-9]+)?' step='none'/>").css("width", "4em");
 	var $expenseInput = $("<input type='number' pattern='[0-9]+([\.|,][0-9]+)?' step='none'/>").css("width", "4em");
@@ -227,18 +227,16 @@ var PersonPayment = function(person)
 			$active,
 			$name),
 		$inputRow.append(
-			$square.clone(),
+			$indent.clone(),
 			$("<div/>").addClass("flex-vertical-container").append(
 				$("<div/>").addClass("flex-horizontal-container").append(
 					$payLabel,
-					$payInput),
+					$payInput,
+					$indent.clone()),
 				$("<div/>").addClass("flex-horizontal-container").append(
 					$expenseLabel,
-					$expenseInput)		
-			),
-			$("<div/>").addClass("flex-vertical-container").append(
-				$square.clone(),
-				$locked
+					$expenseInput,
+					$locked)		
 			)
 		)
 	);
@@ -269,18 +267,46 @@ var PersonPayment = function(person)
 		$expenseInput.css("background-color", isNull ? "lightsalmon" : "");
 	});
 	
-	$active.on("click", function() { person.toggleActive(); });
 	$locked.on("click", function() { person.lock(!isLockedState); });
 	
 	person.onUpdate(function(isActive, payValue, expenseValue, isLocked)
 	{
 		isActiveState = isActive;
 		isLockedState = isLocked;
+
+		$active.off("click");
+		$container.off("click");
 		
-		$active.html(isActive ? "(A)" : "(-)");
+		var toggleActive = function(e)
+		{			
+			person.toggleActive(); 
+			e.stopPropagation();
+		};
+		
+		if (isActive)
+		{
+			$container.removeClass("transparent");
+			$active.on("click", toggleActive);
+		}
+		else
+		{
+			$container.addClass("transparent");
+			$container.on("click", toggleActive);
+		}
+		
+		if (isLocked)
+		{
+			$locked.removeClass("payment-unlocked transparent");
+			$locked.addClass("payment-locked");
+		}
+		else
+		{
+			$locked.removeClass("payment-locked");
+			$locked.addClass("payment-unlocked transparent");
+		}
+		
 		$payInput.val(payValue);
 		$expenseInput.val(expenseValue);
-		$locked.html(isLocked ? "(L)" : "(-)");
 	});
 	
 	return {

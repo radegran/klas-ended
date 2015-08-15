@@ -240,4 +240,63 @@ OFFLINE
 	flex: 1;                  /* NEW, Spec - Opera 12.1, Firefox 20+ */
 }
 
+.nav-stats,
+.nav-people,
+.nav-payments {
+	height: 1.5em;
+	width: 1.5em;
+	background-size: 100%;
+	cursor: pointer;
+	margin: 0 0.5em 0 0.5em;
+}
+
+.payment-person-container {
+	margin: 0.5em 0 0.5em 0;
+}
+
+.payment-indent,
+.payment-active,
+.payment-locked ,
+.payment-unlocked {
+	height: 1.2em;
+	width: 1.2em;
+	background-size: 90%;
+	background-position: center;
+	background-repeat: no-repeat;
+	cursor: pointer;
+	margin: 0.15em 0.3em 0.15em 0.3em;
+}
+
+.payment-indent  {
+	cursor: none;
+}
+
+.transparent {
+	opacity: 0.5;
+}
+
+.payment-active {
+	background-image: url('power.png');
+}
+
+.payment-locked {
+	background-image: url('locked.png');
+}
+
+.payment-unlocked {
+	background-image: url('unlocked.png');
+}
+
+.nav-stats {
+	background-image: url('barchart.png');
+}
+
+.nav-people {
+	background-image: url('contacts.png');
+}
+
+.nav-payments {
+	background-image: url('creditcard.png');
+}
+
 input, select, textarea, button{font-family:inherit; font-size:inherit; padding:0 0.25em 0 0.25em; border:none}
