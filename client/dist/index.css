@@ -153,30 +153,43 @@ OFFLINE
 	padding: 0.2em;
 }
 
+.small-text {
+	font-size: 0.7em;
+}
+
 .ui-parent {
 	margin: 0;
 }
 
 .ui-root {
-	font-size: 1.5em;
+	font-size: 1em;
 	width: 100%;
 	height: 100%;
 }
 
 .ui-header {
-	color: white;
-	background-color: mediumaquamarine;
+	font-size: 1.5em;
+	color: black;
 }
 
 .ui-navigation-bar {
-	background-color: mediumaquamarine;
 	padding-bottom: 0.5em;
 }
 
+.ui-navigation-bar,
+.ui-header {
+	background-color:khaki;
+}
+
+input {
+	background-color: khaki;
+}
+
 .ui-content-container {
-	background-color: lightgray;
+	background-color: none;
 	overflow-y: scroll;
 	-webkit-overflow-scrolling: touch;
+	padding: 1em 0.3em 1em 0.3em;
 }
 
 .ui-content {
@@ -225,7 +238,6 @@ OFFLINE
     flex-direction: column;
 }
 
-
 .flex-justify-center {
 	-webkit-align-items: center;
 	align-items: center;
@@ -255,6 +267,38 @@ OFFLINE
 	margin: 0.5em 0 0.5em 0;
 }
 
+.payment-add,
+.people-add,
+.payment-back,
+.payment-save {
+	height: 2.5em;
+	width: 2.5em;
+	background-size: 90%;
+	background-position: center;
+	background-repeat: no-repeat;
+	cursor: pointer;
+	margin: 1em 0.5em 1em 0.5em;
+}
+
+.payment-back {
+	background-image: url('arrow-left.png');
+}
+
+.payment-save {
+	background-image: url('upload.png');
+}
+
+.people-remove {
+	background-image: url('stop.png');
+}
+
+.people-edit {
+	background-image: url('compose.png');
+}
+
+.people-remove,
+.people-edit,
+.payment-remove,
 .payment-indent,
 .payment-active,
 .payment-locked ,
@@ -268,16 +312,22 @@ OFFLINE
 	margin: 0.15em 0.3em 0.15em 0.3em;
 }
 
+.people-remove,
+.people-edit {
+	margin: 0.15em 0.15em 0.15em 0.15em;
+}
+
 .payment-indent  {
 	cursor: none;
 }
 
 .transparent {
-	opacity: 0.5;
+	opacity: 0.35;
 }
 
+.payment-remove,
 .payment-active {
-	background-image: url('power.png');
+	background-image: url('stop.png');
 }
 
 .payment-locked {
@@ -286,6 +336,11 @@ OFFLINE
 
 .payment-unlocked {
 	background-image: url('unlocked.png');
+}
+
+.payment-add,
+.people-add {
+	background-image: url('plus.png');
 }
 
 .nav-stats {

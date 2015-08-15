@@ -211,10 +211,10 @@ var PersonPayment = function(person)
 	
 	var $active = $("<div/>").addClass("payment-active");
 	var $indent = $("<div/>").addClass("payment-indent");
-	var $name = $("<div/>").addClass("flex-grow").text(person.name);
+	var $name = $("<div/>").addClass("small-text flex-grow flex-justify-center").text(person.name);
 	
-	var $payLabel = $("<div/>").text("Betalat").addClass("flex-grow");
-	var $expenseLabel = $("<div/>").text("Spenderat").addClass("flex-grow");
+	var $payLabel = $("<div/>").text("Betalat").addClass("small-text flex-grow flex-justify-center");
+	var $expenseLabel = $("<div/>").text("Spenderat").addClass("small-text flex-grow flex-justify-center");
 	
 	var moneyInput = function() 
 	{
@@ -325,10 +325,16 @@ var AddWizard = function(model)
 {
 	var Nav = function(onSave, onClose)
 	{
-		var $close = $("<span/>").text("(X)").on("click", onClose);
-		var $save = $("<span/>").text("(Save)").on("click", onSave);
+		var $close = $("<span/>").addClass("payment-back").on("click", onClose);
+		var $save = $("<span/>").addClass("payment-save").on("click", onSave);
 		
-		var $nav = $("<div/>").append($save, $close);
+		var $dummy = $("<div/>").addClass("flex-grow");
+		
+		var $nav = $("<div/>").addClass("flex-horizontal-container").append(
+			$dummy.clone(),
+			$close, 
+			$save,
+			$dummy.clone());
 		
 		return {
 			"element": function() { return $nav; }
@@ -391,7 +397,10 @@ var AddWizard = function(model)
 			$items.append(pp.element());
 		});
 		
-		$parent.append($title, $items, nav.element());
+		$parent.append(
+			$("<div/>").addClass("flex-horizontal-container flex-justify-center").append($title), 
+			$items, 
+			nav.element());
 	};
 	
 	return {

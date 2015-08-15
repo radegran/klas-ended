@@ -36,6 +36,16 @@
 	}
 };
 
+var whiteSpace = function(count)
+{
+	var str = "";
+	while(count--)
+	{
+		str += "&nbsp;";
+	}
+	return str;
+};
+
 var formatMoney = function(value)
 {
 	var fixed = value.toFixed(2);
@@ -99,7 +109,7 @@ var StatsUI = function(addWizard, model)
 				}
 				
 				var $detail = $("<div/>").addClass("flex-horizontal-container").append(
-					$("<span/>").text(payment.text()).addClass("flex-grow"),
+					$("<span/>").html(payment.text() + whiteSpace(3)).addClass("flex-grow"),
 					$("<span/>").text(formatMoney(diff))).on("click", function()
 					{
 						editPayment(payment.index);
@@ -109,7 +119,7 @@ var StatsUI = function(addWizard, model)
 			});
 			
 			$personSummary = $("<div/>").addClass("flex-horizontal-container").append(
-				$("<span/>").text(person.name).addClass("flex-grow"),
+				$("<span/>").html(person.name + whiteSpace(3)).addClass("flex-grow"),
 				$("<span/>").text(formatMoney(person.diff)));
 			
 			var $stat = $("<div/>").append(
@@ -141,16 +151,20 @@ var StatsUI = function(addWizard, model)
 	
 	var create = function($parent)
 	{
-		var $transferHeader = $("<span/>").text("Överföringar:");
+		var $transferHeader = $("<div/>").text("Utjämnande överföringar");
 		$stats = $("<div/>");
-		$transferPlan = $("<div/>");
+		$transferPlan = $("<div/>").addClass("small-text");
 		$transfers = $("<div/>");
 		$addWizard = $("<div/>").hide();
 		$parent.append(
 			$addWizard, 
 			$("<div/>").addClass("flex-horizontal-container flex-justify-center").append($stats), 
 			$("<div/>").addClass("flex-horizontal-container flex-justify-center").append(
-				$transferPlan.append($transferHeader, $transfers)));
+				$transferPlan.append(
+					$("<div/>").html(whiteSpace(1)),
+					$("<div/>").addClass("flex-horizontal-container flex-justify-center").append($transferHeader), 
+					$("<div/>").html(whiteSpace(1)),
+					$transfers)));
 	};
 	
 	return {
@@ -167,9 +181,8 @@ var PeopleUI = function(model)
 	var create = function($parent)
 	{
 		$names = $("<div/>");
-		$add = $("<span/>")
-			.addClass("add-button")
-			.text("(+)")
+		$add = $("<div/>")
+			.addClass("people-add")
 			.on("click", function() { var dh = model.getDataHelper(); dh.addPerson(); dh.commit(); });
 		
 		$parent.append($names, $add);
@@ -187,11 +200,12 @@ var PeopleUI = function(model)
 			
 			var editableName = editable(person.name, function(newName) { person.setName(newName); dh.commit(); });
 			var $name = editableName.element();
-			var $edit = $("<span/>").text("(...)").on("click", function() { editableName.editMode() });
-			var $remove = $("<span/>").text("(X)").on("click", function() { person.remove(); dh.commit(); });
+			var $edit = $("<div/>").addClass("people-edit").on("click", function() { editableName.editMode() });
+			var $remove = $("<div/>").addClass("people-remove").on("click", function() { person.remove(); dh.commit(); });
 			
 			$row = $("<div/>").addClass("flex-horizontal-container").append(
 				$name.addClass("flex-grow"),
+				$("<span/>").html(whiteSpace(3)),
 				$edit,
 				$remove);
 

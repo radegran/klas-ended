@@ -21,19 +21,20 @@
 	
 	var create = function($parent)
 	{
-		var $historyHeader = $("<span/>").text("Tidigare betalningar:");
+		var $historyHeader = $("<div/>").addClass("small-text").text("Tidigare betalningar");
 		$pastPayments = $("<div/>");
 		$historyContainer = $("<div/>");
 		$addWizard = $("<div/>");
-		$addButton = $("<span/>")
-			.addClass("add-button")
-			.text("New payment")
+		$addButton = $("<div/>")
+			.addClass("payment-add")
 			.on("click", function() { showAddWizard(); });
 		
 		$parent.append(
-			$("<div/>").addClass("flex-horizontal-container flex-justify-center").append(
-				$addButton), 
-			$historyContainer.append($historyHeader, $pastPayments), 
+			$("<div/>").addClass("flex-horizontal-container flex-justify-center").append($addButton), 
+			$historyContainer.append(
+				$("<div/>").addClass("flex-horizontal-container flex-justify-center").append($historyHeader), 
+				$("<div/>").html(whiteSpace(1)),
+				$pastPayments), 
 			$addWizard);
 	};
 	
@@ -47,9 +48,9 @@
 		dh.eachPayment(function(payment)
 		{
 			var $p = $("<div/>").addClass("flex-horizontal-container");
-			var $label = $("<span/>").html(payment.text());
-			var $cost = $("<span/>").html("(cost:" + payment.cost() + ")");
-			var $remove = $("<span/>").html("(X)").on("click", function() { payment.remove(); dh.commit(); });
+			var $label = $("<span/>").html(payment.text() + whiteSpace(3));
+			var $cost = $("<span/>").html(formatMoney(payment.cost()));
+			var $remove = $("<div/>").addClass("payment-remove").on("click", function() { payment.remove(); dh.commit(); });
 			
 			$p.on("click", function()
 			{
