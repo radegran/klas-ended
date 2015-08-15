@@ -34,7 +34,23 @@
 		"element": function() { return $cont; },
 		"set": set
 	}
-};	
+};
+
+var formatMoney = function(value)
+{
+	var fixed = value.toFixed(2);
+	var split = ("" + fixed).split(".");
+	var isNaturalNumber = (split[1] === "00");
+	
+	if (isNaturalNumber)
+	{
+		return parseInt(split[0]);
+	}
+	else 
+	{
+		return fixed;
+	}
+}
 
 var StatsUI = function(addWizard, model)
 {
@@ -84,7 +100,7 @@ var StatsUI = function(addWizard, model)
 				
 				var $detail = $("<div/>").addClass("flex-horizontal-container").append(
 					$("<span/>").text(payment.text()).addClass("flex-grow"),
-					$("<span/>").text("(diff:" + diff + ")")).on("click", function()
+					$("<span/>").text(formatMoney(diff))).on("click", function()
 					{
 						editPayment(payment.index);
 					});
@@ -94,7 +110,7 @@ var StatsUI = function(addWizard, model)
 			
 			$personSummary = $("<div/>").addClass("flex-horizontal-container").append(
 				$("<span/>").text(person.name).addClass("flex-grow"),
-				$("<span/>").text(person.diff));
+				$("<span/>").text(formatMoney(person.diff)));
 			
 			var $stat = $("<div/>").append(
 				$personSummary,
@@ -113,7 +129,7 @@ var StatsUI = function(addWizard, model)
 			var $plan = $("<div/>").text(
 				dh.name(transfer.from) +
 				" ska ge " +
-				transfer.amount + 
+				formatMoney(transfer.amount) + 
 				" till " +
 				dh.name(transfer.to));
 			

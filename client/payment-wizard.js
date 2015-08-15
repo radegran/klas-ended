@@ -312,8 +312,8 @@ var PersonPayment = function(person)
 			$locked.addClass("payment-unlocked transparent");
 		}
 		
-		$payInput.val(payValue);
-		$expenseInput.val(expenseValue);
+		$payInput.val(formatMoney(payValue));
+		$expenseInput.val(formatMoney(expenseValue));
 	});
 	
 	return {
