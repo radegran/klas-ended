@@ -46,13 +46,13 @@ var whiteSpace = function(count)
 	return str;
 };
 
-var formatMoney = function(value)
+var formatMoney = function(value, keepDecimals)
 {
 	var fixed = value.toFixed(2);
 	var split = ("" + fixed).split(".");
 	var isNaturalNumber = (split[1] === "00");
 	
-	if (isNaturalNumber)
+	if (isNaturalNumber && !keepDecimals)
 	{
 		return parseInt(split[0]);
 	}
@@ -110,7 +110,7 @@ var StatsUI = function(addWizard, model)
 				
 				var $detail = $("<div/>").addClass("flex-horizontal-container").append(
 					$("<span/>").html(payment.text() + whiteSpace(3)).addClass("flex-grow"),
-					$("<span/>").text(formatMoney(diff))).on("click", function()
+					$("<span/>").text(formatMoney(diff, true))).on("click", function()
 					{
 						editPayment(payment.index);
 					});
@@ -120,7 +120,7 @@ var StatsUI = function(addWizard, model)
 			
 			$personSummary = $("<div/>").addClass("flex-horizontal-container").append(
 				$("<span/>").html(person.name + whiteSpace(3)).addClass("flex-grow"),
-				$("<span/>").text(formatMoney(person.diff)));
+				$("<span/>").text(formatMoney(person.diff, true)));
 			
 			var $stat = $("<div/>").append(
 				$personSummary,
@@ -153,8 +153,8 @@ var StatsUI = function(addWizard, model)
 	{
 		var $transferHeader = $("<div/>").text("Utjämnande överföringar");
 		$stats = $("<div/>");
-		$transferPlan = $("<div/>").addClass("small-text");
-		$transfers = $("<div/>");
+		$transferPlan = $("<div/>");
+		$transfers = $("<div/>").addClass("small-text");
 		$addWizard = $("<div/>").hide();
 		$parent.append(
 			$addWizard, 

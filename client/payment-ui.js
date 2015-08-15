@@ -21,8 +21,8 @@
 	
 	var create = function($parent)
 	{
-		var $historyHeader = $("<div/>").addClass("small-text").text("Tidigare betalningar");
-		$pastPayments = $("<div/>");
+		var $historyHeader = $("<div/>").text("Tidigare betalningar");
+		$pastPayments = $("<div/>").addClass("small-text");
 		$historyContainer = $("<div/>");
 		$addWizard = $("<div/>");
 		$addButton = $("<div/>")

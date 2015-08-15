@@ -256,8 +256,8 @@ input {
 .nav-stats,
 .nav-people,
 .nav-payments {
-	height: 1.5em;
-	width: 1.5em;
+	height: 2em;
+	width: 2em;
 	background-size: 100%;
 	cursor: pointer;
 	margin: 0 0.5em 0 0.5em;
@@ -271,8 +271,8 @@ input {
 .people-add,
 .payment-back,
 .payment-save {
-	height: 2.5em;
-	width: 2.5em;
+	height: 3.5em;
+	width: 3.5em;
 	background-size: 90%;
 	background-position: center;
 	background-repeat: no-repeat;
