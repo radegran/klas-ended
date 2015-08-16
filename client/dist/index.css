@@ -154,7 +154,30 @@ OFFLINE
 }
 
 .small-text {
-	font-size: 0.7em;
+	font-size: 0.75em;
+}
+
+.payment-title-wizard {
+	font-size: 1.2em;
+	margin: 1em 0 1em 0;
+}
+
+.person-summary {
+	padding: 0.3em;
+	margin:0.2em;
+	cursor: pointer;
+	border: 1px solid khaki;
+    -moz-border-radius: 0.5em;
+    -webkit-border-radius: 0.5em;
+    -khtml-border-radius: 0.5em;
+    border-radius: 0.5em;
+}
+
+.pay-label,
+.expense-label
+{
+	font-size: 0.8em;
+	padding: 0.1em 0.2em 0.1em 0;
 }
 
 .ui-parent {
@@ -189,7 +212,7 @@ input {
 	background-color: none;
 	overflow-y: scroll;
 	-webkit-overflow-scrolling: touch;
-	padding: 1em 0.3em 1em 0.3em;
+	padding: 2em 0.3em 1em 0.3em;
 }
 
 .ui-content {
@@ -341,6 +364,18 @@ input {
 .payment-add,
 .people-add {
 	background-image: url('plus.png');
+}
+
+.clickable-payment {
+	padding: 0.3em;
+	margin:0.2em;
+	cursor: pointer;
+    -moz-border-radius: 0.5em;
+    -webkit-border-radius: 0.5em;
+    -khtml-border-radius: 0.5em;
+    border-radius: 0.5em;
+	background-color: khaki;
+	
 }
 
 .nav-stats {

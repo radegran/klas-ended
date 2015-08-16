@@ -47,7 +47,8 @@
 		
 		dh.eachPayment(function(payment)
 		{
-			var $p = $("<div/>").addClass("flex-horizontal-container");
+			var $p = $("<div/>").addClass("flex-horizontal-container flex-justify-center");
+			var $clickable = $("<div/>").addClass("flex-horizontal-container flex-grow clickable-payment");
 			var $label = $("<span/>").html(payment.text() + whiteSpace(3));
 			var $cost = $("<span/>").html(formatMoney(payment.cost()));
 			var $remove = $("<div/>").addClass("payment-remove").on("click", function() { payment.remove(); dh.commit(); });
@@ -58,8 +59,9 @@
 			});
 			
 			$pastPayments.append($p.append(
-				$label.addClass("flex-grow"), 
-				$cost, 
+				$clickable.append(
+					$label.addClass("flex-grow"), 
+					$cost), 
 				$remove));
 				
 			$historyContainer.show();

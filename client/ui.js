@@ -48,18 +48,22 @@ var whiteSpace = function(count)
 
 var formatMoney = function(value, keepDecimals)
 {
+	var color = (value > 0) ? "green" : (value < 0 ? "red" : "");
 	var fixed = value.toFixed(2);
 	var split = ("" + fixed).split(".");
 	var isNaturalNumber = (split[1] === "00");
+	var ret = "";
 	
 	if (isNaturalNumber && !keepDecimals)
 	{
-		return parseInt(split[0]);
+		ret = parseInt(split[0]);
 	}
 	else 
 	{
-		return fixed;
+		ret = fixed;
 	}
+	
+	return $("<span/>").css("color", color).text(ret);
 }
 
 var StatsUI = function(addWizard, model)
@@ -91,14 +95,25 @@ var StatsUI = function(addWizard, model)
 		$transferPlan.hide();
 		
 		var balances = [];
+		var persons = [];
 		
 		var dh = model.getDataHelper();
 		
 		dh.eachPerson(function(person)
 		{
+			persons.push(person);
+		});
+		
+		persons = persons.sort(function(p1, p2) 
+		{ 
+			return p1.diff - p2.diff;
+		});
+		
+		$.each(persons, function(i, person)
+		{
 			balances.push(person.diff);
 
-			var $details = $("<div/>").css("font-size", "0.7em").hide();
+			var $details = $("<div/>").addClass("small-text").hide();
 			
 			person.eachPayment(function(payment)
 			{	
@@ -108,9 +123,9 @@ var StatsUI = function(addWizard, model)
 					return;
 				}
 				
-				var $detail = $("<div/>").addClass("flex-horizontal-container").append(
+				var $detail = $("<div/>").addClass("clickable-payment flex-horizontal-container").append(
 					$("<span/>").html(payment.text() + whiteSpace(3)).addClass("flex-grow"),
-					$("<span/>").text(formatMoney(diff, true))).on("click", function()
+					$("<span/>").html(formatMoney(diff, true))).on("click", function()
 					{
 						editPayment(payment.index);
 					});
@@ -118,9 +133,9 @@ var StatsUI = function(addWizard, model)
 				$details.append($detail);
 			});
 			
-			$personSummary = $("<div/>").addClass("flex-horizontal-container").append(
+			$personSummary = $("<div/>").addClass("flex-horizontal-container person-summary").append(
 				$("<span/>").html(person.name + whiteSpace(3)).addClass("flex-grow"),
-				$("<span/>").text(formatMoney(person.diff, true)));
+				$("<span/>").html(formatMoney(person.diff, true)));
 			
 			var $stat = $("<div/>").append(
 				$personSummary,
@@ -136,12 +151,10 @@ var StatsUI = function(addWizard, model)
 		$.each(plan, function(i, transfer)
 		{
 			// Improve UI
-			var $plan = $("<div/>").text(
-				dh.name(transfer.from) +
-				" ska ge " +
-				formatMoney(transfer.amount) + 
-				" till " +
-				dh.name(transfer.to));
+			var $plan = $("<div/>").append(
+				$("<span/>").html(dh.name(transfer.from) + " ska ge "),
+				formatMoney(transfer.amount), 
+				$("<span/>").html(" till " + dh.name(transfer.to)));
 			
 			$transfers.append($plan);
 			

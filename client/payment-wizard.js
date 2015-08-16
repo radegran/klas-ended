@@ -213,8 +213,8 @@ var PersonPayment = function(person)
 	var $indent = $("<div/>").addClass("payment-indent");
 	var $name = $("<div/>").addClass("flex-grow").text(person.name);
 	
-	var $payLabel = $("<div/>").text("Betalat").addClass("flex-grow");
-	var $expenseLabel = $("<div/>").text("Spenderat").addClass("flex-grow");
+	var $payLabel = $("<div/>").text("Betalat").addClass("flex-grow pay-label");
+	var $expenseLabel = $("<div/>").text("Spenderat").addClass("flex-grow expense-label");
 	
 	var moneyInput = function() 
 	{
@@ -312,8 +312,8 @@ var PersonPayment = function(person)
 			$locked.addClass("payment-unlocked transparent");
 		}
 		
-		$payInput.val(formatMoney(payValue));
-		$expenseInput.val(formatMoney(expenseValue));
+		$payInput.val(formatMoney(payValue).text());
+		$expenseInput.val(formatMoney(expenseValue).text());
 	});
 	
 	return {
@@ -380,6 +380,7 @@ var AddWizard = function(model)
 		
 		// Clear title on focus first time, if its a new payment
 		var $title = editableTitle.element()
+			.addClass("payment-title-wizard")
 			.one("click", function() { if (isNewPayment) { editableTitle.set("");} })
 			.on("click", editableTitle.editMode);
 			
