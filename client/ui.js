@@ -77,6 +77,7 @@ var formatMoney = function(value, keepDecimals)
 
 var StatsUI = function(addWizard, model)
 {
+	var $note = null;
 	var $addWizard = null;
 	var $stats = null;
 	var $transferPlan = null;
@@ -102,6 +103,7 @@ var StatsUI = function(addWizard, model)
 		$stats.empty();
 		$transfers.empty();
 		$transferPlan.hide();
+		$note.hide();
 		
 		var balances = [];
 		var persons = [];
@@ -132,9 +134,9 @@ var StatsUI = function(addWizard, model)
 					return;
 				}
 				
-				var $detail = $("<div/>").addClass("clickable-payment flex-horizontal-container").append(
-					$("<span/>").html(payment.text() + whiteSpace(3)).addClass("flex-grow"),
-					$("<span/>").html(formatMoney(diff, true))).on("click", function()
+				var $detail = $("<div/>").addClass("clickable-payment flex-horizontal-container flex-justify-center").append(
+					$("<div/>").html(payment.text() + whiteSpace(3)).addClass("flex-grow"),
+					$("<div/>").html(formatMoney(diff, true))).on("click", function()
 					{
 						editPayment(payment.index);
 					});
@@ -169,16 +171,32 @@ var StatsUI = function(addWizard, model)
 			
 			$transferPlan.show();
 		});
+		
+		// more note code... DRY!
+		var note = function(text)
+		{
+			$note.html($("<div/>")
+				.addClass("flex-horizontal-container flex-justify-center")
+				.append($("<span/>").html(text))).show();
+		};
+		
+		if (dh.names().length == 0)
+		{
+			note("Lägg först till några personer");
+			return;
+		}
 	};
 	
 	var create = function($parent)
 	{
 		var $transferHeader = $("<div/>").text("Utjämnande överföringar");
 		$stats = $("<div/>");
+		$note = $("<note/>");
 		$transferPlan = $("<div/>");
 		$transfers = $("<div/>").addClass("small-text");
 		$addWizard = $("<div/>").hide();
 		$parent.append(
+			$note,
 			$addWizard, 
 			$("<div/>").addClass("flex-horizontal-container flex-justify-center").append($stats), 
 			$("<div/>").addClass("flex-horizontal-container flex-justify-center").append(
@@ -205,7 +223,7 @@ var PeopleUI = function(model)
 		var $add = $("<div/>").addClass("flex-horizontal-container flex-justify-center").append(
 			$("<div/>")
 				.addClass("people-add")
-				.on("click", function() { var dh = model.getDataHelper(); dh.addPerson(); dh.commit(); }));
+				.on("click", function() { var dh = model.getDataHelper(); dh.addPerson("Namn"); dh.commit(); }));
 		
 		$parent.append($add, $names);
 	};
@@ -231,16 +249,24 @@ var PeopleUI = function(model)
 				.addClass("people-remove")
 				.on("click", function(e) { $confirm.toggle('fast'); e.stopPropagation(); });
 				
-			$(document.body).on("click", function() { $confirm.hide(); });
-			
-			$row = $("<div/>").addClass("flex-horizontal-container").append(
+			$row = $("<div/>").addClass("flex-horizontal-container flex-justify-center").append(
 				$confirm,
 				$name.addClass("flex-grow"),
 				$("<span/>").html(whiteSpace(3)),
 				$remove);
 
 			$names.append($row);
-		})
+		});
+		
+		var noNamesYet = $names.find("*").length == 0;
+		
+		if (noNamesYet)
+		{
+			var $info = $("<div/>").addClass("flex-horizontal-container flex-justify-center").append(
+				$("<span/>").text("Lägg till personer här"));
+				
+			$names.append($info);
+		}
 	};
 	
 	return {
@@ -284,6 +310,10 @@ var HeaderUI = function(model)
 
 var MainUI = function(statsUI, paymentUI, peopleUI, headerUI)
 {
+	var $overviewNav;
+	var $paymentsNav;
+	var $peopleNav;
+	
 	var create = function($parent)
 	{
 		var $root = $("<div/>").addClass("ui-root flex-vertical-container");
@@ -301,9 +331,9 @@ var MainUI = function(statsUI, paymentUI, peopleUI, headerUI)
 		var $paymentContent = $("<div/>");
 		var $statsContent = $("<div/>");
 		
-		var $overviewNav = $("<div/>").addClass("nav nav-stats");
-		var $paymentsNav = $("<div/>").addClass("nav nav-payments");
-		var $peopleNav = $("<div/>").addClass("nav nav-people");
+		$overviewNav = $("<div/>").addClass("nav nav-stats");
+		$paymentsNav = $("<div/>").addClass("nav nav-payments");
+		$peopleNav = $("<div/>").addClass("nav nav-people");
 		
 		var navClick = function()
 		{
@@ -326,9 +356,9 @@ var MainUI = function(statsUI, paymentUI, peopleUI, headerUI)
 			$root.append(
 				$headerFlex.append($header),
 				$topNavigation.append(
-					$overviewNav,
+					$peopleNav,
 					$paymentsNav,
-					$peopleNav),
+					$overviewNav),
 				$statusBar,
 				$contentContainer.append(
 					$statsContentFlex.append($statsContent),
@@ -337,6 +367,10 @@ var MainUI = function(statsUI, paymentUI, peopleUI, headerUI)
 					
 		// Remove...
 		$paymentsNav.trigger("click");
+		
+		// General stuff...
+		$(window).on("click", function() { $(".confirm-remove").hide('fast'); });
+			
 		
 		// document.addEventListener('touchmove', function(e) {
 // if (document.querySelector('.scrollable').contains(e.target)) {
@@ -358,6 +392,23 @@ var MainUI = function(statsUI, paymentUI, peopleUI, headerUI)
 	
 	return {
 		"create": create,
-		"update": update
+		"update": update,
+		"navPeople": function() { $peopleNav.trigger('click'); },
+		"navPayments": function() { $paymentsNav.trigger('click'); },
+		"navStats": function() { $overviewNav.trigger('click'); }		
 	};
+};
+
+var setStartPage = function(mainUi, model)
+{
+	var dh = model.getDataHelper();
+	
+	if (dh.names().length == 0)
+	{
+		mainUi.navPeople();
+	}
+	else
+	{
+		mainUi.navPayments();
+	}
 };

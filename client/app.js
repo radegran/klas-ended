@@ -1,6 +1,7 @@
 var initialize = function(docProxy, net, networkStatus)
 {	
 	var ui;
+	var hasSetStartPage = false;
 	
 	var model = Model(function(newdata) 
 	{ 
@@ -17,10 +18,17 @@ var initialize = function(docProxy, net, networkStatus)
 	
 	ui.create($(document.body));
 	
+	
 	var onData = function(data) 
 	{
-		// DRY...
 		model.reset(data);
+		
+		if (!hasSetStartPage)
+		{
+			setStartPage(ui, model)
+			hasSetStartPage = true;
+		}
+		
 		ui.update();
 	};
 	

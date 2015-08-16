@@ -3,6 +3,7 @@
 	var $addButton = null;
 	var $historyContainer = null;
 	var $addWizard = null;
+	var $note = null;
 	
 	var hideWizard = function()
 	{
@@ -24,6 +25,7 @@
 		var $historyHeader = $("<div/>").text("Tidigare betalningar");
 		$pastPayments = $("<div/>");
 		$historyContainer = $("<div/>");
+		$note = $("<div/>");
 		$addWizard = $("<div/>");
 		$addButton = $("<div/>")
 			.addClass("payment-add")
@@ -31,6 +33,7 @@
 		
 		$parent.append(
 			$("<div/>").addClass("flex-horizontal-container flex-justify-center").append($addButton), 
+			$note,
 			$historyContainer.append(
 				$("<div/>").addClass("flex-horizontal-container flex-justify-center").append($historyHeader), 
 				$("<div/>").html(whiteSpace(1)),
@@ -43,12 +46,13 @@
 		$pastPayments.empty();
 		hideWizard();	
 		$historyContainer.hide();
+		$note.hide();
 		var dh = model.getDataHelper();
 		
 		dh.eachPayment(function(payment)
 		{
 			var $p = $("<div/>").addClass("flex-horizontal-container flex-justify-center");
-			var $clickable = $("<div/>").addClass("flex-horizontal-container flex-grow clickable-payment small-text");
+			var $clickable = $("<div/>").addClass("flex-horizontal-container flex-grow flex-justify-center clickable-payment small-text");
 			var $label = $("<span/>").html(payment.text() + whiteSpace(3));
 			var $cost = $("<span/>").html(formatMoney(payment.cost()));
 			var $confirm = $("<div/>").hide()
@@ -59,9 +63,7 @@
 			var $remove = $("<div/>")
 				.addClass("payment-remove")
 				.on("click", function(e) { $confirm.toggle('fast'); e.stopPropagation(); });
-				
-			$(document.body).on("click", function() { $confirm.hide(); });
-			
+							
 			$p.on("click", function()
 			{
 				showAddWizard(payment.index);
@@ -76,6 +78,32 @@
 				
 			$historyContainer.show();
 		});
+		
+		var note = function(text)
+		{
+			$note.html($("<div/>")
+				.addClass("flex-horizontal-container flex-justify-center")
+				.append($("<span/>").html(text))).show();
+		};
+		
+		var noNamesYet = dh.names().length == 0;
+		
+		if (noNamesYet)
+		{
+			$addButton.hide();
+			note("Lägg först till några personer");
+			return;
+		}
+			
+		$addButton.show();
+				
+		// no payments yet?
+		var noPaymentsYet = $pastPayments.find("*").length == 0;
+		
+		if (noPaymentsYet)
+		{
+			note("Lägg till betalningar här");
+		}
 	};
 	
 	return {

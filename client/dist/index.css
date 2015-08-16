@@ -200,9 +200,15 @@ input {
 }
 
 .confirm-remove {
-	background-color: lightsalmon;
+	background-color: salmon;
 	color: white;
-	margin: 0 0.2em 0 0.2em;
+	padding: 0 0.2em 0 0.2em;
+	margin: 0 0.2em 0 0;
+	cursor: pointer;
+    -moz-border-radius: 0.5em;
+    -webkit-border-radius: 0.5em;
+    -khtml-border-radius: 0.5em;
+    border-radius: 0.5em;
 }
 
 .ui-content-container {
@@ -275,9 +281,11 @@ input {
 .nav-stats,
 .nav-people,
 .nav-payments {
-	height: 2em;
-	width: 2em;
-	background-size: 100%;
+	height: 2.3em;
+	width: 2.3em;
+	background-size: 95%;
+	background-position: center;
+	background-repeat: no-repeat;
 	cursor: pointer;
 	margin: 0 0.5em 0 0.5em;
 }
@@ -324,11 +332,11 @@ input {
 .payment-unlocked {
 	height: 1.2em;
 	width: 1.2em;
-	background-size: 90%;
+	background-size: 80%;
 	background-position: center;
 	background-repeat: no-repeat;
 	cursor: pointer;
-	margin: 0.15em 0.3em 0.15em 0.3em;
+	padding: 0.15em 0.3em 0.15em 0.3em;
 }
 
 .people-remove,
