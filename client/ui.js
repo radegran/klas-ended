@@ -9,6 +9,7 @@
 	var editMode = function()
 	{
 		$input.val($e.html());
+		$input.css("width", $e.width() + 5);
 		$e.hide(); $input.show().focus().on("blur", function()
 		{
 			$input.trigger("change");
@@ -19,12 +20,20 @@
 	{
 		$e.html(value);
 	};
-
-	$input.on("change", function()
+	
+	$input.on("input paste", function()
 	{
-		$e.html($input.val());
+		var v = $input.val();
+		$e.html(v);
+		$input.css("width", $e.width() + 5);
+	});
+
+	$input.on("submit change", function()
+	{
+		var v = $input.val();
+		$e.html(v);
 		$e.show(); $input.hide();
-		onChange($input.val());
+		onChange(v);
 	});
 	
 	$e.on("click", editMode);
@@ -189,16 +198,16 @@ var StatsUI = function(addWizard, model)
 var PeopleUI = function(model)
 {
 	var $names = $();
-	var $add = $();
 	
 	var create = function($parent)
 	{
 		$names = $("<div/>");
-		$add = $("<div/>")
-			.addClass("people-add")
-			.on("click", function() { var dh = model.getDataHelper(); dh.addPerson(); dh.commit(); });
+		var $add = $("<div/>").addClass("flex-horizontal-container flex-justify-center").append(
+			$("<div/>")
+				.addClass("people-add")
+				.on("click", function() { var dh = model.getDataHelper(); dh.addPerson(); dh.commit(); }));
 		
-		$parent.append($names, $add);
+		$parent.append($add, $names);
 	};
 	
 	var update = function()
@@ -213,13 +222,21 @@ var PeopleUI = function(model)
 			
 			var editableName = editable(person.name, function(newName) { person.setName(newName); dh.commit(); });
 			var $name = editableName.element();
-			var $edit = $("<div/>").addClass("people-edit").on("click", function() { editableName.editMode() });
-			var $remove = $("<div/>").addClass("people-remove").on("click", function() { person.remove(); dh.commit(); });
+			var $confirm = $("<div/>").hide()
+				.addClass("confirm-remove")
+				.text("Ta bort")
+				.on("click", function() { person.remove(); dh.commit(); });
+				
+			var $remove = $("<div/>")
+				.addClass("people-remove")
+				.on("click", function(e) { $confirm.toggle('fast'); e.stopPropagation(); });
+				
+			$(document.body).on("click", function() { $confirm.hide(); });
 			
 			$row = $("<div/>").addClass("flex-horizontal-container").append(
+				$confirm,
 				$name.addClass("flex-grow"),
 				$("<span/>").html(whiteSpace(3)),
-				$edit,
 				$remove);
 
 			$names.append($row);
@@ -272,7 +289,7 @@ var MainUI = function(statsUI, paymentUI, peopleUI, headerUI)
 		var $root = $("<div/>").addClass("ui-root flex-vertical-container");
 		var $header = $("<div/>");
 		var $topNavigation = $("<div/>").addClass("ui-navigation-bar flex-horizontal-container flex-justify-center small-padding");
-		var $statusBar = $("<div/>").addClass("ui-status-bar small-padding").text("status").hide();
+		var $statusBar = $("<div/>").addClass("ui-status-bar flex-horizontal-container flex-justify-center messagecontainer");
 		var $contentContainer = $("<div/>").addClass("scrollable ui-content-container flex-grow small-padding");
 		
 		var $paymentContentFlex = $("<div/>").addClass("ui-content flex-horizontal-container flex-justify-center");

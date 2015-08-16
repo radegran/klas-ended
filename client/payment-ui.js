@@ -22,7 +22,7 @@
 	var create = function($parent)
 	{
 		var $historyHeader = $("<div/>").text("Tidigare betalningar");
-		$pastPayments = $("<div/>").addClass("small-text");
+		$pastPayments = $("<div/>");
 		$historyContainer = $("<div/>");
 		$addWizard = $("<div/>");
 		$addButton = $("<div/>")
@@ -48,10 +48,19 @@
 		dh.eachPayment(function(payment)
 		{
 			var $p = $("<div/>").addClass("flex-horizontal-container flex-justify-center");
-			var $clickable = $("<div/>").addClass("flex-horizontal-container flex-grow clickable-payment");
+			var $clickable = $("<div/>").addClass("flex-horizontal-container flex-grow clickable-payment small-text");
 			var $label = $("<span/>").html(payment.text() + whiteSpace(3));
 			var $cost = $("<span/>").html(formatMoney(payment.cost()));
-			var $remove = $("<div/>").addClass("payment-remove").on("click", function() { payment.remove(); dh.commit(); });
+			var $confirm = $("<div/>").hide()
+				.addClass("confirm-remove")
+				.text("Ta bort")
+				.on("click", function() { payment.remove(); dh.commit(); });
+				
+			var $remove = $("<div/>")
+				.addClass("payment-remove")
+				.on("click", function(e) { $confirm.toggle('fast'); e.stopPropagation(); });
+				
+			$(document.body).on("click", function() { $confirm.hide(); });
 			
 			$p.on("click", function()
 			{
@@ -59,6 +68,7 @@
 			});
 			
 			$pastPayments.append($p.append(
+				$confirm,
 				$clickable.append(
 					$label.addClass("flex-grow"), 
 					$cost), 
