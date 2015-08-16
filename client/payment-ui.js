@@ -10,6 +10,7 @@
 		$historyContainer.show();
 		$addButton.show();
 		$addWizard.hide();
+		$note.show();
 	};
 	
 	var showAddWizard = function(paymentIndex)
@@ -17,6 +18,7 @@
 		// paymentIndex might be null. Then its a new payment
 		$addButton.hide();
 		$historyContainer.hide();
+		$note.hide();
 		addWizard.show($addWizard.empty().show(), hideWizard, paymentIndex);
 	};
 	

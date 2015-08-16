@@ -209,9 +209,8 @@ var PersonPayment = function(person)
 	var $nameRow = $("<div/>").addClass("flex-horizontal-container");
 	var $inputRow = $("<div/>").addClass("flex-horizontal-container");
 	
-	var $active = $("<div/>").addClass("payment-active");
 	var $indent = $("<div/>").addClass("payment-indent");
-	var $name = $("<div/>").addClass("flex-grow").text(person.name);
+	var $name = $("<div/>").addClass("clickable-person flex-grow").text(person.name);
 	
 	var $payLabel = $("<div/>").text("Betalat").addClass("flex-grow pay-label");
 	var $expenseLabel = $("<div/>").text("Spenderat").addClass("flex-grow expense-label");
@@ -231,7 +230,6 @@ var PersonPayment = function(person)
 	
 	$container.append(
 		$nameRow.append(
-			$active,
 			$name),
 		$inputRow.append(
 			$indent.clone(),
@@ -247,6 +245,8 @@ var PersonPayment = function(person)
 			)
 		)
 	);
+	
+	$name.on("click", function() { person.toggleActive(); });
 	
 	$payInput.on("change paste", function()
 	{
@@ -278,27 +278,15 @@ var PersonPayment = function(person)
 	
 	person.onUpdate(function(isActive, payValue, expenseValue, isLocked)
 	{
-		isActiveState = isActive;
 		isLockedState = isLocked;
 
-		$active.off("click");
-		$container.off("click");
-		
-		var toggleActive = function(e)
-		{			
-			person.toggleActive(); 
-			e.stopPropagation();
-		};
-		
 		if (isActive)
 		{
-			$container.removeClass("transparent");
-			$active.on("click", toggleActive);
+			$name.removeClass("inactive");
 		}
 		else
 		{
-			$container.addClass("transparent");
-			$container.on("click", toggleActive);
+			$name.addClass("inactive");
 		}
 		
 		if (isLocked)

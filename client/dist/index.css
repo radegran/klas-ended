@@ -296,6 +296,7 @@ input {
 
 .payment-add,
 .people-add,
+.payment-next,
 .payment-back,
 .payment-save {
 	height: 3.5em;
@@ -305,6 +306,10 @@ input {
 	background-repeat: no-repeat;
 	cursor: pointer;
 	margin: 1em 0.5em 1em 0.5em;
+}
+
+.payment-next {
+	background-image: url('arrow-right.png');
 }
 
 .payment-back {
@@ -327,7 +332,6 @@ input {
 .people-edit,
 .payment-remove,
 .payment-indent,
-.payment-active,
 .payment-locked ,
 .payment-unlocked {
 	height: 1.2em;
@@ -352,8 +356,7 @@ input {
 	opacity: 0.35;
 }
 
-.payment-remove,
-.payment-active {
+.payment-remove {
 	background-image: url('stop.png');
 }
 
@@ -370,6 +373,7 @@ input {
 	background-image: url('plus.png');
 }
 
+.clickable-person,
 .clickable-payment {
 	padding: 0.3em;
 	margin:0.2em;
@@ -379,7 +383,14 @@ input {
     -khtml-border-radius: 0.5em;
     border-radius: 0.5em;
 	background-color: khaki;
-	
+}
+
+.clickable-person {
+	border: 2px solid khaki;
+}
+
+.clickable-person.inactive {
+	background-color: transparent;
 }
 
 .nav-stats {

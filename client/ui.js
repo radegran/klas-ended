@@ -8,7 +8,7 @@
 	
 	var editMode = function()
 	{
-		$input.val($e.html());
+		$input.val("");
 		$input.css("width", $e.width() + 5);
 		$e.hide(); $input.show().focus().on("blur", function()
 		{
@@ -88,6 +88,7 @@ var StatsUI = function(addWizard, model)
 		$addWizard.hide();
 		$stats.show();
 		$transferPlan.show();
+		$note.show();
 	}
 	
 	var editPayment = function(index)
@@ -95,6 +96,7 @@ var StatsUI = function(addWizard, model)
 		$addWizard.show();
 		$stats.hide();
 		$transferPlan.hide();
+		$note.hide();
 		addWizard.show($addWizard.empty(), hideWizard, index);
 	};
 	
@@ -112,6 +114,7 @@ var StatsUI = function(addWizard, model)
 		
 		dh.eachPerson(function(person)
 		{
+			balances.push(person.diff);
 			persons.push(person);
 		});
 		
@@ -122,8 +125,6 @@ var StatsUI = function(addWizard, model)
 		
 		$.each(persons, function(i, person)
 		{
-			balances.push(person.diff);
-
 			var $details = $("<div/>").addClass("small-text").hide();
 			
 			person.eachPayment(function(payment)
