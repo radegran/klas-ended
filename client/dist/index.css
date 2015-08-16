@@ -363,14 +363,30 @@ input {
 .payment-locked {
 	background-image: url('locked.png');
 }
-
+/*
 .payment-unlocked {
 	background-image: url('unlocked.png');
 }
-
+*/
 .payment-add,
 .people-add {
 	background-image: url('plus.png');
+}
+
+.dot {
+	margin: 0.1em;
+	width: 0.6em;
+	height: 0.6em;
+	border: 2px solid rgb(79, 93, 115);
+    -moz-border-radius: 0.5em;
+    -webkit-border-radius: 0.5em;
+    -khtml-border-radius: 0.5em;
+    border-radius: 0.5em;
+	background-color: transparent;
+}
+
+.dot.filled {
+    background-color: rgb(79, 93, 115);
 }
 
 .clickable-person,
