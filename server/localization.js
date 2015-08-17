@@ -101,8 +101,8 @@ var Strings =
 		"sv": "Kunde inte skapa dokumentet!"
 	},
 	"OfflineMode": {
-		"en": "Offline mode!",
-		"sv": "Offlineläge!"
+		"en": "Offline mode - You can add new payments.",
+		"sv": "Offlineläge - Du kan lägga till nya betalningar."
 	},
 	"OnlineMode": {
 		"en": "Back online!",
