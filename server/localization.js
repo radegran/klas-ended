@@ -102,10 +102,10 @@ var Strings =
 	},
 	"Welcome1": {
 		"en": "Click on the button to get started with your own payment list.",
-		"sv": "Klicka knappen för att komma igång med en egen betalningslista."
+		"sv": "Klicka på knappen för att komma igång med en egen betalningslista."
 	},
 	"Welcome2": {
-		"en": "Then, don't forget to copy the link in the address bar or add the page to your mobile's home screen, to get back.",
+		"en": "Then, don't forget to copy the link in the address bar or add the page to your mobile's home screen to get back.",
 		"sv": "Glöm inte att sedan kopiera länken eller lägg till sidan på mobilens hemskärm för att återkomma!"
 	},
 	"OfflineMode": {
