@@ -1,3 +1,50 @@
+var gogogo2 = function(toCollection, modifyLive) 
+{
+	db[toCollection].drop();
+	db.createCollection(toCollection);
+	
+	// Clone collection
+	db.docs.find().forEach( function(x){db[toCollection].insert(x)} );
+	
+	var currentCollection = modifyLive ? "docs" : toCollection;
+	var cursor = db[currentCollection].find();
+
+	var migrate = function(doc)
+	{
+		var ps = doc.data.payments;
+		var newPs = [];
+		
+		// for each payment
+		for (var i = 0; i < ps.length; i++)
+		{
+			var vs = ps[i].values;
+			var newVs = [];
+			
+			for (var j = 0; j < vs.length; j++)
+			{
+				var v = vs[j];
+				newVs.push([v[0], Math.abs(v[1])]);
+			}
+			
+			ps[i].values = newVs;
+		}
+		
+		return doc;
+	};
+
+	while (cursor.hasNext())
+	{
+		 var doc = migrate(cursor.next());
+		 if (!doc)
+		 {
+			 print("No doc!");
+			 return;
+		 }
+		 
+		 db[currentCollection].save(doc);
+	}	
+};
+
 var gogogo = function(toCollection, modifyLive) 
 {
 	db[toCollection].drop();
