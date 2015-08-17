@@ -16,6 +16,62 @@ var Strings =
 		"en": "to",
 		"sv": "till"
 	},
+	"AddPersonsFirst": {
+		"en": "First add some persons",
+		"sv": "Lägg först till några personer"
+	},
+	"AddPersonsHere": {
+		"en": "Add persons here",
+		"sv": "Lägg till personer här"
+	},
+	"AddPaymentsHere": {
+		"en": "Add payments here",
+		"sv": "Lägg till betalningar här"
+	},
+	"PreviousPayments": {
+		"en": "Previous payments",
+		"sv": "Tidigare betalningar"
+	},
+	"Paid": {
+		"en": "Paid",
+		"sv": "Betalat"
+	},
+	"ShouldPaid": {
+		"en": "Should paid",
+		"sv": "Borde betalat"
+	},
+	"DescribePayment": {
+		"en": "Describe the payment",
+		"sv": "Beskriv betalningen"
+	},
+	"WhoAffected": {
+		"en": "Who are affected?",
+		"sv": "Vilka berörs av betalningen?"
+	},
+	"HowMuchPeoplePaid": {
+		"en": "How much have people paid?",
+		"sv": "Hur mycket har folk betalat?"
+	},
+	"HowMuchPeopleShouldPaid": {
+		"en": "How much should people have paid?",
+		"sv": "Hur mycket borde folk betalat?"
+	},
+	"Summary": {
+		"en": "Summary",
+		"sv": "Sammanfattning"
+	},
+	"Remove": {
+		"en": "Remove",
+		"sv": "Ta bort"
+	},
+	"MakeEven": {
+		"en": "How to make even",
+		"sv": "Bli kvitt såhär"
+	},
+	"Name": {
+		"en": "Name",
+		"sv": "Namn"
+	},
 	"Help": {
 		"en": "Help",
 		"sv": "Hjälp"
@@ -98,7 +154,7 @@ var Strings =
 	},
 	"StartData": {
 		"en": {
-			"title": "Type a title here",
+			"title": "Enter a title here",
 			"names": [],
 			"payments": []
 		},

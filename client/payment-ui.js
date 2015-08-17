@@ -24,7 +24,7 @@
 	
 	var create = function($parent)
 	{
-		var $historyHeader = $("<div/>").text("Tidigare betalningar");
+		var $historyHeader = $("<div/>").text(L.PreviousPayments);
 		$pastPayments = $("<div/>");
 		$historyContainer = $("<div/>");
 		$note = $("<div/>");
@@ -48,18 +48,20 @@
 		$pastPayments.empty();
 		hideWizard();	
 		$historyContainer.hide();
-		$note.hide();
+		$note.empty().hide();
 		var dh = model.getDataHelper();
+		var anyPayments = false;
 		
 		dh.eachPayment(function(payment)
 		{
+			anyPayments = true;
 			var $p = $("<div/>").addClass("flex-horizontal-container flex-justify-center");
 			var $clickable = $("<div/>").addClass("flex-horizontal-container flex-grow flex-justify-center clickable-payment small-text");
 			var $label = $("<span/>").html(payment.text() + whiteSpace(3));
 			var $cost = $("<span/>").html(formatMoney(payment.cost()));
 			var $confirm = $("<div/>").hide()
 				.addClass("confirm-remove")
-				.text("Ta bort")
+				.text(L.Remove)
 				.on("click", function() { payment.remove(); dh.commit(); });
 				
 			var $remove = $("<div/>")
@@ -93,18 +95,15 @@
 		if (noNamesYet)
 		{
 			$addButton.hide();
-			note("Lägg först till några personer");
+			note(L.AddPersonsFirst);
 			return;
 		}
 			
 		$addButton.show();
 				
-		// no payments yet?
-		var noPaymentsYet = $pastPayments.find("*").length == 0;
-		
-		if (noPaymentsYet)
+		if (!anyPayments)
 		{
-			note("Lägg till betalningar här");
+			note(L.AddPaymentsHere);
 		}
 	};
 	

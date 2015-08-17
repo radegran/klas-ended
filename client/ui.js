@@ -179,9 +179,9 @@ var StatsUI = function(addWizard, model)
 		{
 			// Improve UI
 			var $plan = $("<div/>").append(
-				$("<span/>").html(dh.name(transfer.from) + " ska ge "),
+				$("<span/>").html(dh.name(transfer.from) + " " + L.ShouldGive + " "),
 				formatMoney(transfer.amount), 
-				$("<span/>").html(" till " + dh.name(transfer.to)));
+				$("<span/>").html(" " + L.To + " " + dh.name(transfer.to)));
 			
 			$transfers.append($plan);
 			
@@ -198,14 +198,14 @@ var StatsUI = function(addWizard, model)
 		
 		if (dh.names().length == 0)
 		{
-			note("Lägg först till några personer");
+			note(L.AddPersonsFirst);
 			return;
 		}
 	};
 	
 	var create = function($parent)
 	{
-		var $transferHeader = $("<div/>").text("Utjämnande överföringar");
+		var $transferHeader = $("<div/>").text(L.MakeEven);
 		$stats = $("<div/>");
 		$note = $("<note/>");
 		$transferPlan = $("<div/>");
@@ -239,7 +239,7 @@ var PeopleUI = function(model)
 		var $add = $("<div/>").addClass("flex-horizontal-container flex-justify-center").append(
 			$("<div/>")
 				.addClass("people-add")
-				.on("click", function() { var dh = model.getDataHelper(); dh.addPerson("Namn"); dh.commit(); }));
+				.on("click", function() { var dh = model.getDataHelper(); dh.addPerson(L.Name); dh.commit(); }));
 		
 		$parent.append($add, $names);
 	};
@@ -279,7 +279,7 @@ var PeopleUI = function(model)
 		if (noNamesYet)
 		{
 			var $info = $("<div/>").addClass("flex-horizontal-container flex-justify-center").append(
-				$("<span/>").text("Lägg till personer här"));
+				$("<span/>").text(L.AddPersonsHere));
 				
 			$names.append($info);
 		}

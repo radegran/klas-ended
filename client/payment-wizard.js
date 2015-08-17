@@ -212,8 +212,8 @@ var PersonPayment = function(person)
 	var $indent = div("payment-indent");
 	var $name = div("clickable-person").html(person.name);
 	
-	var $payLabel = div("flex-grow pay-label").text("Betalat");
-	var $expenseLabel = div("flex-grow expense-label").text("Borde betalat");
+	var $payLabel = div("flex-grow pay-label").text(L.Paid);
+	var $expenseLabel = div("flex-grow expense-label").text(L.ShouldPaid);
 	
 	var moneyInput = function() 
 	{
@@ -581,7 +581,7 @@ var AddWizard = function(model, fullScreenFunc)
 		// SSSSSSSSSSTTTTTTTTEEEEEEEEPPPPPPPPSSSSSSSSSS
 		var step1 = function() 
 		{
-			$stepTitle.html("Beskriv betalningen").show();
+			$stepTitle.html(L.DescribePayment).show();
 			$title.show();
 			forAllPersonsCall("hide");
 			if ($title.text() == "")
@@ -591,25 +591,25 @@ var AddWizard = function(model, fullScreenFunc)
 		};
 		var step2 = function()
 		{
-			$stepTitle.html("Vilka berörs av betalningen?").show();
+			$stepTitle.html(L.WhoAffected).show();
 			$title.hide();
 			forAllPersonsCall("showName");
 		};
 		var step3 = function()
 		{
-			$stepTitle.html("Hur mycket har folk betalat?").show();
+			$stepTitle.html(L.HowMuchPeoplePaid).show();
 			$title.hide();
 			forAllPersonsCall("showPay");
 		};
 		var step4 = function()
 		{
-			$stepTitle.html("Hur mycket borde folk betalat?").show();
+			$stepTitle.html(L.HowMuchPeopleShouldPaid).show();
 			$title.hide();
 			forAllPersonsCall("showShouldHavePaid");
 		};
 		var step5 = function()
 		{
-			$stepTitle.html("Sammanställning");
+			$stepTitle.html(L.Summary);
 			$title.show();
 			forAllPersonsCall("showEverything");
 		};
