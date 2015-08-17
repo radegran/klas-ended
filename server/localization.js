@@ -53,8 +53,8 @@ var Strings =
 		"sv": "Hur mycket har folk betalat?"
 	},
 	"HowMuchPeopleShouldPaid": {
-		"en": "How much should people have paid?",
-		"sv": "Hur mycket borde folk betalat?"
+		"en": "How much did stuff really cost?",
+		"sv": "Hur mycket kostade folks grejer?"
 	},
 	"Summary": {
 		"en": "Summary",
