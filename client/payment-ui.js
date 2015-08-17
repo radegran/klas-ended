@@ -50,11 +50,18 @@
 		$historyContainer.hide();
 		$note.empty().hide();
 		var dh = model.getDataHelper();
-		var anyPayments = false;
+		
+		var paymentList = [];
 		
 		dh.eachPayment(function(payment)
 		{
-			anyPayments = true;
+			paymentList.push(payment);
+		});
+		
+		paymentList = paymentList.reverse();
+		
+		$.each(paymentList, function(i, payment) 
+		{
 			var $p = $("<div/>").addClass("flex-horizontal-container flex-justify-center");
 			var $clickable = $("<div/>").addClass("flex-horizontal-container flex-grow flex-justify-center clickable-payment small-text");
 			var $label = $("<span/>").html(payment.text() + whiteSpace(3));
@@ -101,7 +108,7 @@
 			
 		$addButton.show();
 				
-		if (!anyPayments)
+		if (paymentList.length === 0)
 		{
 			note(L.AddPaymentsHere);
 		}
