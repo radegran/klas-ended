@@ -168,11 +168,11 @@ var setOnlineCss = function(isOnline)
 {
 	if (isOnline)
 	{
-		$(".root").removeClass("offline");
+		$(".ui-root").removeClass("offline");
 	}
 	else
 	{
-		$(".root").addClass("offline");
+		$(".ui-root").addClass("offline");
 	}
 };
 

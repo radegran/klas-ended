@@ -254,7 +254,7 @@ var PeopleUI = function(model)
 		{
 			var $name = $("<div/>");
 			
-			var editableName = editable(person.name, function(newName) { person.setName(newName); dh.commit(); });
+			var editableName = editable(person.name, function(newName) { person.setName(newName || "?"); dh.commit(); });
 			var $name = editableName.element();
 			var $confirm = $("<div/>").hide()
 				.addClass("confirm-remove")

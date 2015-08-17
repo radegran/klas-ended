@@ -8,126 +8,15 @@ body {
 
 .root {
 	display: inline-block;
-	min-width: 100%;
 }
-
-.nullvalue div:empty:not(:focus):before {
-    content: "∅";
-	font-size: 0.9em;
-	color: lightgray;
-}
-
-table {
-	min-width: 100%;
-	border-spacing: 0px;
-}
-
-.help-container {
-	min-width: 100%;
-}
-
-.help-header {
-	padding: 0 1em 0 1em;
-}
-
-.help-text {
-	padding: 0 2em 0.5em 2em;
-	color: #505050;
-	font-size: 0.85em;
-}
-
-.help-submit {
-	padding: 0.5em;
-	margin: 0 2em 1.5em 2em;
-}
-
-.payment-text {
-	white-space: nowrap;
-}
-
-.transfer-plan
-{
-	font-size: 0.9em;
-	color: gray;
-}
-
-td.diff-cell, td.cell {
-	text-align: center;
-}
-
-td {
-	padding: 0.25em 0.5em 0.25em 0.5em;
-}
-
-.transfer-plan td {
-	padding: 0.2em 0 0.2em 0.5em;
-}
-
-/*
-ONLINE
-*/
-.header {
-	color: #f8f8f8;
-	border-bottom: 1px solid #197541;
-	background-color: seagreen;
-	padding: 1em 0 1em 1em;
-	font-size: 1.8em;
-	outline:0;
-}
-
-.column-header-row  td,
-.diff-row  td {
-	padding: 0.5em;
-	color: #F8F8F8;
-}
-
-.column-header-row  td {
-	border-top: 1px solid #055829;
-	background-color: mediumseagreen;
-}
-
-.diff-row  td {
-	border-top: 1px solid seagreen;
-}
-
-.payment-row.even {
-	background-color: beige;
-}
-/*
-OFFLINE
-*/
-.offline .header {
-	color: #f8f8f8;
-	border-bottom: 1px solid #B24532;
-	background-color: #CC4F39;
-	padding: 1em 0 1em 1em;
-	font-size: 1.8em;
-	outline:0;
-}
-
-.offline .column-header-row  td,
-.offline .diff-row  td {
-	padding: 0.5em;
-	color: #F8F8F8;
-}
-
-.offline .column-header-row  td {
-	border-top: 1px solid #66281C;
-	background-color: tomato;
-}
-
-.offline .diff-row  td {
-	border-top: 1px solid #B24532;
-}
-
-.offline .payment-row.even {
-	background-color: moccasin;
-}
-
-/**/
 
 .info {
-	padding: 2px 0 2px 0.5em;
+	margin: 0.2em;
+	padding: 0.4em;
+    -moz-border-radius: 0.4em;
+    -webkit-border-radius: 0.4em;
+    -khtml-border-radius: 0.4em;
+    border-radius: 0.4em;
 }
 
 .yellow {
@@ -158,6 +47,10 @@ OFFLINE
     -webkit-border-radius: 0.5em;
     -khtml-border-radius: 0.5em;
     border-radius: 0.5em;
+}
+
+.offline .person-summary {
+	border: 1px solid gainsboro;
 }
 
 .pay-label,
@@ -191,8 +84,17 @@ OFFLINE
 	background-color:khaki;
 }
 
+.offline .ui-navigation-bar,
+.offline .ui-header {
+	background-color:gainsboro;
+}
+
 input {
 	background-color: khaki;
+}
+
+.offline input {
+	background-color: gainsboro;
 }
 
 .confirm-remove {
@@ -406,14 +308,24 @@ input {
     border-radius: 0.5em;
 	background-color: khaki;
 }
-
 .clickable-person {
 	border: 2px solid khaki;
 }
-
 .clickable-person.inactive {
 	background-color: transparent;
 }
+
+.offline .clickable-person,
+.offline .clickable-payment {
+	background-color: gainsboro;
+}
+.offline .clickable-person {
+	border: 2px solid gainsboro;
+}
+.offline .clickable-person.inactive {
+	background-color: transparent;
+}
+
 
 .nav-stats {
 	background-image: url('barchart.png');
