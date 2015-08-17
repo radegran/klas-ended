@@ -1,1 +1,4 @@
-$(document).ready(loadApp);
+$(document).ready(function()
+{
+	loadApp();
+});

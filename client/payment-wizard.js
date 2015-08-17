@@ -294,12 +294,14 @@ var PersonPayment = function(person)
 	var hide = function()
 	{
 		$container.find("*").detach();
+		$container.hide();
 		$name.off();
 	};
 	
 	var showAll = function()
 	{
 		hide();
+		$container.show();
 		
 		$container.append(
 			vertical().append(
@@ -331,6 +333,7 @@ var PersonPayment = function(person)
 	var showName = function()
 	{
 		hide();
+		$container.show();
 		$container.append(
 			horizontal().append(
 				$name
@@ -352,6 +355,7 @@ var PersonPayment = function(person)
 		}
 		
 		hide();
+		$container.show();
 		$container.append(
 			horizontal().append(
 				$name,
@@ -370,6 +374,7 @@ var PersonPayment = function(person)
 		}
 		
 		hide();
+		$container.show();
 		$container.append(
 			horizontal().append(
 				$name,
