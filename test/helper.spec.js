@@ -28,20 +28,31 @@ var makeModel = function()
 		"updateTitle": function(text) { helper.title(text); helper.commit(); },
 		"updateName": function(text, index) 
 		{ 
+			var i = 0;
+			
 			helper.eachPerson(function(p) 
 			{
-				if (index-- == 0)
+				if (i++ == index)
 				{
-					p.setName(text);
+					if (text === "")
+					{
+						p.remove();
+					}
+					else
+					{
+						p.setName(text);
+					}
 				}					
 			});
 			helper.commit();
 		},
 		"updatePaymentText": function(text, index)
 		{
+			var i = 0;
+			
 			helper.eachPayment(function(p)
 			{
-				if (index-- == 0)
+				if (i++ == index)
 				{
 					if (text === "")
 					{

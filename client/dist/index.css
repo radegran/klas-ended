@@ -125,10 +125,6 @@ OFFLINE
 }
 
 /**/
-.center
-{
-	margin: 0 auto;
-}
 
 .info {
 	padding: 2px 0 2px 0.5em;
@@ -296,6 +292,7 @@ input {
 
 .payment-add,
 .people-add,
+.payment-close,
 .payment-next,
 .payment-back,
 .payment-save {
@@ -305,7 +302,7 @@ input {
 	background-position: center;
 	background-repeat: no-repeat;
 	cursor: pointer;
-	margin: 1em 0.5em 1em 0.5em;
+	margin: 1em 0.25em 1em 0.25em;
 }
 
 .payment-next {
@@ -318,6 +315,10 @@ input {
 
 .payment-save {
 	background-image: url('upload.png');
+}
+
+.payment-close {
+	background-image: url('close.png');
 }
 
 .people-remove {
@@ -368,6 +369,11 @@ input {
 	background-image: url('unlocked.png');
 }
 */
+
+.wiz-step-title {
+	margin-bottom:1em;
+}
+
 .payment-add,
 .people-add {
 	background-image: url('plus.png');

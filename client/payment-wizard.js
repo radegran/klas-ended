@@ -204,19 +204,16 @@ var PayModel = function(names, payment, allActiveDefault)
 
 var PersonPayment = function(person)
 {
-	var $container = $("<div/>").addClass("payment-person-container");
+	var $container = div("payment-person-container");
 	
-	var $nameRow = $("<div/>").addClass("flex-horizontal-container flex-grow");
-	var $inputRow = $("<div/>").addClass("flex-horizontal-container");
+	var $nameRow = horizontal("flex-grow");
+	var $inputRow = horizontal();
 	
-	var $indent = $("<div/>").addClass("payment-indent");
-	var $name = $("<div/>").addClass("clickable-person").text(person.name);
+	var $indent = div("payment-indent");
+	var $name = div("clickable-person").html(person.name);
 	
-	var $payLabel = $("<div/>").text("Betalat").addClass("flex-grow pay-label");
-	var $expenseLabel = $("<div/>").text("Borde betalat").addClass("flex-grow expense-label");
-	
-	var $innerLayout = $("<div/>").addClass("flex-vertical-container");
-	var $outerLayout = $("<div/>").addClass("flex-vertical-container");	
+	var $payLabel = div("flex-grow pay-label").text("Betalat");
+	var $expenseLabel = div("flex-grow expense-label").text("Borde betalat");
 	
 	var moneyInput = function() 
 	{
@@ -230,27 +227,7 @@ var PersonPayment = function(person)
 	var $locked = $("<div/>");
 	
 	var isLockedState;
-	
-	$container.append($outerLayout.append(
-		$nameRow.append(
-			$name,
-			$indent.clone().addClass("flex-grow")),
-		$inputRow.append(
-			$indent.clone(),
-			$innerLayout.append(
-				$("<div/>").addClass("flex-horizontal-container").append(
-					$payLabel,
-					$payInput,
-					$indent.clone()),
-				$("<div/>").addClass("flex-horizontal-container").append(
-					$expenseLabel,
-					$expenseInput,
-					$locked)		
-			)
-		)
-	));
-	
-	$name.on("click", function() { person.toggleActive(); });
+	var isActiveState = true;
 	
 	$payInput.on("change paste", function()
 	{
@@ -280,8 +257,6 @@ var PersonPayment = function(person)
 	
 	$locked.on("click", function() { person.lock(!isLockedState); });
 	
-	var isActiveState = true;
-	
 	person.onUpdate(function(isActive, payValue, expenseValue, isLocked)
 	{
 		isLockedState = isLocked;
@@ -308,7 +283,9 @@ var PersonPayment = function(person)
 		}
 		
 		$payInput.val(formatMoney(payValue).text());
+		$payInput.css("background-color", "");
 		$expenseInput.val(formatMoney(expenseValue).text());
+		$expenseInput.css("background-color", "");
 	});
 	
 	//
@@ -316,21 +293,54 @@ var PersonPayment = function(person)
 	//	
 	var hide = function()
 	{
-		$container.hide();
+		$container.find("*").detach();
+		$name.off();
 	};
 	
 	var showAll = function()
 	{
-		$container.find("*").show();
-		$outerLayout.attr("class", "flex-vertical-container");
-		$innerLayout.attr("class", "flex-vertical-container");
-		$container.show();
+		hide();
+		
+		$container.append(
+			vertical().append(
+				horizontal().append(
+					$nameRow.append(
+						$name,
+						div("flex-grow")
+					)
+				),
+				$inputRow.append(
+					$indent.clone(),
+					vertical().append(
+						horizontal().append(
+							$payLabel,
+							$payInput,
+							$indent.clone()
+						),
+						horizontal().append(
+							$expenseLabel,
+							$expenseInput,
+							$locked
+						)
+					)
+				)
+			)
+		);
 	};
 	
 	var showName = function()
 	{
-		showAll();
-		$inputRow.hide();
+		hide();
+		$container.append(
+			horizontal().append(
+				$name
+			)
+		);
+				
+		$name.on("click", function() 
+		{ 
+			person.toggleActive(); 
+		});
 	};
 	
 	var showPay = function()
@@ -341,12 +351,14 @@ var PersonPayment = function(person)
 			return;
 		}
 		
-		showAll();
-		$outerLayout.attr("class", "flex-horizontal-container flex-justify-center");
-		$payLabel.hide();
-		$expenseLabel.hide();
-		$expenseInput.hide();
-		$locked.hide();
+		hide();
+		$container.append(
+			horizontal().append(
+				$name,
+				div("flex-grow"),
+				$payInput
+			)
+		);
 	};
 	
 	var showShouldHavePaid = function()
@@ -357,12 +369,15 @@ var PersonPayment = function(person)
 			return;
 		}
 		
-		showAll();
-		$outerLayout.attr("class", "flex-horizontal-container flex-justify-center");
-		$innerLayout.attr("class", "flex-horizontal-container flex-justify-center");
-		$payLabel.hide();
-		$expenseLabel.hide();
-		$payInput.hide();
+		hide();
+		$container.append(
+			horizontal().append(
+				$name,
+				div("flex-grow"),
+				$expenseInput,
+				$locked
+			)
+		);
 	};
 	
 	var showEverything = function()
@@ -386,113 +401,128 @@ var PersonPayment = function(person)
 	};
 };
 
-var AddWizard = function(model)
+var WizNav = function(steps, $navTitle, onSave, onClose)
 {
-	var Nav = function(steps, $navTitle, onSave, onClose)
+	var currentStep = 0;
+	var stepCount = steps.length;
+	
+	var $close;
+	var $back;
+	var $next;
+	var $save;
+	var dots = [];
+	
+	for (var i = 0; i < stepCount; i++)
 	{
-		var currentStep = 0;
-		var stepCount = steps.length;
-		
-		var $back;
-		var $next;
-		var $save;
-		var dots = [];
-		
-		for (var i = 0; i < stepCount; i++)
-		{
-			dots.push($("<div/>").addClass("dot"));
-		}
-		
-		var onSaveInternal = function()
-		{
-			$navTitle.hide();
-			onSave();
-		};
-		
-		var showCurrentStep = function()
-		{
-			$navTitle.show();
-			$back.show();
-			$next.show();
-			$save.hide();
-				
-			if (currentStep < 0)
-			{
-				onClose();
-				$navTitle.hide();
-				return;
-			}
-			
-			if (currentStep == stepCount-1)
-			{
-				$next.hide();
-				$save.show();				
-			}
-			
-			$(dots).removeClass("filled");
-			for (var i = 0; i < stepCount; i++)
-			{
-				if (i <= currentStep)
-				{
-					dots[i].addClass("filled");
-				}
-				else
-				{
-					dots[i].removeClass("filled");					
-				}
-			}
-			
-			steps[currentStep]();
-		};
-		
-		var nextStep = function()
-		{
-			currentStep++;
-			showCurrentStep();
-		};
-		
-		var prevStep = function()
-		{
-			currentStep--;
-			showCurrentStep();
-		};
-		
-		$back = $("<span/>").addClass("payment-back").on("click", prevStep);
-		$next = $("<span/>").addClass("payment-next").on("click", nextStep);
-		$save = $("<span/>").addClass("payment-save").on("click", onSaveInternal);
-		
-		var $dummy = $("<div/>").addClass("flex-grow");
-		
-		var $nav = $("<div/>").addClass("flex-horizontal-container flex-justify-center").append(
-			$dummy.clone(),
-			$back,
-			dots,
-			$next,
-			$save,
-			$dummy.clone());
-				
-		var begin = function()
-		{
-			showCurrentStep();
-		};
-		
-		var last = function()
-		{
-			currentStep = steps.length - 1;
-			showCurrentStep();
-		}
-		
-		return {
-			"element": function() { return $nav; },
-			"begin": begin,
-			"last": last
-		};
+		dots.push($("<div/>").addClass("dot"));
 	}
 	
+	var onSaveInternal = function()
+	{
+		$navTitle.hide();
+		onSave();
+	};
+		
+	var onCloseInternal = function()
+	{
+		$navTitle.hide();
+		onClose();
+	};
+	
+	var showCurrentStep = function()
+	{
+		$navTitle.show();
+		$close.removeClass("transparent").off().on("click", onCloseInternal);
+		$back.removeClass("transparent").off().on("click", prevStep);
+		$next.removeClass("transparent").off().on("click", nextStep);
+		$save.addClass("transparent").off();
+			
+		if (currentStep == 0)
+		{
+			$back.addClass("transparent").off();
+		}
+		
+		if (currentStep == stepCount-1)
+		{
+			$next.addClass("transparent").off();
+			$save.removeClass("transparent").off().on("click", onSaveInternal);				
+		}
+		
+		$(dots).removeClass("filled");
+		for (var i = 0; i < stepCount; i++)
+		{
+			if (i <= currentStep)
+			{
+				dots[i].addClass("filled");
+			}
+			else
+			{
+				dots[i].removeClass("filled");					
+			}
+		}
+		
+		steps[currentStep]();
+	};
+	
+	var nextStep = function()
+	{
+		currentStep++;
+		showCurrentStep();
+	};
+	
+	var prevStep = function()
+	{
+		currentStep--;
+		showCurrentStep();
+	};
+	
+	$close = $("<span/>").addClass("payment-close");
+	$back = $("<span/>").addClass("payment-back");
+	$next = $("<span/>").addClass("payment-next");
+	$save = $("<span/>").addClass("payment-save");
+	
+	var $dummy = $("<div/>").addClass("flex-grow");
+	
+	var $nav = $("<div/>").addClass("flex-horizontal-container flex-justify-center").append(
+		$dummy.clone(),
+		$close,
+		$back,
+		dots,
+		$next,
+		$save,
+		$dummy.clone());
+			
+	var begin = function()
+	{
+		showCurrentStep();
+	};
+	
+	var last = function()
+	{
+		currentStep = steps.length - 1;
+		showCurrentStep();
+	}
+	
+	return {
+		"element": function() { return $nav; },
+		"begin": begin,
+		"last": last
+	};
+};
+
+var AddWizard = function(model, fullScreenFunc)
+{	
 	var $items;
 	
 	var show = function($parent, onClose, paymentIndex)
 	{	
+		fullScreenFunc(true);
+		var onCloseInternal = function()
+		{
+			fullScreenFunc(false);
+			onClose();
+		};
+	
 		// Setup
 		var isNewPayment = paymentIndex === undefined;
 		var dh = model.getDataHelper();
@@ -518,7 +548,7 @@ var AddWizard = function(model)
 			.on("click", editableTitle.editMode);
 	
 		// Throw in person payment objects
-		$items = $("<div/>");
+		$items = vertical();
 		var personPayments = [];
 		payModel.eachPerson(function(person)
 		{
@@ -528,28 +558,16 @@ var AddWizard = function(model)
 		{
 			$items.append(pp.element());
 		});
-		var Persons = function(personList)
-		{
-			var forAll = function(funcName)
-			{				
-				$.each(personPayments, function(i, pp)
-				{
-					pp[funcName]();
-				});
-			};
-			
-			return {
-				"hide": function() { forAll("hide"); },
-				"showNames": function() { forAll("showName"); },
-				"showPay": function() { forAll("showPay"); },
-				"showShouldHavePaid": function() { forAll("showShouldHavePaid"); },
-				"showEverything": function() { forAll("showEverything"); }
-			};
+		var forAllPersonsCall = function(funcName)
+		{				
+			$.each(personPayments, function(i, pp)
+			{
+				pp[funcName]();
+			});
 		};
-		var persons = Persons(personPayments);
-			
+					
 		// Navigation		
-		var $stepTitle = $("<div/>");
+		var $stepTitle = div("wiz-step-title");
 		var onSave = function()
 		{
 			if (isNewPayment)
@@ -558,47 +576,50 @@ var AddWizard = function(model)
 			}
 
 			dh.commit();
-			onClose();
+			onCloseInternal();
 		};
 		// SSSSSSSSSSTTTTTTTTEEEEEEEEPPPPPPPPSSSSSSSSSS
 		var step1 = function() 
 		{
 			$stepTitle.html("Beskriv betalningen").show();
 			$title.show();
-			persons.hide();
-			editableTitle.editMode();			
+			forAllPersonsCall("hide");
+			if ($title.text() == "")
+			{
+				editableTitle.editMode();			
+			}
 		};
 		var step2 = function()
 		{
 			$stepTitle.html("Vilka berörs av betalningen?").show();
 			$title.hide();
-			persons.showNames();
+			forAllPersonsCall("showName");
 		};
 		var step3 = function()
 		{
 			$stepTitle.html("Hur mycket har folk betalat?").show();
 			$title.hide();
-			persons.showPay();
+			forAllPersonsCall("showPay");
 		};
 		var step4 = function()
 		{
 			$stepTitle.html("Hur mycket borde folk betalat?").show();
 			$title.hide();
-			persons.showShouldHavePaid();
+			forAllPersonsCall("showShouldHavePaid");
 		};
 		var step5 = function()
 		{
-			$stepTitle.html("Sammanställning av betalning");
+			$stepTitle.html("Sammanställning");
 			$title.show();
-			persons.showEverything();
+			forAllPersonsCall("showEverything");
 		};
-		var nav = Nav([step1, step2, step3, step4, step5], $stepTitle, onSave, onClose);
+		var nav = WizNav([step1, step2, step3, step4, step5], $stepTitle, onSave, onCloseInternal);
 		
 		// Add all
 		$parent.append(
-			$("<div/>").addClass("flex-horizontal-container flex-justify-center").append($stepTitle), 
-			$("<div/>").addClass("flex-horizontal-container flex-justify-center").append($title), 
-			$items, 
+			horizontal().append($stepTitle), 
+			horizontal().append($title), 
+			horizontal().append($items), 
 			nav.element());
 		
 		if (isNewPayment)

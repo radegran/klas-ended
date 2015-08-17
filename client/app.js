@@ -9,7 +9,12 @@ var initialize = function(docProxy, net, networkStatus)
 		docProxy.update(newdata);
 	});
 	
-	var addWizard = AddWizard(model);
+	var fullScreen = function(shouldFullScreen)
+	{
+		ui.fullScreen(shouldFullScreen);
+	};
+	
+	var addWizard = AddWizard(model, fullScreen);
 	
 	var ui = MainUI(StatsUI(addWizard, model), 
 				    PaymentUI(addWizard, model), 

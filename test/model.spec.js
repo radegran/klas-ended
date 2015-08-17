@@ -1,5 +1,42 @@
 describe("Model", function()
 {	
+	// {"text": "T0", "values": [[0,10], [0,10], [30,10]]},
+	// {"text": "T1", "values": [[0,0], [29, 14.5], [0,14.5]]},
+	// {"text": "T2", "values": [[40,0], [0,40], [0,0]]}
+
+	it("removes name (0)", function()
+	{
+		var m = makeModel();
+		m.updateName("", 0);
+		
+		expect(localData.names.length).toBe(2);
+		expect(localData.payments[0].values).toEqual([[0,15], [30,15]]);
+		expect(localData.payments[1].values).toEqual([[29,14.5], [0,14.5]]);
+		expect(localData.payments[2].values).toEqual([[0,0], [0,0]]);
+	});
+	
+	it("removes name (1)", function()
+	{
+		var m = makeModel();
+		m.updateName("", 1);
+		
+		expect(localData.names.length).toBe(2);
+		expect(localData.payments[0].values).toEqual([[0,15], [30,15]]);
+		expect(localData.payments[1].values).toEqual([[0,0], [0,0]]);
+		expect(localData.payments[2].values).toEqual([[40,20], [0,20]]);
+	});
+	
+	it("removes name (2)", function()
+	{
+		var m = makeModel();
+		m.updateName("", 2);
+		
+		expect(localData.names.length).toBe(2);
+		expect(localData.payments[0].values).toEqual([[0,0], [0,0]]);
+		expect(localData.payments[1].values).toEqual([[0,7.25], [29,14.5 + 7.25]]);
+		expect(localData.payments[2].values).toEqual([[40,0], [0,40]]);
+	});
+
 	describe("DataDiff", function()
 	{
 		it("does not accept different title", function()

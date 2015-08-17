@@ -319,14 +319,30 @@ var DataHelper = function(data, onChange, onCommit)
 			
 			var remove = function()
 			{
-				alert("not implemented!");
-				return;
+				$.each(data.payments, function(j, p) 
+				{
+					var payModel = PayModel(data.names, p, true);
+					var i = nameIndex;
+					var pmp;
+					
+					payModel.eachPerson(function(it)
+					{
+						if (i-- == 0)
+						{
+							pmp = it;						
+						}
+					});
+					
+					pmp.toggleActive();
+					pmp.toggleActive();					
+				});
+
+				data.names.splice(nameIndex, 1);
+				$.each(data.payments, function(j, p) {
+					p.values.splice(nameIndex, 1);
+				});
 				
-				// data.names.splice(nameIndex, 1);
-				// $.each(data.payments, function(j, p) {
-					// p.values.splice(nameIndex, 1);
-				// });
-				// onChange();
+				onChange();
 			};
 			
 			callback({
@@ -452,7 +468,7 @@ var DataHelper = function(data, onChange, onCommit)
 	var emptyPayment = function()
 	{
 		var p = {
-			"text": "Beskrivning...",
+			"text": "",
 			"values": []
 		};
 		

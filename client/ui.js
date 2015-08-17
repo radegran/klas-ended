@@ -54,6 +54,21 @@ var whiteSpace = function(count)
 	}
 	return str;
 };
+	
+var horizontal = function(classNames)
+{
+	return $("<div/>").addClass("flex-horizontal-container flex-justify-center " + (classNames || ""));
+};
+
+var vertical = function(classNames)
+{
+	return $("<div/>").addClass("flex-vertical-container " + (classNames || ""));
+};
+
+var div = function(classNames)
+{
+	return $("<div/>").addClass(classNames);
+};
 
 var formatMoney = function(value, keepDecimals)
 {
@@ -314,12 +329,14 @@ var MainUI = function(statsUI, paymentUI, peopleUI, headerUI)
 	var $overviewNav;
 	var $paymentsNav;
 	var $peopleNav;
+	var $header;
+	var $topNavigation;
 	
 	var create = function($parent)
 	{
 		var $root = $("<div/>").addClass("ui-root flex-vertical-container");
-		var $header = $("<div/>");
-		var $topNavigation = $("<div/>").addClass("ui-navigation-bar flex-horizontal-container flex-justify-center small-padding");
+		$header = $("<div/>");
+		$topNavigation = $("<div/>").addClass("ui-navigation-bar flex-horizontal-container flex-justify-center small-padding");
 		var $statusBar = $("<div/>").addClass("ui-status-bar flex-horizontal-container flex-justify-center messagecontainer");
 		var $contentContainer = $("<div/>").addClass("scrollable ui-content-container flex-grow small-padding");
 		
@@ -391,12 +408,27 @@ var MainUI = function(statsUI, paymentUI, peopleUI, headerUI)
 		peopleUI.update();
 	};
 	
+	var fullScreen = function(shouldFullScreen)
+	{
+		if (shouldFullScreen)
+		{
+			$header.hide();
+			$topNavigation.hide();
+		}
+		else
+		{
+			$header.show();
+			$topNavigation.show();
+		}
+	};
+	
 	return {
 		"create": create,
 		"update": update,
 		"navPeople": function() { $peopleNav.trigger('click'); },
 		"navPayments": function() { $paymentsNav.trigger('click'); },
-		"navStats": function() { $overviewNav.trigger('click'); }		
+		"navStats": function() { $overviewNav.trigger('click'); },
+		"fullScreen": fullScreen
 	};
 };
 
