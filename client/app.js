@@ -45,7 +45,7 @@ var initialize = function(docProxy, net, networkStatus)
 var startApp = function()
 {
 	FastClick.attach(document.body);
-
+	
 	var errorHandler = {"fatal": bailout, "info": info};
 	var networkStatus = NetworkStatus();
 	
@@ -69,6 +69,9 @@ var startApp = function()
 	});
 	
 	initialize(docProxy, net, networkStatus); 	
+	
+	
+	nonbounce("ui-content-container");
 	
 	var ajaxTimer = null;
 	var messageObj = {"hide": $.noop};

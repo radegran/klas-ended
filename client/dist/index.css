@@ -1,5 +1,6 @@
-body {
+html, body {
 	margin: 0;
+	height: 100%;
 }
 
 body {
@@ -77,6 +78,7 @@ body {
 
 .ui-navigation-bar {
 	padding-bottom: 0.5em;
+	border-bottom: 1px solid #d8cf7e;
 }
 
 .ui-navigation-bar,
@@ -111,7 +113,7 @@ input {
 
 .ui-content-container {
 	background-color: none;
-	overflow-y: scroll;
+	overflow-y: auto;
 	-webkit-overflow-scrolling: touch;
 	padding: 2em 0.3em 1em 0.3em;
 }
@@ -204,6 +206,11 @@ input {
 	background-position: center;
 	background-repeat: no-repeat;
 	cursor: pointer;
+	margin: 0;
+}
+
+.payment-add,
+.people-add {
 	margin: 1em 0.25em 1em 0.25em;
 }
 

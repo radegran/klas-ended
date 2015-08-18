@@ -331,18 +331,20 @@ var MainUI = function(statsUI, paymentUI, peopleUI, headerUI)
 	var $peopleNav;
 	var $header;
 	var $topNavigation;
+	var $topNavigationAlternative;
 	
 	var create = function($parent)
 	{
 		var $root = $("<div/>").addClass("ui-root flex-vertical-container");
 		$header = $("<div/>");
 		$topNavigation = $("<div/>").addClass("ui-navigation-bar flex-horizontal-container flex-justify-center small-padding");
+		$topNavigationAlternative = $("<div/>").addClass("ui-navigation-bar flex-horizontal-container flex-justify-center small-padding");
 		var $statusBar = $("<div/>").addClass("ui-status-bar flex-horizontal-container flex-justify-center messagecontainer");
-		var $contentContainer = $("<div/>").addClass("scrollable ui-content-container flex-grow small-padding");
+		var $contentContainer = $("<div/>").addClass("nonbounce ui-content-container flex-grow small-padding");
 		
-		var $paymentContentFlex = $("<div/>").addClass("ui-content flex-horizontal-container flex-justify-center");
-		var $peopleContentFlex = $("<div/>").addClass("ui-content flex-horizontal-container flex-justify-center");
-		var $statsContentFlex = $("<div/>").addClass("ui-content flex-horizontal-container flex-justify-center");
+		var $paymentContentFlex = $("<div/>").addClass("nonbounce ui-content flex-horizontal-container flex-justify-center");
+		var $peopleContentFlex = $("<div/>").addClass("nonbounce ui-content flex-horizontal-container flex-justify-center");
+		var $statsContentFlex = $("<div/>").addClass("nonbounce ui-content flex-horizontal-container flex-justify-center");
 		var $headerFlex = $("<div/>").addClass("ui-header small-padding flex-horizontal-container flex-justify-center");
 		
 		var $peopleContent = $("<div/>");
@@ -377,6 +379,7 @@ var MainUI = function(statsUI, paymentUI, peopleUI, headerUI)
 					$peopleNav,
 					$paymentsNav,
 					$overviewNav),
+				$topNavigationAlternative.hide(),
 				$statusBar,
 				$contentContainer.append(
 					$statsContentFlex.append($statsContent),
@@ -388,15 +391,6 @@ var MainUI = function(statsUI, paymentUI, peopleUI, headerUI)
 		
 		// General stuff...
 		$(window).on("click", function() { $(".confirm-remove").hide('fast'); });
-			
-		
-		// document.addEventListener('touchmove', function(e) {
-// if (document.querySelector('.scrollable').contains(e.target)) {
-// return;
-// }
-
-// e.preventDefault();
-// }, true);
 
 	};
 	
@@ -408,17 +402,19 @@ var MainUI = function(statsUI, paymentUI, peopleUI, headerUI)
 		peopleUI.update();
 	};
 	
-	var fullScreen = function(shouldFullScreen)
+	var fullScreen = function($withTopNavigation)
 	{
-		if (shouldFullScreen)
+		if ($withTopNavigation)
 		{
 			$header.hide();
 			$topNavigation.hide();
+			$topNavigationAlternative.append($withTopNavigation).show();
 		}
 		else
 		{
 			$header.show();
 			$topNavigation.show();
+			$topNavigationAlternative.empty().hide();
 		}
 	};
 	

@@ -521,10 +521,9 @@ var AddWizard = function(model, fullScreenFunc)
 	
 	var show = function($parent, onClose, paymentIndex)
 	{	
-		fullScreenFunc(true);
 		var onCloseInternal = function()
 		{
-			fullScreenFunc(false);
+			fullScreenFunc();
 			onClose();
 		};
 	
@@ -624,8 +623,9 @@ var AddWizard = function(model, fullScreenFunc)
 		$parent.append(
 			horizontal().append($stepTitle), 
 			horizontal().append($title), 
-			horizontal().append($items), 
-			nav.element());
+			horizontal().append($items));
+			
+		fullScreenFunc(nav.element());
 		
 		if (isNewPayment)
 		{
