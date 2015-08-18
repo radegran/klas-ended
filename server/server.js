@@ -253,8 +253,15 @@ var SampleApp = function() {
 		
 		self.routes['/app.appcache'] = function(req, res)
 		{
-            res.setHeader('Content-Type', 'text/cache-manifest');
-            res.send(self.cache_get('app.appcache') );
+			if (self.isDevelEnv)
+			{
+				res.send('');
+			}
+			else
+			{
+				res.setHeader('Content-Type', 'text/cache-manifest');
+				res.send(self.cache_get('app.appcache') );				
+			}
 		};
 		
         self.routes['/stats'] = function(req, res) 

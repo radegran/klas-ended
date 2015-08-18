@@ -70,9 +70,6 @@ var startApp = function()
 	
 	initialize(docProxy, net, networkStatus); 	
 	
-	
-	nonbounce("ui-content-container");
-	
 	var ajaxTimer = null;
 	var messageObj = {"hide": $.noop};
 	
