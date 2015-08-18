@@ -178,6 +178,8 @@ input {
 	flex: 1;                  /* NEW, Spec - Opera 12.1, Firefox 20+ */
 }
 
+.help-button,
+.nav-help,
 .nav-stats,
 .nav-people,
 .nav-payments {
@@ -334,6 +336,10 @@ input {
 }
 
 
+.nav-help {
+	background-image: url('help.png');
+}
+
 .nav-stats {
 	background-image: url('barchart.png');
 }
@@ -346,4 +352,15 @@ input {
 	background-image: url('creditcard.png');
 }
 
-input, select, textarea, button{font-family:inherit; font-size:inherit; padding:0 0.25em 0 0.25em; border:none}
+.help-button {
+	background-image: url('mail.png');
+	background-color: transparent;
+}
+
+.big-margin {
+	margin: 0.7em 0 0.7em 0;
+}
+
+
+textarea {font-family:inherit; font-size:inherit; padding: 0.5em;}
+input, select, button{font-family:inherit; font-size:inherit; padding:0 0.25em 0 0.25em; border:none}

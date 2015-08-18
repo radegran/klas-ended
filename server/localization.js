@@ -157,8 +157,16 @@ var Strings =
 		"sv": "Öppna sidan på telefonen och lägg till den på hemskärmen."
 	},
 	"ExampleEmail": {
-		"en": "mail@domain.com",
-		"sv": "mail@domän.com"
+		"en": "your.name@domain.com",
+		"sv": "din.mail@domän.com"
+	},
+	"CommentSample": {
+		"en": "Enter questions or comments here and we'll get back to you",
+		"sv": "Skriv frågor eller kommentarer här så återkommer vi snarast"
+	},
+	"CopyUrlInfo": {
+		"en": "Share this link with friends",
+		"sv": "Dela den här länken med dina vänner"
 	},
 	"StartData": {
 		"en": {

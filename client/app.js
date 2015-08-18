@@ -19,7 +19,8 @@ var initialize = function(docProxy, net, networkStatus)
 	var ui = MainUI(StatsUI(addWizard, model), 
 				    PaymentUI(addWizard, model), 
 					PeopleUI(model),
-					HeaderUI(model));
+					HeaderUI(model),
+					HelpUI(model, net, networkStatus));
 	
 	ui.create($(document.body));
 	
