@@ -343,8 +343,9 @@ var HelpUI = function(model, net, networkStatus)
 		
 		var $textArea = $("<textarea/>").addClass("big-margin small-text")
 			.val(L.CommentSample)
-			.attr("cols", 20)
+			.css("width", "15em")
 			.attr("rows", 6)
+			.on("focus", function() { if ($textArea.val() == L.CommentSample) $textArea.val("");})
 			.on("input paste", function() { updateSubmitButton(); });
 		var $inputEmail = $("<input/>").addClass("big-margin small-text")
 			.css("width", "15em")
