@@ -336,7 +336,7 @@ var HelpUI = function(model, net, networkStatus)
 			div("big-margin").html(whiteSpace(1))
 		);
 			
-		var $container = vertical();
+		var $container = vertical("flex-justify-center");
 		
 		var emailSent = false;
 		var updateSubmitButton;
@@ -382,7 +382,11 @@ var HelpUI = function(model, net, networkStatus)
 		
 		networkStatus.onChanged(function() { updateSubmitButton(); });
 		
-		$container.append($urlContainer, $textArea, horizontal().append($inputEmail), horizontal().append($submit));
+		$container.append(
+			$urlContainer, 
+			$textArea, 
+			$inputEmail, 
+			$submit);
 		$parent.append(horizontal().append($container));
 		
 		updateSubmitButton();
