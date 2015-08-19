@@ -78,7 +78,7 @@ body {
 
 .ui-navigation-bar {
 	padding-bottom: 0.5em;
-	border-bottom: 1px solid #d8cf7e;
+	box-shadow: rgba(0, 0, 0, 0.278431) 0px 4px 8px;
 }
 
 .ui-navigation-bar,
