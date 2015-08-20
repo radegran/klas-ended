@@ -140,7 +140,7 @@ var StatsUI = function(addWizard, model)
 		
 		$.each(persons, function(i, person)
 		{
-			var $details = $("<div/>").addClass("small-text").hide();
+			var $details = $("<div/>").addClass("person-details").hide();
 			
 			person.eachPayment(function(payment)
 			{	
@@ -150,7 +150,7 @@ var StatsUI = function(addWizard, model)
 					return;
 				}
 				
-				var $detail = $("<div/>").addClass("clickable-payment flex-horizontal-container flex-justify-center").append(
+				var $detail = div("small-padding").addClass("clickable-payment flex-horizontal-container flex-justify-center").append(
 					$("<div/>").html(payment.text() + whiteSpace(3)).addClass("flex-grow"),
 					$("<div/>").html(formatMoney(diff, true))).on("click", function()
 					{
@@ -168,7 +168,11 @@ var StatsUI = function(addWizard, model)
 				$personSummary,
 				$details);
 				
-			$personSummary.on("click", function() { $details.slideToggle('fast'); });
+			$personSummary.on("click", function() 
+			{ 
+				$(".person-details").not($details[0]).slideUp('fast');
+				$details.slideToggle('fast'); 
+			});
 				
 			$stats.append($stat);
 		});

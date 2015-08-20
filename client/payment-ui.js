@@ -63,7 +63,7 @@
 		$.each(paymentList, function(i, payment) 
 		{
 			var $p = $("<div/>").addClass("flex-horizontal-container flex-justify-center");
-			var $clickable = $("<div/>").addClass("flex-horizontal-container flex-grow flex-justify-center clickable-payment small-text");
+			var $clickable = $("<div/>").addClass("flex-horizontal-container flex-grow flex-justify-center clickable-payment");
 			var $label = $("<span/>").html(payment.text() + whiteSpace(3));
 			var $cost = $("<span/>").html(formatMoney(payment.cost()));
 			var $confirm = $("<div/>").hide()

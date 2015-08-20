@@ -41,9 +41,9 @@ body {
 
 .person-summary {
 	padding: 0.3em;
-	margin:0.2em;
+	margin:0.5em;
 	cursor: pointer;
-	border: 1px solid khaki;
+	border: 2px solid khaki;
     -moz-border-radius: 0.5em;
     -webkit-border-radius: 0.5em;
     -khtml-border-radius: 0.5em;
@@ -51,7 +51,7 @@ body {
 }
 
 .offline .person-summary {
-	border: 1px solid gainsboro;
+	border: 2px solid gainsboro;
 }
 
 .pay-label,
