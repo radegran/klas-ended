@@ -1,4 +1,4 @@
-var initialize = function(docProxy, net, networkStatus)
+var initialize = function(docProxy, net, networkStatus, errorHandler)
 {	
 	var ui;
 	var hasSetStartPage = false;
@@ -14,7 +14,7 @@ var initialize = function(docProxy, net, networkStatus)
 		ui.fullScreen(shouldFullScreen);
 	};
 	
-	var addWizard = AddWizard(model, fullScreen);
+	var addWizard = AddWizard(model, fullScreen, errorHandler);
 	
 	var ui = MainUI(StatsUI(addWizard, model), 
 				    PaymentUI(addWizard, model), 
@@ -69,7 +69,7 @@ var startApp = function()
 		}
 	});
 	
-	initialize(docProxy, net, networkStatus); 	
+	initialize(docProxy, net, networkStatus, errorHandler); 	
 	
 	var ajaxTimer = null;
 	var messageObj = {"hide": $.noop};

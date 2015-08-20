@@ -515,7 +515,7 @@ var WizNav = function(steps, $navTitle, onSave, onClose)
 	};
 };
 
-var AddWizard = function(model, fullScreenFunc)
+var AddWizard = function(model, fullScreenFunc, errorHandler)
 {	
 	var $items;
 	
@@ -580,6 +580,7 @@ var AddWizard = function(model, fullScreenFunc)
 			}
 
 			dh.commit();
+			errorHandler.info(L.Saving);
 			onCloseInternal();
 		};
 		// SSSSSSSSSSTTTTTTTTEEEEEEEEPPPPPPPPSSSSSSSSSS

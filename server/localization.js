@@ -113,8 +113,8 @@ var Strings =
 		"sv": "Offlineläge - Du kan lägga till nya betalningar."
 	},
 	"OnlineMode": {
-		"en": "Back online!",
-		"sv": "Online igen!"
+		"en": "Online!",
+		"sv": "Online!"
 	},
 	"HelpHeader1": {
 		"en": "How do I remove an expense or a person?",
