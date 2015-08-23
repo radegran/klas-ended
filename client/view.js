@@ -45,6 +45,16 @@ var editable = function(text, onChange)
 	}
 };
 
+var row  = function(colElems)
+{
+	var $r = $("<tr/>");
+	for (var i = 0; i < colElems.length; i++)
+	{
+		$r.append($("<td/>").addClass("col" + i).append(colElems[i]));
+	}
+	return $r;
+};
+
 var whiteSpace = function(count)
 {
 	var str = "";

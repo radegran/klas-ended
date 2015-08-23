@@ -27,7 +27,7 @@ var UI = function(headerUI, contentUI, footerUI)
 {
 	var create = function($parent)
 	{
-		var $root = vertical("ui-root flex-justify-center");
+		var $root = vertical("ui-root");
 		var $header = div("ui-header small-padding");
 		var $statusBar = div("ui-status-bar messagecontainer");
 		var $content = vertical("flex-justify-center ui-content-container flex-grow small-padding");
@@ -45,9 +45,6 @@ var UI = function(headerUI, contentUI, footerUI)
 				$footer
 			)
 		);
-		
-		// General stuff...
-		$(window).on("click", function() { $(".confirm-remove").hide('fast'); });
 	};
 	
 	var update = function()

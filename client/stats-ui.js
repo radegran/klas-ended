@@ -32,6 +32,12 @@ var StatsUI = function(addWizard, model)
 		
 		var dh = model.getDataHelper();
 		
+		$addPerson.off().on("click", function() 
+		{
+			dh.addPerson(L.Name);
+			dh.commit();
+		});
+		
 		dh.eachPerson(function(person)
 		{
 			balances.push(person.diff);
@@ -101,6 +107,7 @@ var StatsUI = function(addWizard, model)
 		$transferPlan = $("<div/>");
 		$transfers = $("<div/>").addClass("small-text");
 		$addWizard = $("<div/>").hide();
+		$addPerson = div("person-add");
 		
 		$parent.append(
 			$addWizard, 
@@ -110,7 +117,8 @@ var StatsUI = function(addWizard, model)
 					$("<div/>").html(whiteSpace(1)),
 					$("<div/>").addClass("flex-horizontal-container flex-justify-center").append($transferHeader), 
 					$("<div/>").html(whiteSpace(1)),
-					$transfers)));
+					$transfers)),
+			horizontal().append($addPerson));
 	};
 	
 	return {

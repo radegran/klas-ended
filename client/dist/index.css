@@ -196,14 +196,14 @@ input {
 	margin: 0.5em 0 0.5em 0;
 }
 
+.person-add,
 .payment-add,
-.people-add,
 .payment-close,
 .payment-next,
 .payment-back,
 .payment-save {
-	height: 3.5em;
-	width: 3.5em;
+	height: 2.5em;
+	width: 2.5em;
 	background-size: 90%;
 	background-position: center;
 	background-repeat: no-repeat;
@@ -212,8 +212,8 @@ input {
 }
 
 .payment-add,
-.people-add {
-	margin: 1em 0.25em 1em 0.25em;
+.person-add {
+	margin: 0.25em 0.25em 0.25em 0.25em;
 }
 
 .payment-next {
@@ -286,7 +286,7 @@ input {
 }
 
 .payment-add,
-.people-add {
+.person-add {
 	background-image: url('plus.png');
 }
 

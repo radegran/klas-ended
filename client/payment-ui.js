@@ -1,20 +1,16 @@
 ﻿var PaymentUI = function(addWizard, model)
 {
-	var $addButton = null;
 	var $historyContainer = null;
 	var $addWizard = null;
 	
 	var hideWizard = function()
 	{
 		$historyContainer.show();
-		$addButton.show();
 		$addWizard.hide();
 	};
 	
 	var showAddWizard = function(paymentIndex)
 	{
-		// paymentIndex might be null. Then its a new payment
-		$addButton.hide();
 		$historyContainer.hide();
 		addWizard.show($addWizard.empty().show(), hideWizard, paymentIndex);
 	};
@@ -25,12 +21,8 @@
 		$pastPayments = $("<div/>");
 		$historyContainer = $("<div/>");
 		$addWizard = $("<div/>");
-		$addButton = $("<div/>")
-			.addClass("payment-add")
-			.on("click", function() { showAddWizard(); });
 		
 		$parent.append(
-			$("<div/>").addClass("flex-horizontal-container flex-justify-center").append($addButton), 
 			$historyContainer.append(
 				$("<div/>").addClass("flex-horizontal-container flex-justify-center").append($historyHeader), 
 				$("<div/>").html(whiteSpace(1)),
@@ -83,8 +75,6 @@
 				
 			$historyContainer.show();
 		});
-				
-		$addButton.show();
 	};
 	
 	return {

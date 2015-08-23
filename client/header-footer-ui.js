@@ -40,7 +40,7 @@ var AddPaymentButtonUI = function(paymentWizard, model)
 	{
 		var dh = model.getDataHelper();
 
-		if (dh.names.length == 0)
+		if (dh.names().length == 0)
 		{
 			$addPaymentButton.hide();
 		}
@@ -49,23 +49,12 @@ var AddPaymentButtonUI = function(paymentWizard, model)
 			$addPaymentButton.slideDown();
 		}
 	};
-	
-	var showAddPayment = function()
-	{
-		var hideWizard = $.noop;
-		paymentWizard.show($addWizard.empty().show(), hideWizard);
-	};
-	
 	var create = function($parent)
 	{
 		$addPaymentButton = div("payment-add")
-			.on("click", function() {});
-		
-		// $addPaymentButton = $("<div/>")
-			// .addClass("people-add")
-			// .on("click", function() { var dh = model.getDataHelper(); dh.addPerson(L.Name); dh.commit(); });
+			.on("click", function() { paymentWizard.show(); });
 
-		$parent.append($addPaymentButton);
+		$parent.append(horizontal().append($addPaymentButton));
 	};
 	
 	return {

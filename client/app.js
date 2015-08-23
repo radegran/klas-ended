@@ -1,7 +1,6 @@
 var initialize = function(docProxy, net, networkStatus)
 {	
 	var ui;
-	// var hasSetStartPage = false;
 	
 	var model = Model(function(newdata) 
 	{ 
@@ -9,20 +8,60 @@ var initialize = function(docProxy, net, networkStatus)
 		docProxy.update(newdata);
 	});
 	
-	var fullScreen = function(shouldFullScreen)
-	{
-		ui.fullScreen(shouldFullScreen);
+	var $uiRoot = div("ui-root");
+	
+	var paymentWizard = {
+		"show": function(paymentIndex) 
+		{
+			var isNewPayment = paymentIndex === undefined;
+			var dh = model.getDataHelper();
+			var payment = isNewPayment ? dh.emptyPayment() : dh.payment(paymentIndex);
+			var values = payment.values;
+			var payModel = PayModel(dh.names(), payment, false);
+
+			// title
+			var $paymentTitle = div().text("title-todo");
+			
+			// navigation
+			var $paymentClose = div("payment-close");
+			var $paymentSave = div("payment-save");
+			var $paymentNavigation = vertical("flex-justify-center").append(
+				horizontal().append(
+					$paymentClose,
+					$paymentSave
+				)
+			);
+			
+			// content
+			var $table = $("<table/>");
+			$table.append(row([$(), div().text("betalat"), div().text("borde betalat"), $()]));
+			
+			payModel.eachPerson(function(person)
+			{
+				var pp = PersonPayment(person);
+				$table.append(pp.element())
+			});
+			
+			var $wizElem = vertical("ui-root").append(
+				horizontal("ui-header").append($paymentTitle),
+				horizontal("flex-grow").append($table),
+				horizontal("ui-footer").append($paymentNavigation)
+			);
+			
+			$uiRoot.hide();
+			$(document.body).append($wizElem);
+		}
 	};
+
+	ui = UI(TitleUI(model),
+			MainContentUI(
+				StatsUI(paymentWizard, model),
+				PaymentUI(paymentWizard, model)), 
+			AddPaymentButtonUI(paymentWizard, model));
 	
-	var addWizard = AddWizard(model, fullScreen);
+	ui.create($uiRoot);
 	
-	var ui = UI(TitleUI(model),
-				MainContentUI(
-					StatsUI(addWizard, model),
-					PaymentUI(addWizard, model)), 
-				AddPaymentButtonUI(addWizard, model));
-	
-	ui.create($(document.body));
+	$(document.body).append($uiRoot);
 	
 	
 	var onData = function(data) 
@@ -66,6 +105,8 @@ var startApp = function()
 	
 	var ajaxTimer = null;
 	var messageObj = {"hide": $.noop};
+	
+	$(window).on("click", function() { $(".confirm-remove").hide('fast'); });
 	
 	$(document).ajaxStart(function()
 	{
