@@ -3,14 +3,12 @@
 	var $addButton = null;
 	var $historyContainer = null;
 	var $addWizard = null;
-	var $note = null;
 	
 	var hideWizard = function()
 	{
 		$historyContainer.show();
 		$addButton.show();
 		$addWizard.hide();
-		$note.show();
 	};
 	
 	var showAddWizard = function(paymentIndex)
@@ -18,7 +16,6 @@
 		// paymentIndex might be null. Then its a new payment
 		$addButton.hide();
 		$historyContainer.hide();
-		$note.hide();
 		addWizard.show($addWizard.empty().show(), hideWizard, paymentIndex);
 	};
 	
@@ -27,7 +24,6 @@
 		var $historyHeader = $("<div/>").text(L.PreviousPayments);
 		$pastPayments = $("<div/>");
 		$historyContainer = $("<div/>");
-		$note = $("<div/>");
 		$addWizard = $("<div/>");
 		$addButton = $("<div/>")
 			.addClass("payment-add")
@@ -35,7 +31,6 @@
 		
 		$parent.append(
 			$("<div/>").addClass("flex-horizontal-container flex-justify-center").append($addButton), 
-			$note,
 			$historyContainer.append(
 				$("<div/>").addClass("flex-horizontal-container flex-justify-center").append($historyHeader), 
 				$("<div/>").html(whiteSpace(1)),
@@ -48,7 +43,6 @@
 		$pastPayments.empty();
 		hideWizard();	
 		$historyContainer.hide();
-		$note.empty().hide();
 		var dh = model.getDataHelper();
 		
 		var paymentList = [];
@@ -89,29 +83,8 @@
 				
 			$historyContainer.show();
 		});
-		
-		var note = function(text)
-		{
-			$note.html($("<div/>")
-				.addClass("flex-horizontal-container flex-justify-center")
-				.append($("<span/>").html(text))).show();
-		};
-		
-		var noNamesYet = dh.names().length == 0;
-		
-		if (noNamesYet)
-		{
-			$addButton.hide();
-			note(L.AddPersonsFirst);
-			return;
-		}
-			
-		$addButton.show();
 				
-		if (paymentList.length === 0)
-		{
-			note(L.AddPaymentsHere);
-		}
+		$addButton.show();
 	};
 	
 	return {

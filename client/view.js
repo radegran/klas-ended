@@ -1,119 +1,93 @@
-var Help = function($helpContainer, net, networkStatus, highlightHelpButtonFunc)
+var editable = function(text, onChange)
 {
-	$helpContainer.addClass("help-container yellow");
+	onChange = onChange || $.noop;
 	
-	var text = function(content)
+	var $e = $("<span/>").html(text);
+	var $input = $("<input/>").hide();
+	var $cont = $("<span/>").append($e, $input);
+	
+	var editMode = function()
 	{
-		return $("<div/>").addClass("help-text").append($("<span/>").html(content));
+		$input.val("");
+		$input.css("width", $e.width() + 5);
+		$e.hide(); $input.show().focus().on("blur", function()
+		{
+			$input.trigger("change");
+		});
 	};
 	
-	var header = function(content)
+	var set = function(value)
 	{
-		return $("<div/>").addClass("help-header").append($("<span/>").html(content));
+		$e.html(value);
 	};
 	
-	$helpContainer.append(
-		header("&nbsp;"),
-		header(L.HelpHeader1),
-		text(L.HelpText1),
-		header(L.HelpHeader2),
-		text(L.HelpText2),
-		header(L.HelpHeader3),
-		text(L.HelpText3),
-		header(L.HelpHeader4),
-		text(L.HelpText4),
-		header(L.HelpHeader5),
-		text(L.HelpText5),
-		text("&nbsp;"));
-	
-	var $comment = $("<span/>");
-	var emailSent = false;
-	var updateSubmitButton;
-	
-	var $textArea = $("<textarea/>")
-		.addClass("help-submit")
-		.attr("cols", 40)
-		.attr("rows", 8)
-		.on("input paste", function() { updateSubmitButton(); });
-	var $inputEmail = $("<input/>")
-		.addClass("help-submit")
-		.attr("placeholder", L.ExampleEmail)
-		.on("input paste", function() { updateSubmitButton(); });
-	var $submit = $("<button/>").html(L.SubmitFeedback).addClass("help-submit").on("click", function() {
-		net.sendmail({"message": $textArea.val(), "from": $inputEmail.val()});
-		emailSent = true;
-		updateSubmitButton();
-		$submit.html(L.ThankYou);
-		
-		setTimeout(function() 
-		{ 				
-			$textArea.val("");
-			emailSent = false;
-			$submit.html(L.SubmitFeedback);
-			updateSubmitButton();
-		}, 2000);
+	$input.on("input paste", function()
+	{
+		var v = $input.val();
+		$e.html(v);
+		$input.css("width", $e.width() + 5);
+	});
+
+	$input.on("submit change", function()
+	{
+		var v = $input.val();
+		$e.html(v);
+		$e.show(); $input.hide();
+		onChange(v);
 	});
 	
-	updateSubmitButton = function()
-	{
-		var enabled =(networkStatus.isOnline && $textArea.val() != "" && !emailSent && $inputEmail.val().search(/^[a-zA-Z0-9\.]+@[a-zA-Z0-9]+\.[a-zA-Z]+$/) > -1)
-		$submit.attr("disabled", !enabled);
-	};
-	
-	networkStatus.onChanged(function() { updateSubmitButton(); });
-	$helpContainer.append($comment.append($textArea, $("<br/>"), $inputEmail, $("<br/>"), $submit));
-	updateSubmitButton();
-	
-	var visible = false;
-
-	var toggle = function()
-	{
-		if (visible)
-		{
-			$helpContainer.slideUp();			
-		}
-		else
-		{
-			$helpContainer.slideDown();
-		}
-		
-		visible = !visible;
-	};
-	
-	var getShowHelpButton = function()
-	{	
-		var $highlighter = $("<span/>").html("&nbsp;&nbsp;&nbsp;&#x2190;&nbsp;" + L.Help).hide();
-	
-		var $helpButton = $("<span/>").append(
-			$("<span/>").html("&nbsp;&#x2261;&nbsp;"),
-			$highlighter
-		).css("cursor", "pointer").on("click", function() {
-			highlightHelpButtonFunc = function() { return false; },
-			toggle();
-		});
-		
-		var toggleHighlight = function()
-		{
-			if (highlightHelpButtonFunc())
-			{
-				$highlighter.fadeToggle('fast');
-			}
-			else
-			{
-				$highlighter.hide();
-			}
-
-			setTimeout(toggleHighlight, 750);
-		}
-		
-		toggleHighlight();
-		
-		return $helpButton;
-	};
+	$e.on("click", editMode);
 	
 	return {
-		"getShowHelpButton": getShowHelpButton
-	};
+		"editMode": editMode,
+		"element": function() { return $cont; },
+		"set": set
+	}
+};
+
+var whiteSpace = function(count)
+{
+	var str = "";
+	while(count--)
+	{
+		str += "&nbsp;";
+	}
+	return str;
+};
+	
+var horizontal = function(classNames)
+{
+	return $("<div/>").addClass("flex-horizontal-container flex-justify-center " + (classNames || ""));
+};
+
+var vertical = function(classNames)
+{
+	return $("<div/>").addClass("flex-vertical-container " + (classNames || ""));
+};
+
+var div = function(classNames)
+{
+	return $("<div/>").addClass(classNames);
+};
+
+var formatMoney = function(value, keepDecimals)
+{
+	var color = (value > 0) ? "green" : (value < 0 ? "red" : "");
+	var fixed = value.toFixed(2);
+	var split = ("" + fixed).split(".");
+	var isNaturalNumber = (split[1] === "00");
+	var ret = "";
+	
+	if (isNaturalNumber && !keepDecimals)
+	{
+		ret = parseInt(split[0]);
+	}
+	else 
+	{
+		ret = fixed;
+	}
+	
+	return $("<span/>").css("color", color).text(ret);
 };
 
 var isCtrlZ = function(e)

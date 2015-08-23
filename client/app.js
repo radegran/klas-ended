@@ -1,7 +1,7 @@
 var initialize = function(docProxy, net, networkStatus)
 {	
 	var ui;
-	var hasSetStartPage = false;
+	// var hasSetStartPage = false;
 	
 	var model = Model(function(newdata) 
 	{ 
@@ -16,11 +16,11 @@ var initialize = function(docProxy, net, networkStatus)
 	
 	var addWizard = AddWizard(model, fullScreen);
 	
-	var ui = MainUI(StatsUI(addWizard, model), 
-				    PaymentUI(addWizard, model), 
-					PeopleUI(model),
-					HeaderUI(model),
-					HelpUI(model, net, networkStatus));
+	var ui = UI(TitleUI(model),
+				MainContentUI(
+					StatsUI(addWizard, model),
+					PaymentUI(addWizard, model)), 
+				AddPaymentButtonUI(addWizard, model));
 	
 	ui.create($(document.body));
 	
@@ -28,13 +28,6 @@ var initialize = function(docProxy, net, networkStatus)
 	var onData = function(data) 
 	{
 		model.reset(data);
-		
-		if (!hasSetStartPage)
-		{
-			setStartPage(ui, model)
-			hasSetStartPage = true;
-		}
-		
 		ui.update();
 	};
 	

@@ -72,19 +72,18 @@ body {
 }
 
 .ui-header {
-	font-size: 1.5em;
-	color: black;
-}
-
-.ui-navigation-bar {
-	padding-bottom: 0.5em;
 	box-shadow: rgba(0, 0, 0, 0.25) 0px 4px 4px;
-	z-index: 1;
+	font-size: 1.5em;
 }
 
-.ui-navigation-bar,
+.ui-footer {
+	box-shadow: rgba(0, 0, 0, 0.5) 0px -1px 4px;
+}
+
+.ui-footer,
 .ui-header {
 	background-color:khaki;
+	z-index: 1;
 }
 
 .offline .ui-navigation-bar,
