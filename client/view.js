@@ -36,8 +36,6 @@ var editable = function(text, onChange)
 		onChange(v);
 	});
 	
-	$e.on("click", editMode);
-	
 	return {
 		"editMode": editMode,
 		"element": function() { return $cont; },

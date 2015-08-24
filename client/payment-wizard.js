@@ -279,8 +279,6 @@ var PersonPayment = function(person)
 		$payInput.css("background-color", "");
 		$expenseInput.val(formatMoney(expenseValue).text());
 		$expenseInput.css("background-color", "");
-		
-		console.log(isActive + ", " + payValue + ", " + expenseValue + ", " + isLocked);
 	});
 	
 	var $row = row([$name, $payInput, $expenseInput, $locked]);

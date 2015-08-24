@@ -17,7 +17,6 @@ var TitleUI = function(model)
 		
 		$title.empty();
 		$title.append(editableTitle.element().on("click", function() { editableTitle.editMode(); }));
-		
 	};
 	
 	var create = function($parent)

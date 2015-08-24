@@ -53,6 +53,7 @@ var StatsUI = function(addWizard, model)
 		{
 			var $details = $("<div/>").addClass("small-text").hide();
 			
+			// Paymeny details for person
 			person.eachPayment(function(payment)
 			{	
 				var diff = payment.valuePair()[0] - payment.valuePair()[1];
@@ -71,17 +72,34 @@ var StatsUI = function(addWizard, model)
 				$details.append($detail);
 			});
 			
-			$personSummary = $("<div/>").addClass("flex-horizontal-container person-summary").append(
-				$("<span/>").html(person.name + whiteSpace(3)).addClass("flex-grow"),
-				$("<span/>").html(formatMoney(person.diff, true)));
+			// Person summary
+			var $removeButton = div("volatile").text("(X)").hide();
+			var $confirm = div("volatile").text(L.Remove).hide();
+			var editableName = editable(person.name, function(newValue) { person.setName(newValue); dh.commit(); });
+			var $name = editableName.element();
 			
-			var $stat = $("<div/>").append(
-				$personSummary,
-				$details);
+			$personSummary = vertical("person-summary").append(
+				horizontal().append(
+					$removeButton,
+					$name.addClass("flex-grow"),
+					$("<span/>").html(formatMoney(person.diff, true)),
+					$confirm
+				),
+				$details.addClass("volatile")
+			);
+			
+			$removeButton.on("click", function() { $confirm.show('fast'); });
+			$confirm.on("click", function() { person.remove(); dh.commit(); });
+			
+			$personSummary.on("click", function() 
+			{ 
+				//$(".volatile").hide('fast');
+				$details.show('fast');
+				$removeButton.show('fast');
+				$name.on("click", function() { editableName.editMode(); });
+			});
 				
-			$personSummary.on("click", function() { $details.slideToggle('fast'); });
-				
-			$stats.append($stat);
+			$stats.append($personSummary);
 		});
 		
 		var plan = transferPlan(balances);
@@ -115,7 +133,7 @@ var StatsUI = function(addWizard, model)
 			horizontal().append(
 				$transferPlan.append(
 					$("<div/>").html(whiteSpace(1)),
-					$("<div/>").addClass("flex-horizontal-container flex-justify-center").append($transferHeader), 
+					horizontal().append($transferHeader), 
 					$("<div/>").html(whiteSpace(1)),
 					$transfers)),
 			horizontal().append($addPerson));
