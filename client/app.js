@@ -10,56 +10,7 @@ var initialize = function(docProxy, net, networkStatus)
 	
 	var $uiRoot = div("ui-root");
 	
-	var paymentWizard = {
-		"show": function(paymentIndex) 
-		{
-			var isNewPayment = paymentIndex === undefined;
-			var dh = model.getDataHelper();
-			var payment = isNewPayment ? dh.emptyPayment() : dh.payment(paymentIndex);
-			var values = payment.values;
-			var payModel = PayModel(dh.names(), payment, false);
-
-			var $wizElem;
-			
-			// title
-			var $paymentTitle = div().text("title-todo");
-			
-			// navigation
-			var close = function() { $wizElem.remove(); $uiRoot.slideDown('fast'); };
-			var save = function() { dh.commit(); close(); };
-			
-			var $paymentClose = div("payment-close").on("click", close);
-			var $paymentSave = div("payment-save").on("click", save);
-			var $paymentNavigation = vertical("flex-justify-center").append(
-				horizontal().append(
-					$paymentClose,
-					$paymentSave
-				)
-			);
-			
-			// content
-			var $table = $("<table/>");
-			$table.append(row([$(), div().text("betalat"), div().text("borde betalat"), $()]));
-			
-			payModel.eachPerson(function(person)
-			{
-				var pp = PersonPayment(person);
-				$table.append(pp.element())
-			});
-			
-			$wizElem = vertical("ui-root").append(
-				horizontal("ui-header").append($paymentTitle),
-				horizontal("flex-grow").append($table),
-				horizontal("ui-footer").append($paymentNavigation)
-			);
-			
-			$uiRoot.slideUp('fast');
-			$(document.body).append($wizElem);
-			
-			$wizElem.hide();
-			$wizElem.slideDown('fast');
-		}
-	};
+	var paymentWizard = PaymentWizard(model, $uiRoot);
 
 	ui = UI(TitleUI(model),
 			MainContentUI(
@@ -70,7 +21,6 @@ var initialize = function(docProxy, net, networkStatus)
 	ui.create($uiRoot);
 	
 	$(document.body).append($uiRoot);
-	
 	
 	var onData = function(data) 
 	{

@@ -30,18 +30,24 @@ var UI = function(headerUI, contentUI, footerUI)
 		var $root = vertical("ui-root");
 		var $header = div("ui-header small-padding");
 		var $statusBar = div("ui-status-bar messagecontainer");
-		var $content = vertical("flex-justify-center ui-content-container flex-grow small-padding");
+		var $contentVertical = vertical();
+		var $contentHorizontal = horizontal("ui-content small-padding");
+		var $contentContainer = div("ui-content-container flex-grow");
 		var $footer = div("ui-footer small-padding");
 		
 		headerUI.create($header);
-		contentUI.create($content);
+		contentUI.create($contentVertical);
 		footerUI.create($footer);
 		
 		$parent.append(
 			$root.append(
 				$header,
 				$statusBar,
-				$content,
+				$contentContainer.append(
+					$contentHorizontal.append(
+						$contentVertical
+					)
+				),
 				$footer
 			)
 		);

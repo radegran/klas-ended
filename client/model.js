@@ -246,7 +246,9 @@ var DataDiff = function(serverData, localData)
 		for (var i = serverData.payments.length; i < localData.payments.length; i++)
 		{
 			var p = localData.payments[i];
-			dh.addPayment(p.text, p.values);
+			var newP = dh.newPayment();
+			newP.text = p.text;
+			newP.values = p.values;
 		}
 		
 		dh.commit();
@@ -384,14 +386,6 @@ var DataHelper = function(data, onChange, onCommit)
 		onChange();
 	};
 	
-	var addPayment = function(text, values)
-	{	
-		data.payments.push({
-			"text": text || "...",
-			"values": values || makeArray(data.names.length, [0,0])
-		});
-	};
-	
 	var title = function(value)
 	{
 		if (value === undefined)
@@ -465,7 +459,7 @@ var DataHelper = function(data, onChange, onCommit)
 		cleanupPayments();
 	};
 	
-	var emptyPayment = function()
+	var newPayment = function()
 	{
 		var p = {
 			"text": "",
@@ -476,6 +470,8 @@ var DataHelper = function(data, onChange, onCommit)
 		{
 			p.values.push([0, 0]);
 		}
+		
+		data.payments.push(p);
 		
 		return p;
 	};
@@ -496,10 +492,9 @@ var DataHelper = function(data, onChange, onCommit)
 		"name": name,
 		"payment": paymentByIndex,
 		"addPerson": addPerson,
-		"addPayment": addPayment,
 		"title": title,
 		"names": function() { return data.names; },
-		"emptyPayment": emptyPayment,
+		"newPayment": newPayment,
 		"commit": commit
 	};
 }

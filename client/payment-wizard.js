@@ -288,238 +288,82 @@ var PersonPayment = function(person)
 	};
 };
 
-// var WizNav = function(steps, $navTitle, onSave, onClose)
-// {
-	// var currentStep = 0;
-	// var stepCount = steps.length;
-	
-	// var $close;
-	// var $back;
-	// var $next;
-	// var $save;
-	// var dots = [];
-	
-	// for (var i = 0; i < stepCount; i++)
-	// {
-		// dots.push($("<div/>").addClass("dot"));
-	// }
-	
-	// var onSaveInternal = function()
-	// {
-		// $navTitle.hide();
-		// onSave();
-	// };
-		
-	// var onCloseInternal = function()
-	// {
-		// $navTitle.hide();
-		// onClose();
-	// };
-	
-	// var showCurrentStep = function()
-	// {
-		// $navTitle.show();
-		// $close.removeClass("transparent").off().on("click", onCloseInternal);
-		// $back.removeClass("transparent").off().on("click", prevStep);
-		// $next.removeClass("transparent").off().on("click", nextStep);
-		// $save.addClass("transparent").off();
-			
-		// if (currentStep == 0)
-		// {
-			// $back.addClass("transparent").off();
-		// }
-		
-		// if (currentStep == stepCount-1)
-		// {
-			// $next.addClass("transparent").off();
-			// $save.removeClass("transparent").off().on("click", onSaveInternal);				
-		// }
-		
-		// $(dots).removeClass("filled");
-		// for (var i = 0; i < stepCount; i++)
-		// {
-			// if (i <= currentStep)
-			// {
-				// dots[i].addClass("filled");
-			// }
-			// else
-			// {
-				// dots[i].removeClass("filled");					
-			// }
-		// }
-		
-		// steps[currentStep]();
-	// };
-	
-	// var nextStep = function()
-	// {
-		// currentStep++;
-		// showCurrentStep();
-	// };
-	
-	// var prevStep = function()
-	// {
-		// currentStep--;
-		// showCurrentStep();
-	// };
-	
-	// $close = $("<span/>").addClass("payment-close");
-	// $back = $("<span/>").addClass("payment-back");
-	// $next = $("<span/>").addClass("payment-next");
-	// $save = $("<span/>").addClass("payment-save");
-	
-	// var $dummy = $("<div/>").addClass("flex-grow");
-	
-	// var $nav = $("<div/>").addClass("flex-horizontal-container flex-justify-center").append(
-		// $dummy.clone(),
-		// $close,
-		// $back,
-		// dots,
-		// $next,
-		// $save,
-		// $dummy.clone());
-			
-	// var begin = function()
-	// {
-		// showCurrentStep();
-	// };
-	
-	// var last = function()
-	// {
-		// currentStep = steps.length - 1;
-		// showCurrentStep();
-	// }
-	
-	// return {
-		// "element": function() { return $nav; },
-		// "begin": begin,
-		// "last": last
-	// };
-// };
+var PaymentWizard = function(model, $uiRoot)
+{
+	var show = function(paymentIndex) 
+	{
+		var isNewPayment = paymentIndex === undefined;
+		var dh = model.getDataHelper();
+		var payment = isNewPayment ? dh.newPayment() : dh.payment(paymentIndex);
+		var values = payment.values;
+		var payModel = PayModel(dh.names(), payment, false);
 
-// var AddWizard = function(model, fullScreenFunc)
-// {	
-	// var $items;
-	
-	// var show = function($parent, onClose, paymentIndex)
-	// {	
-		// var onCloseInternal = function()
-		// {
-			// fullScreenFunc();
-			// onClose();
-		// };
-	
-		// // Setup
-		// var isNewPayment = paymentIndex === undefined;
-		// var dh = model.getDataHelper();
-		// var payment = isNewPayment ? dh.emptyPayment() : dh.payment(paymentIndex);
-		// var values = payment.values;
-		// var payModel = PayModel(dh.names(), payment, false);
-
-		// // Title
-		// var editableTitle = editable(payment.text, function(value) 
-		// { 
-			// if (value == "")
-			// {
-				// payment.text = "...";
-				// editableTitle.set("...");
-			// }
-			// else
-			// {
-				// payment.text = value;
-			// }
-		// });
-		// var $title = editableTitle.element()
-			// .addClass("payment-title-wizard")
-			// .on("click", editableTitle.editMode);
-	
-		// // Throw in person payment objects
-		// $items = vertical();
-		// var personPayments = [];
-		// payModel.eachPerson(function(person)
-		// {
-			// personPayments.push(PersonPayment(person));
-		// });
-		// $.each(personPayments, function(i, pp)
-		// {
-			// $items.append(pp.element());
-		// });
-		// var forAllPersonsCall = function(funcName)
-		// {				
-			// $.each(personPayments, function(i, pp)
-			// {
-				// pp[funcName]();
-			// });
-		// };
-					
-		// // Navigation		
-		// var $stepTitle = div("wiz-step-title");
-		// var onSave = function()
-		// {
-			// if (isNewPayment)
-			// {
-				// dh.addPayment(payment.text, values);
-			// }
-
-			// dh.commit();
-			// onCloseInternal();
-		// };
-		// // SSSSSSSSSSTTTTTTTTEEEEEEEEPPPPPPPPSSSSSSSSSS
-		// var step1 = function() 
-		// {
-			// $stepTitle.html(L.DescribePayment).show();
-			// $title.show();
-			// forAllPersonsCall("hide");
-			// if ($title.text() == "")
-			// {
-				// editableTitle.editMode();			
-			// }
-		// };
-		// var step2 = function()
-		// {
-			// $stepTitle.html(L.WhoAffected).show();
-			// $title.hide();
-			// forAllPersonsCall("showName");
-		// };
-		// var step3 = function()
-		// {
-			// $stepTitle.html(L.HowMuchPeoplePaid).show();
-			// $title.hide();
-			// forAllPersonsCall("showPay");
-		// };
-		// var step4 = function()
-		// {
-			// $stepTitle.html(L.HowMuchPeopleShouldPaid).show();
-			// $title.hide();
-			// forAllPersonsCall("showShouldHavePaid");
-		// };
-		// var step5 = function()
-		// {
-			// $stepTitle.html(L.Summary);
-			// $title.show();
-			// forAllPersonsCall("showEverything");
-		// };
-		// var nav = WizNav([step1, step2, step3, step4, step5], $stepTitle, onSave, onCloseInternal);
+		var $wizElem;
 		
-		// // Add all
-		// $parent.append(
-			// horizontal().append($stepTitle), 
-			// horizontal().append($title), 
-			// horizontal().append($items));
-			
-		// fullScreenFunc(nav.element());
+		if (isNewPayment)
+		{
+			payment.text = "new!";
+		}
 		
-		// if (isNewPayment)
-		// {
-			// nav.begin();
-		// }
-		// else
-		// {
-			// nav.last();
-		// }
-	// };
+		var editableTitle = editable(payment.text, function(newValue)
+		{
+			payment.text = newValue;
+		});
+		
+		var $paymentTitle = editableTitle.element().on("click", function() { editableTitle.editMode(); });
+		
+		// navigation
+		var close = function() { $wizElem.remove(); $uiRoot.slideDown('fast'); };
+		var save = function() 
+		{ 
+			dh.commit(); 
+			close(); 
+		};
+		
+		var $paymentClose = div("payment-close").on("click", close);
+		var $paymentSave = div("payment-save").on("click", save);
+		var $paymentNavigation = vertical("flex-justify-center").append(
+			horizontal().append(
+				$paymentClose,
+				$paymentSave
+			)
+		);
+		
+		// content
+		var $table = $("<table/>");
+		$table.append(row([$(), div().text("betalat"), div().text("borde betalat"), $()]));
+		
+		payModel.eachPerson(function(person)
+		{
+			var pp = PersonPayment(person);
+			$table.append(pp.element())
+		});
+		
+		
+		var $contentVertical = vertical();
+		var $contentHorizontal = horizontal("ui-content small-padding");
+		var $contentContainer = div("ui-content-container flex-grow");
+		
+		$wizElem = vertical("ui-root").append(
+			horizontal("ui-header").append($paymentTitle),
+			$contentContainer.append(
+				$contentHorizontal.append(
+					$contentVertical.append(
+						$table
+					)
+				)
+			),
+			horizontal("ui-footer").append($paymentNavigation)
+		);
+		
+		$uiRoot.slideUp('fast');
+		$(document.body).append($wizElem);
+		
+		$wizElem.hide();
+		$wizElem.slideDown('fast');
+	};
 	
-	// return {
-		// "show": show
-	// };
-// };
+	return {
+		"show": show
+	};
+};

@@ -1,39 +1,23 @@
-﻿var PaymentUI = function(addWizard, model)
+﻿var PaymentUI = function(paymentWizard, model)
 {
 	var $historyContainer = null;
-	var $addWizard = null;
-	
-	var hideWizard = function()
-	{
-		$historyContainer.show();
-		$addWizard.hide();
-	};
-	
-	var showAddWizard = function(paymentIndex)
-	{
-		$historyContainer.hide();
-		addWizard.show($addWizard.empty().show(), hideWizard, paymentIndex);
-	};
-	
+
 	var create = function($parent)
 	{
 		var $historyHeader = $("<div/>").text(L.PreviousPayments);
 		$pastPayments = $("<div/>");
 		$historyContainer = $("<div/>");
-		$addWizard = $("<div/>");
 		
 		$parent.append(
 			$historyContainer.append(
 				$("<div/>").addClass("flex-horizontal-container flex-justify-center").append($historyHeader), 
 				$("<div/>").html(whiteSpace(1)),
-				$pastPayments), 
-			$addWizard);
+				$pastPayments));
 	};
 	
 	var update = function()
 	{
 		$pastPayments.empty();
-		hideWizard();	
 		$historyContainer.hide();
 		var dh = model.getDataHelper();
 		
@@ -63,7 +47,7 @@
 							
 			$p.on("click", function()
 			{
-				showAddWizard(payment.index);
+				paymentWizard.show(payment.index);
 			});
 			
 			$pastPayments.append($p.append(

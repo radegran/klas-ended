@@ -1,24 +1,13 @@
-var StatsUI = function(addWizard, model)
+var StatsUI = function(paymentWizard, model)
 {
-	var $addWizard = null;
 	var $stats = null;
 	var $transferPlan = null;
 	var $transfers = null;
 	var $addPerson = null;
 	
-	var hideWizard = function()
-	{
-		$addWizard.hide();
-		$stats.show();
-		$transferPlan.show();
-	}
-	
 	var editPayment = function(index)
 	{
-		$addWizard.show();
-		$stats.hide();
-		$transferPlan.hide();
-		addWizard.show($addWizard.empty(), hideWizard, index);
+		paymentWizard.show(index);
 	};
 	
 	var update = function()
@@ -124,11 +113,11 @@ var StatsUI = function(addWizard, model)
 		$stats = $("<div/>");
 		$transferPlan = $("<div/>");
 		$transfers = $("<div/>").addClass("small-text");
-		$addWizard = $("<div/>").hide();
+		$paymentWizard = $("<div/>").hide();
 		$addPerson = div("person-add");
 		
 		$parent.append(
-			$addWizard, 
+			$paymentWizard, 
 			horizontal().append($stats), 
 			horizontal().append(
 				$transferPlan.append(
