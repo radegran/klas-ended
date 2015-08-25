@@ -8,7 +8,7 @@
 		statsUI.create($stats);
 		paymentUI.create($payments);
 		
-		$parent.append($stats, $payments);
+		$parent.append($stats, div().html(whiteSpace(1)), $payments);
 	};
 	
 	var update = function()

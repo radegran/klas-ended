@@ -64,7 +64,16 @@ var startApp = function()
 	var ajaxTimer = null;
 	var messageObj = {"hide": $.noop};
 	
-	$(window).on("click", function() { $(".confirm-remove").hide('fast'); });
+	// $(window).on("click", function(e) 
+	// { 
+		// $(".volatile").each(function(i, elem)
+		// {
+			// if ($(e.target).contains(elem))
+			// {
+				// $(elem).hide('fast');
+			// }
+		// });
+	// });
 	
 	$(document).ajaxStart(function()
 	{
