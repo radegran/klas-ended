@@ -19,12 +19,17 @@ var initialize = function(docProxy, net, networkStatus)
 			var values = payment.values;
 			var payModel = PayModel(dh.names(), payment, false);
 
+			var $wizElem;
+			
 			// title
 			var $paymentTitle = div().text("title-todo");
 			
 			// navigation
-			var $paymentClose = div("payment-close");
-			var $paymentSave = div("payment-save");
+			var close = function() { $wizElem.remove(); $uiRoot.slideDown('fast'); };
+			var save = function() { dh.commit(); close(); };
+			
+			var $paymentClose = div("payment-close").on("click", close);
+			var $paymentSave = div("payment-save").on("click", save);
 			var $paymentNavigation = vertical("flex-justify-center").append(
 				horizontal().append(
 					$paymentClose,
@@ -42,14 +47,17 @@ var initialize = function(docProxy, net, networkStatus)
 				$table.append(pp.element())
 			});
 			
-			var $wizElem = vertical("ui-root").append(
+			$wizElem = vertical("ui-root").append(
 				horizontal("ui-header").append($paymentTitle),
 				horizontal("flex-grow").append($table),
 				horizontal("ui-footer").append($paymentNavigation)
 			);
 			
-			$uiRoot.hide();
+			$uiRoot.slideUp('fast');
 			$(document.body).append($wizElem);
+			
+			$wizElem.hide();
+			$wizElem.slideDown('fast');
 		}
 	};
 
