@@ -7,9 +7,61 @@ var L = require('./localization');
 var sendgrid = require("sendgrid")("klas", "qwerQWER1234");
 var clientDistDir = "./client/dist/";
 
-var DB = function(mongoClient, url)
+var MockDataBase = function()
 {
-	var db; 
+	var objects = {};
+
+	// findOne({"id":doc.id}, function(err, foundDoc) 
+	var findOne = function(o, cb) 
+	{
+		if (objects.hasOwnProperty(o.id))
+		{
+			cb(null, objects[o.id]);
+		}
+		else
+		{
+			cb(null, null);
+		}
+	};
+
+	// insert(doc, {w:1}, function(err, result)
+	var insert = function(doc, dummy, cb)
+	{
+		objects[doc.id] = doc;
+		cb(null, true);
+	};
+	
+	// update({"id":doc.id}, {$set:setter}, {w:1}, function(err, result)
+	var update = function(o, setterWrap, dummy2, cb)
+	{
+		var setter = setterWrap["$set"];
+		var doc = objects[o.id];
+
+		for (var key in setter)
+		{
+			if (setter.hasOwnProperty(key))
+			{
+				doc[key] = setter[key];
+			}
+		}
+		
+		cb(null, true);
+	};
+	
+	var mockDocs = {
+		"findOne": findOne,
+		"insert": insert,
+		"update": update
+	};
+
+	return {
+		"collection": function() { return mockDocs; }
+	};
+};
+
+var DB = function(mongoClient, isDevelEnv)
+{
+	var database; 
 	
 	    // default to a 'localhost' configuration:
     var connectionString = '127.0.0.1:27017/klas';
@@ -22,22 +74,27 @@ var DB = function(mongoClient, url)
         process.env.OPENSHIFT_APP_NAME;
 	}
 	
-	mongoClient.connect("mongodb://" + connectionString, function(err, database)
+	mongoClient.connect("mongodb://" + connectionString, function(err, validDatabase)
 	{
 		if (err) 
 		{ 
 			console.dir(err); 
+		    if (isDevelEnv)
+			{
+				console.log(">>> Using mock database!");
+				database = MockDataBase();
+			}
 		}		
 		else
 		{
 			console.log("Connected to Mongo database!")
-			db = database;
+			database = validDatabase;
 		}
 	});
 	
 	var create = function(callback, startData) 
 	{
-		var collection = db.collection('docs');
+		var collection = database.collection('docs');
 		var id = crypto.randomBytes(10).toString('hex');
 		var now = Date.now();
 		
@@ -67,7 +124,7 @@ var DB = function(mongoClient, url)
 		
 	var update = function(doc, callback) 
 	{
-		var collection = db.collection('docs');
+		var collection = database.collection('docs');
 
 		collection.findOne({"id":doc.id}, function(err, foundDoc) 
 		{
@@ -106,7 +163,7 @@ var DB = function(mongoClient, url)
 	
 	var stats = function(callback)
 	{
-		db.collection('docs').find(
+		database.collection('docs').find(
 			{"lastUpdated":{"$exists":true}}, 
 			{"sort":[["lastUpdated", "descending"]], "limit": 500})
 			.toArray(function(err, docs)
@@ -122,7 +179,8 @@ var DB = function(mongoClient, url)
 	};
 };
 
-var db = DB(mongoClient);
+// The database instance
+var db;
 
 
 /**
@@ -447,6 +505,7 @@ var SampleApp = function() {
      */
     self.initialize = function() {
         self.setupVariables();
+		db = DB(mongoClient, self.isDevelEnv);
         self.populateCache();
         self.setupTerminationHandlers();
 
