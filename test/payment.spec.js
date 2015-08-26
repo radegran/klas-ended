@@ -159,17 +159,17 @@ describe("PayModel", function()
 	
 	it("toggle active twice actually toggles twice", function()
 	{
-		var pm = makePM(false, [90,30], [0,60], [0,0]);
-		// ccc inactive since [0,0]
-		modify("ccc", "toggleActive");
-		verifyOut("aaa", true, 90, 30, false);
-		verifyOut("bbb", true, 0, 60, false);
-		verifyOut("ccc", true, 0, 0, false);
+		var pm = makePM(false, [90,20], [0,30], [0,40]);
 		
 		modify("ccc", "toggleActive");
-		verifyOut("aaa", true, 90, 30, false);
-		verifyOut("bbb", true, 0, 60, false);
+		verifyOut("aaa", true, 90, 40, false);
+		verifyOut("bbb", true, 0, 50, false);
 		verifyOut("ccc", false, 0, 0, false);
+		
+		modify("ccc", "toggleActive");
+		verifyOut("aaa", true, 90, 25, false);
+		verifyOut("bbb", true, 0, 35, false);
+		verifyOut("ccc", true, 0, 30, false);
 	});
 	
 	it("can expense although locked", function()
@@ -267,7 +267,27 @@ describe("PayModel", function()
 		modify("aaa", "toggleActive");	
 		verifyOut("aaa", false, 0, 0, false);
 		verifyOut("bbb", true, 0, 0, false);
-		verifyOut("ccc", true, 0, 0, false);
+		verifyOut("ccc", true, 0, 0, false);		
+	});
 		
+	it("activating should set expense to fair share", function()
+	{
+		var pm = makePM(true, [0,0], [0,0], [0,0], [0,0]);
+		
+		modify("ccc", "toggleActive");	
+		modify("ddd", "toggleActive");	
+		modify("aaa", "pay", 30);
+		modify("bbb", "lock", true);
+		
+		verifyOut("aaa", true, 30, 15, false);
+		verifyOut("bbb", true, 0, 15, true);
+		verifyOut("ccc", false, 0, 0, false);
+		verifyOut("ddd", false, 0, 0, false);
+		
+		modify("ccc", "toggleActive");	
+		verifyOut("aaa", true, 30, 10, false);
+		verifyOut("bbb", true, 0, 10, false);
+		verifyOut("ccc", true, 0, 10, false);
+		verifyOut("ddd", false, 0, 0, false);
 	});
 });

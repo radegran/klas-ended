@@ -335,7 +335,6 @@ var DataHelper = function(data, onChange, onCommit)
 						}
 					});
 					
-					pmp.toggleActive();
 					pmp.toggleActive();					
 				});
 

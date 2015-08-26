@@ -61,6 +61,17 @@ var PayModel = function(names, payment, allActiveDefault)
 					}
 				}
 			};
+
+			var activeFilter = function(cb)
+			{
+				return function(it, isMe)
+				{
+					if (it.isActive)
+					{
+						cb(it);
+					}
+				}
+			};
 			
 			var distributeExpense = function(contrib, includeMe)
 			{	
@@ -105,15 +116,24 @@ var PayModel = function(names, payment, allActiveDefault)
 			
 			var toggleActive = function()
 			{
+				iteratePersons(function(it) { it.isLocked = false; });
+
 				if (!p.isActive)
 				{
 					p.isActive = true;
+				
+					var totalExpense = 0;
+					var personCount = 0;
+					iteratePersons(activeFilter(function(it) { personCount++; totalExpense += it.expense; }));
+					
+					var myExpenseShouldBe = totalExpense / personCount;
+					distributeExpense(myExpenseShouldBe);
+					p.expense = myExpenseShouldBe;
+
 					updateAll();
 					return;
 				}
-				
-				iteratePersons(function(p) { p.isLocked = false; });
-				
+								
 				var expense = p.expense;
 				var pay = p.pay;
 				var contrib = pay - expense;
@@ -206,47 +226,41 @@ var PersonPayment = function(person)
 {
 	var $name = div("clickable-person").html(person.name);
 	
-	var moneyInput = function() 
+	var moneyInput = function(onChanged) 
 	{
-		return $("<input type='number' pattern='[0-9]+([\.|,][0-9]+)?' step='none'/>")
+		var $m = $("<input type='number' pattern='[0-9]+([\.|,][0-9]+)?' step='none'/>")
 			.css("width", "4em")
-			.on("focus", function() { $(this).val("");});
+			.on("focus", function() { $(this).val("");})
+			.on("change paste", function()
+			{
+				var parsed = toNonNegativeNumber($m.val());
+				var isNull = parsed === null;
+				
+				if (!isNull)
+				{
+					onChanged(parsed);
+				}
+				
+				$payInput.css("background-color", isNull ? "lightsalmon" : "");
+			});
+			
+		return $m;
 	};
 	
-	var $payInput = moneyInput();
-	var $expenseInput = moneyInput();
+	var $payInput = moneyInput(function(newValue)
+	{
+		person.pay(newValue);
+	});
+	var $expenseInput = moneyInput(function(newValue)
+	{
+		person.expense(newValue);
+	});
 	var $locked = $("<div/>");
 	
 	var isLockedState;
 	var isActiveState = true;
 	
 	$name.on("click", person.toggleActive);
-	
-	$payInput.on("change paste", function()
-	{
-		var parsed = toNonNegativeNumber($payInput.val());
-		var isNull = parsed === null;
-		
-		if (!isNull)
-		{
-			person.pay(parsed);
-		}
-		
-		$payInput.css("background-color", isNull ? "lightsalmon" : "");
-	});
-		
-	$expenseInput.on("change paste", function()
-	{
-		var parsed = toNonNegativeNumber($expenseInput.val());
-		var isNull = parsed === null;
-		
-		if (!isNull)
-		{
-			person.expense(parsed);
-		}
-		
-		$expenseInput.css("background-color", isNull ? "lightsalmon" : "");
-	});
 	
 	$locked.on("click", function() { person.lock(!isLockedState); });
 	
@@ -338,7 +352,6 @@ var PaymentWizard = function(model, $uiRoot)
 			var pp = PersonPayment(person);
 			$table.append(pp.element())
 		});
-		
 		
 		var $contentVertical = vertical();
 		var $contentHorizontal = horizontal("ui-content small-padding");
