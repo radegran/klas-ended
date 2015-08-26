@@ -200,7 +200,6 @@ input {
 	margin: 0.5em 0 0.5em 0;
 }
 
-.person-add,
 .payment-add,
 .payment-close,
 .payment-next,
@@ -212,7 +211,7 @@ input {
 	background-position: center;
 	background-repeat: no-repeat;
 	cursor: pointer;
-	margin: 0;
+	margin: 0.2em 0.5em 0.2em 0.5em;
 }
 
 .payment-add,
@@ -244,6 +243,7 @@ input {
 	background-image: url('compose.png');
 }
 
+.person-add,
 .people-remove,
 .people-edit,
 .payment-remove,
