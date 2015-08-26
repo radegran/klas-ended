@@ -32,20 +32,19 @@
 		
 		$.each(paymentList, function(i, payment) 
 		{
-			var $p = $("<div/>").addClass("flex-horizontal-container flex-justify-center");
+			var $p = horizontal("volatile-container");
 			var $clickable = $("<div/>").addClass("flex-horizontal-container flex-grow flex-justify-center clickable-payment small-text");
 			var $label = $("<span/>").html(payment.text() + whiteSpace(3));
 			var $cost = $("<span/>").html(formatMoney(payment.cost()));
-			var $confirm = $("<div/>").hide()
-				.addClass("confirm-remove")
+			var $confirm = div("confirm-remove volatile").hide()
 				.text(L.Remove)
 				.on("click", function() { payment.remove(); dh.commit(); });
 				
 			var $remove = $("<div/>")
 				.addClass("payment-remove")
-				.on("click", function(e) { $confirm.toggle('fast'); e.stopPropagation(); });
+				.on("click", function(e) { $confirm.show('fast'); });
 							
-			$p.on("click", function()
+			$label.on("click", function()
 			{
 				paymentWizard.show(payment.index);
 			});
