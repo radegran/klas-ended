@@ -65,6 +65,8 @@ var startApp = function()
 	var ajaxTimer = null;
 	var messageObj = {"hide": $.noop};
 	
+	nonbounceSetup();
+	
 	$(window).on("click", function(e) 
 	{ 
 		var $inTopMostVolatileContainer = $(e.target).parents(".volatile-container").last().find(".volatile")

@@ -39,7 +39,7 @@ var UI = function(headerUI, contentUI, footerUI)
 		var $statusBar = div("ui-status-bar messagecontainer");
 		var $contentVertical = vertical();
 		var $contentHorizontal = horizontal("ui-content small-padding");
-		var $contentContainer = div("ui-content-container flex-grow");
+		var $contentContainer = div("ui-content-container flex-grow nonbounce");
 		var $footer = div("ui-footer small-padding");
 		
 		headerUI.create($header);
