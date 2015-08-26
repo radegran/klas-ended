@@ -1,14 +1,21 @@
-﻿var MainContentUI = function(statsUI, paymentUI)
+﻿var MainContentUI = function(statsUI, paymentUI, helpUI)
 {
 	var create = function($parent)
 	{
 		var $stats = div();
 		var $payments = div();
+		var $help = div();
 		
 		statsUI.create($stats);
 		paymentUI.create($payments);
+		helpUI.create($help);
 		
-		$parent.append($stats, div().html(whiteSpace(1)), $payments);
+		$parent.append(
+			$stats, 
+			div().html(whiteSpace(1)), 
+			$payments,
+			div().html(whiteSpace(1)),
+			$help);
 	};
 	
 	var update = function()

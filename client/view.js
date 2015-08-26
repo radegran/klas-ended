@@ -146,6 +146,8 @@ var info = function(message, delay)
 	return showMessage(message, delay);
 };
 
+var showHideSpeed = undefined;
+
 var setOnlineCss = function(isOnline) 
 {
 	if (isOnline)

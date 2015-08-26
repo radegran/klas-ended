@@ -40,6 +40,7 @@ body {
 	margin: 1em 0 1em 0;
 }
 
+.help-container,
 .person-summary {
 	padding: 0.3em;
 	margin:0.2em;
@@ -180,6 +181,7 @@ input {
 	flex: 1;                  /* NEW, Spec - Opera 12.1, Firefox 20+ */
 }
 
+.mail-button,
 .help-button,
 .nav-help,
 .nav-stats,
@@ -337,9 +339,9 @@ input {
 	background-color: transparent;
 }
 
-
-.nav-help {
-	background-image: url('help.png');
+.mail-button {
+	background-image: url('mail.png');
+	background-color: transparent;
 }
 
 .nav-stats {
@@ -355,8 +357,7 @@ input {
 }
 
 .help-button {
-	background-image: url('mail.png');
-	background-color: transparent;
+	background-image: url('help.png');
 }
 
 .big-margin {

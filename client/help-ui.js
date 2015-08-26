@@ -34,7 +34,9 @@ var HelpUI = function(model, net, networkStatus)
 			div("big-margin").html(whiteSpace(1))
 		);
 			
-		var $container = vertical("flex-justify-center");
+		var $container = vertical("flex-justify-center volatile").hide();
+		
+		var $helpButton = div("help-button").on("click", function(e) { e.stopPropagation(); $container.show(showHideSpeed); });
 		
 		var emailSent = false;
 		var updateSubmitButton;
@@ -51,7 +53,7 @@ var HelpUI = function(model, net, networkStatus)
 			.css("border", "1px solid rgb(79,93,115)")
 			.attr("placeholder", L.ExampleEmail)
 			.on("input paste", function() { updateSubmitButton(); });
-		var $submit = $("<button/>").addClass("help-button big-margin").on("click", function() {
+		var $submit = $("<button/>").addClass("mail-button big-margin").on("click", function() {
 			net.sendmail({"message": $textArea.val(), "from": $inputEmail.val()});
 			emailSent = true;
 			updateSubmitButton();
@@ -85,7 +87,9 @@ var HelpUI = function(model, net, networkStatus)
 			$textArea, 
 			$inputEmail, 
 			$submit);
-		$parent.append(horizontal().append($container));
+		$parent.append(
+			horizontal().append($helpButton), 
+			horizontal("volatile-container").append($container.addClass("help-container")));
 		
 		updateSubmitButton();
 	};

@@ -82,27 +82,27 @@ var StatsUI = function(paymentWizard, model)
 			
 			$removeButton.on("click", function(e) 
 			{ 
-				$removeButton.hide('fast'); 
-				$editButton.hide('fast');
-				$confirm.show('fast'); 
+				$removeButton.hide(showHideSpeed); 
+				$editButton.hide(showHideSpeed);
+				$confirm.show(showHideSpeed); 
 				e.stopPropagation();
 			});
 			$editButton.on("click", function(e) 
 			{ 
 				editableName.editMode(); 
-				$removeButton.hide('fast'); 
-				$editButton.hide('fast');
-				$confirm.hide('fast'); 
+				$removeButton.hide(showHideSpeed); 
+				$editButton.hide(showHideSpeed);
+				$confirm.hide(showHideSpeed); 
 				e.stopPropagation();
 			});
 			$confirm.on("click", function() { person.remove(); dh.commit(); });
 			
 			$personSummary.on("click", function() 
 			{ 
-				$("person-summary").not(this).find(".volatile").hide('fast');
-				$details.show('fast');
-				$editButton.show('fast');
-				$removeButton.show('fast');
+				$("person-summary").not(this).find(".volatile").hide(showHideSpeed);
+				$details.show(showHideSpeed);
+				$editButton.show(showHideSpeed);
+				$removeButton.show(showHideSpeed);
 			});
 				
 			$stats.append($personSummary);

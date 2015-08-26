@@ -42,7 +42,7 @@
 				
 			var $remove = $("<div/>")
 				.addClass("payment-remove")
-				.on("click", function(e) { $confirm.show('fast'); });
+				.on("click", function(e) { $confirm.show(showHideSpeed); });
 							
 			$label.on("click", function()
 			{

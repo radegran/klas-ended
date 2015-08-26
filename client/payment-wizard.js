@@ -330,7 +330,7 @@ var PaymentWizard = function(model, $uiRoot)
 		var $paymentTitle = editableTitle.element().on("click", function() { editableTitle.editMode(); });
 		
 		// navigation
-		var close = function() { $wizElem.remove(); $uiRoot.slideDown('fast'); };
+		var close = function() { $wizElem.remove(); $uiRoot.fadeIn('fast'); };
 		var save = function() 
 		{ 
 			dh.commit(); 
@@ -372,11 +372,11 @@ var PaymentWizard = function(model, $uiRoot)
 			horizontal("ui-footer").append($paymentNavigation)
 		);
 		
-		$uiRoot.slideUp('fast');
+		$uiRoot.fadeOut('fast');
 		$(document.body).append($wizElem);
 		
 		$wizElem.hide();
-		$wizElem.slideDown('fast');
+		$wizElem.fadeIn('fast');
 	};
 	
 	return {

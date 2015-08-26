@@ -15,7 +15,8 @@ var initialize = function(docProxy, net, networkStatus)
 	ui = UI(TitleUI(model),
 			MainContentUI(
 				StatsUI(paymentWizard, model),
-				PaymentUI(paymentWizard, model)), 
+				PaymentUI(paymentWizard, model),
+				HelpUI(model, net, networkStatus)), 
 			AddPaymentButtonUI(paymentWizard, model));
 	
 	ui.create($uiRoot);
@@ -67,7 +68,7 @@ var startApp = function()
 	$(window).on("click", function(e) 
 	{ 
 		var $inTopMostVolatileContainer = $(e.target).parents(".volatile-container").last().find(".volatile")
-		$(".volatile").not($inTopMostVolatileContainer).hide('fast');
+		$(".volatile").not($inTopMostVolatileContainer).hide(showHideSpeed);
 	});
 	
 	$(document).ajaxStart(function()
