@@ -228,9 +228,12 @@ var PersonPayment = function(person)
 	
 	var moneyInput = function(onChanged) 
 	{
+		var beforeFocusValue;
+		
 		var $m = $("<input type='number' pattern='[0-9]+([\.|,][0-9]+)?' step='none'/>")
 			.css("width", "4em")
-			.on("focus", function() { $(this).val("");})
+			.on("focus", function() { beforeFocusValue = $(this).val(); $(this).val(""); })
+			.on("blur", function() { if ($(this).val() === "") $(this).val(beforeFocusValue); })
 			.on("change paste", function()
 			{
 				var parsed = toNonNegativeNumber($m.val());
