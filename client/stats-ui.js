@@ -62,8 +62,8 @@ var StatsUI = function(paymentWizard, model)
 			});
 			
 			// Person summary
-			var $removeButton = div("volatile").text("(X)").hide();
-			var $editButton = div("volatile").text("(...)").hide();
+			var $removeButton = div("volatile people-remove").hide();
+			var $editButton = div("volatile people-edit").hide();
 			var $confirm = div("volatile confirm-remove").text(L.Remove).hide();
 			var editableName = editable(person.name, function(newValue) { person.setName(newValue); dh.commit(); });
 			var $name = editableName.element();
@@ -80,8 +80,21 @@ var StatsUI = function(paymentWizard, model)
 				$details.addClass("volatile")
 			);
 			
-			$removeButton.on("click", function() { $confirm.show('fast'); });
-			$editButton.on("click", function() { editableName.editMode(); });
+			$removeButton.on("click", function(e) 
+			{ 
+				$removeButton.hide('fast'); 
+				$editButton.hide('fast');
+				$confirm.show('fast'); 
+				e.stopPropagation();
+			});
+			$editButton.on("click", function(e) 
+			{ 
+				editableName.editMode(); 
+				$removeButton.hide('fast'); 
+				$editButton.hide('fast');
+				$confirm.hide('fast'); 
+				e.stopPropagation();
+			});
 			$confirm.on("click", function() { person.remove(); dh.commit(); });
 			
 			$personSummary.on("click", function() 
