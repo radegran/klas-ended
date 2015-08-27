@@ -2,6 +2,39 @@ var PayModel = function(names, payment, allActiveDefault)
 {
 	var persons = [];
 	
+	var onAllUpdateCallback = $.noop;
+	
+	var onAllUpdate = function(cb)
+	{
+		onAllUpdateCallback = cb;
+	};
+	
+	var triggerAllUpdate = function(triggerPersonsUpdate)
+	{
+		var anyActive = false;
+		var totalPay = 0;
+	
+		for (var i = 0; i < persons.length; i++)
+		{
+			var it = persons[i].internal;
+			
+			anyActive |= it.isActive;
+			totalPay += it.pay;
+			
+			if (triggerPersonsUpdate)
+			{
+				it.update();
+			}
+		}
+		
+		onAllUpdateCallback(anyActive, totalPay > 0);
+	};
+	
+	var triggerUpdate = function()
+	{
+		triggerAllUpdate(true);
+	};
+	
 	var eachPerson = function(callback)
 	{
 		$.each(names, function(i, name)
@@ -18,6 +51,7 @@ var PayModel = function(names, payment, allActiveDefault)
 					payment.values[i][0] = p.pay;
 					payment.values[i][1] = p.expense;
 					updateCallback(p.isActive, p.pay, p.expense, p.isLocked); 
+					triggerAllUpdate();
 				}
 			};
 			
@@ -218,7 +252,9 @@ var PayModel = function(names, payment, allActiveDefault)
 	};
 	
 	return {
-		"eachPerson": eachPerson
+		"eachPerson": eachPerson,
+		"onUpdate": onAllUpdate,
+		"triggerUpdate": triggerUpdate
 	};
 };
 
@@ -254,10 +290,14 @@ var PersonPayment = function(person)
 	{
 		person.pay(newValue);
 	});
+	
 	var $expenseInput = moneyInput(function(newValue)
 	{
 		person.expense(newValue);
 	});
+	
+	var $expenseInputContainer = horizontal().append($expenseInput, $locked);
+	
 	var $locked = $("<div/>");
 	
 	var isLockedState;
@@ -275,10 +315,14 @@ var PersonPayment = function(person)
 		if (isActive)
 		{
 			$name.removeClass("inactive");
+			$payInput.show(showHideSpeed);
+			$expenseInputContainer.show(showHideSpeed);
 		}
 		else
 		{
 			$name.addClass("inactive");
+			$payInput.hide(showHideSpeed);
+			$expenseInputContainer.hide(showHideSpeed);
 		}
 		
 		if (isLocked)
@@ -298,7 +342,7 @@ var PersonPayment = function(person)
 		$expenseInput.css("background-color", "");
 	});
 	
-	var $row = row([$name, $payInput, $expenseInput, $locked]);
+	var $row = row([$name, $payInput, $expenseInputContainer]);
 	
 	return {
 		"element": function() { return $row; }
@@ -314,6 +358,33 @@ var PaymentWizard = function(model, $uiRoot)
 		var payment = isNewPayment ? dh.newPayment() : dh.payment(paymentIndex);
 		var values = payment.values;
 		var payModel = PayModel(dh.names(), payment, false);
+		
+		var $selectActiveLabel = div();
+		
+		// paymodel general update
+		payModel.onUpdate(function(anyActive, anyPay)
+		{
+			$selectActiveLabel.html(anyActive ? "" : "Välj vilka som berörs");
+		
+			if (!anyActive)
+			{
+				$(".col1").hide(showHideSpeed);
+				$(".col2").hide(showHideSpeed);
+				return;
+			}
+			
+			$(".col1").show(showHideSpeed);
+			$(".col2").show(showHideSpeed);
+			
+			if (!anyPay)
+			{
+				$(".col2").hide(showHideSpeed);
+			}
+			else
+			{
+				$(".col2").show(showHideSpeed);
+			}
+		});
 
 		var $wizElem;
 		
@@ -348,7 +419,7 @@ var PaymentWizard = function(model, $uiRoot)
 		
 		// content
 		var $table = $("<table/>");
-		$table.append(row([$(), div().text("betalat"), div().text("borde betalat"), $()]));
+		$table.append(row([$selectActiveLabel, div().text("betalat"), div().text("borde betalat")]));
 		
 		payModel.eachPerson(function(person)
 		{
@@ -377,6 +448,8 @@ var PaymentWizard = function(model, $uiRoot)
 		
 		$wizElem.hide();
 		$wizElem.fadeIn('fast');
+		
+		payModel.triggerUpdate();
 	};
 	
 	return {
