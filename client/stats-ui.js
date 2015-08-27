@@ -40,7 +40,7 @@ var StatsUI = function(paymentWizard, model)
 		
 		$.each(persons, function(i, person)
 		{
-			var $details = $("<div/>").addClass("small-text").hide();
+			var $details = div("person-history").hide();
 			
 			// Paymeny details for person
 			person.eachPayment(function(payment)
@@ -63,37 +63,35 @@ var StatsUI = function(paymentWizard, model)
 			
 			// Person summary
 			var $removeButton = div("volatile people-remove").hide();
-			var $editButton = div("volatile people-edit").hide();
 			var $confirm = div("volatile confirm-remove").text(L.Remove).hide();
 			var editableName = editable(person.name, function(newValue) { person.setName(newValue); dh.commit(); });
 			var $name = editableName.element();
 			
-			$personSummary = vertical("person-summary volatile-container").append(
+			$personSummary = vertical("person-summary volatile-container flex-grow").append(
 				horizontal().append(
-					$confirm,
-					$editButton,
-					$name.addClass("flex-grow"),
-					div().html(whiteSpace(3)),
-					$("<span/>").html(formatMoney(person.diff, true)),
-					$removeButton
+					$name,
+					div("flex-grow").html(whiteSpace(7)),
+					div().html(formatMoney(person.diff, true))
 				),
-				$details.addClass("volatile")
+				$details.addClass("volatile"),
+				horizontal().append($confirm, div("flex-grow"), $removeButton)
 			);
 			
 			$removeButton.on("click", function(e) 
 			{ 
 				$removeButton.hide(showHideSpeed); 
-				$editButton.hide(showHideSpeed);
 				$confirm.show(showHideSpeed); 
 				e.stopPropagation();
 			});
-			$editButton.on("click", function(e) 
+			$name.on("click", function(e) 
 			{ 
-				editableName.editMode(); 
-				$removeButton.hide(showHideSpeed); 
-				$editButton.hide(showHideSpeed);
-				$confirm.hide(showHideSpeed); 
-				e.stopPropagation();
+				if ($details.is(":visible"))
+				{
+					editableName.editMode(); 
+					$removeButton.hide(showHideSpeed); 
+					$confirm.hide(showHideSpeed); 
+					e.stopPropagation();					
+				}
 			});
 			$confirm.on("click", function() { person.remove(); dh.commit(); });
 			
@@ -101,7 +99,6 @@ var StatsUI = function(paymentWizard, model)
 			{ 
 				$("person-summary").not(this).find(".volatile").hide(showHideSpeed);
 				$details.show(showHideSpeed);
-				$editButton.show(showHideSpeed);
 				$removeButton.show(showHideSpeed);
 			});
 				
@@ -127,14 +124,12 @@ var StatsUI = function(paymentWizard, model)
 	var create = function($parent)
 	{
 		var $transferHeader = $("<div/>").text(L.MakeEven);
-		$stats = $("<div/>");
-		$transferPlan = $("<div/>");
-		$transfers = $("<div/>").addClass("small-text");
-		$paymentWizard = $("<div/>").hide();
+		$stats = vertical();
+		$transferPlan = vertical();
+		$transfers = vertical();
 		$addPerson = div("person-add");
 		
 		$parent.append(
-			$paymentWizard, 
 			horizontal().append($stats),
 			horizontal().append($addPerson),
 			horizontal().append(

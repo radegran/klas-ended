@@ -5,12 +5,12 @@
 	var create = function($parent)
 	{
 		var $historyHeader = $("<div/>").text(L.PreviousPayments);
-		$pastPayments = $("<div/>");
-		$historyContainer = $("<div/>");
+		$pastPayments = vertical();
+		$historyContainer = vertical();
 		
 		$parent.append(
 			$historyContainer.append(
-				$("<div/>").addClass("flex-horizontal-container flex-justify-center").append($historyHeader), 
+				horizontal().append($historyHeader), 
 				$("<div/>").html(whiteSpace(1)),
 				$pastPayments));
 	};
@@ -33,7 +33,7 @@
 		$.each(paymentList, function(i, payment) 
 		{
 			var $p = horizontal("volatile-container");
-			var $clickable = $("<div/>").addClass("flex-horizontal-container flex-grow flex-justify-center clickable-payment small-text");
+			var $clickable = $("<div/>").addClass("flex-horizontal-container flex-grow flex-justify-center clickable-payment");
 			var $label = $("<span/>").html(payment.text() + whiteSpace(3));
 			var $cost = $("<span/>").html(formatMoney(payment.cost()));
 			var $confirm = div("confirm-remove volatile").hide()

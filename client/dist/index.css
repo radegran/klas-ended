@@ -42,7 +42,7 @@ body {
 
 .help-container,
 .person-summary {
-	padding: 0.3em;
+	padding: 0.3em 0.7em 0.3em 0.7em;
 	margin:0.2em;
 	cursor: pointer;
 	border: 1px solid khaki;
@@ -99,18 +99,6 @@ input {
 
 .offline input {
 	background-color: gainsboro;
-}
-
-.confirm-remove {
-	background-color: salmon;
-	color: white;
-	padding: 0 0.2em 0 0.2em;
-	margin: 0 0.2em 0 0;
-	cursor: pointer;
-    -moz-border-radius: 0.5em;
-    -webkit-border-radius: 0.5em;
-    -khtml-border-radius: 0.5em;
-    border-radius: 0.5em;
 }
 
 .ui-content-container {
@@ -181,6 +169,17 @@ input {
 	flex: 1;                  /* NEW, Spec - Opera 12.1, Firefox 20+ */
 }
 
+.flex-no-shrink  {
+    -webkit-flex-shrink: 0;
+    flex-shrink: 0;
+	-ms-flex-negative:0;
+}
+
+.flex-stretch {
+   -webkit-align-content: stretch;
+   align-content: stretch;
+}
+
 .mail-button,
 .help-button,
 .nav-help,
@@ -194,6 +193,10 @@ input {
 	background-repeat: no-repeat;
 	cursor: pointer;
 	margin: 0 0.5em 0 0.5em;
+}
+
+.person-history {
+	margin: 0.75em 0 0 0;
 }
 
 .payment-person-container {
@@ -243,6 +246,7 @@ input {
 	background-image: url('compose.png');
 }
 
+.confirm-remove,
 .person-add,
 .people-remove,
 .people-edit,
@@ -257,6 +261,17 @@ input {
 	background-repeat: no-repeat;
 	cursor: pointer;
 	padding: 0.15em 0.3em 0.15em 0.3em;
+}
+
+.confirm-remove {
+	width: auto;
+	background-color: salmon;
+	color: white;
+	cursor: pointer;
+    -moz-border-radius: 0.5em;
+    -webkit-border-radius: 0.5em;
+    -khtml-border-radius: 0.5em;
+    border-radius: 0.5em;
 }
 
 .people-remove,
@@ -312,7 +327,7 @@ input {
 
 .clickable-person,
 .clickable-payment {
-	padding: 0.3em;
+	padding: 0.3em 0.7em 0.3em 0.7em;
 	margin:0.2em;
 	cursor: pointer;
     -moz-border-radius: 0.5em;

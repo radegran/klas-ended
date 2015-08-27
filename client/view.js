@@ -6,13 +6,22 @@ var editable = function(text, onChange)
 	var $input = $("<input/>").hide();
 	var $cont = $("<span/>").append($e, $input);
 	
+	var beforeFocusVal;
+	
 	var editMode = function()
 	{
+		beforeFocusVal = $e.html();
 		$input.val("");
 		$input.css("width", $e.width() + 5);
-		$e.hide(); $input.show().focus().on("blur", function()
+		$e.hide(); 
+		$input.show().focus().on("blur", function()
 		{
-			$input.trigger("change");
+			if ($input.val() === "")
+			{
+				$input.val(beforeFocusVal);
+			}
+		
+			$input.trigger("change");				
 		});
 	};
 	
