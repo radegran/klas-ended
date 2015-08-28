@@ -148,22 +148,31 @@ var PayModel = function(names, payment, allActiveDefault)
 				}
 			}
 			
+			var activate = function()
+			{
+				if (p.isActive)
+				{
+					return;
+				}
+				
+				p.isActive = true;
+			
+				var totalExpense = 0;
+				var personCount = 0;
+				iteratePersons(activeFilter(function(it) { personCount++; totalExpense += it.expense; }));
+				
+				var myExpenseShouldBe = totalExpense / personCount;
+				distributeExpense(myExpenseShouldBe);
+				p.expense = myExpenseShouldBe;
+			};
+			
 			var toggleActive = function()
 			{
 				iteratePersons(function(it) { it.isLocked = false; });
 
 				if (!p.isActive)
 				{
-					p.isActive = true;
-				
-					var totalExpense = 0;
-					var personCount = 0;
-					iteratePersons(activeFilter(function(it) { personCount++; totalExpense += it.expense; }));
-					
-					var myExpenseShouldBe = totalExpense / personCount;
-					distributeExpense(myExpenseShouldBe);
-					p.expense = myExpenseShouldBe;
-
+					activate();
 					updateAll();
 					return;
 				}
@@ -188,6 +197,8 @@ var PayModel = function(names, payment, allActiveDefault)
 					return;
 				}
 				
+				activate();
+				
 				var numUnlockedOthers = 0;
 				var expenseUnlockedOthers = 0;
 				
@@ -197,7 +208,6 @@ var PayModel = function(names, payment, allActiveDefault)
 					numUnlockedOthers++; 
 				}));
 				
-				p.isActive = true;
 				
 				if (numUnlockedOthers === 0)
 				{
@@ -224,9 +234,10 @@ var PayModel = function(names, payment, allActiveDefault)
 					return;
 				}
 				
+				activate();
+				
 				var contrib = p.pay - value;
 				p.pay = value;
-				p.isActive = true;
 				
 				iteratePersons(function(it) { it.isLocked = false; });
 				distributeExpense(contrib, true);

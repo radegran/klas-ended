@@ -306,4 +306,20 @@ describe("PayModel", function()
 		verifyOut("bbb", true, 0, 30, true);
 		verifyOut("ccc", false, 0, 0, false);
 	});
+	
+	it("all inactive then two pay should balance expenses", function()
+	{
+		var pm = makePM(false, [0,0], [0,0], [0,0]);
+		
+		verifyOut("aaa", false, 0, 0, false);
+		verifyOut("bbb", false, 0, 0, false);
+		verifyOut("ccc", false, 0, 0, false);
+	
+		modify("aaa", "pay", 30);
+		modify("bbb", "pay", 70);
+		
+		verifyOut("aaa", true, 30, 50, false);
+		verifyOut("bbb", true, 70, 50, false);
+		verifyOut("ccc", false, 0, 0, false);
+	});
 });
