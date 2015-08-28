@@ -68,9 +68,17 @@ var StatsUI = function(paymentWizard, model)
 			var editableName = editable(person.name, function(newValue) { person.setName(newValue); dh.commit(); });
 			var $name = editableName.element();
 			
-			$personSummary = vertical("person-summary volatile-container flex-grow").append(
+			$personSummary = vertical("person-summary volatile-container").append(
 				horizontalFill().append(
-					$name.addClass("flex-grow"),
+					$name,
+					div("flex-grow").on("click", function(e) 
+					{ 
+						if ($details.is(":visible")) 
+						{ 
+							$(".volatile").hide(); 
+							e.stopPropagation();
+						} 
+					}),  // AAAAh... snygga till!!!
 					div("flex-no-shrink").html(formatMoney(person.diff, true))
 				),
 				$details.addClass("volatile"),
