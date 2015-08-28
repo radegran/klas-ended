@@ -34,8 +34,8 @@
 		{
 			var $p = horizontal("volatile-container");
 			var $clickable = $("<div/>").addClass("flex-horizontal-container flex-grow flex-justify-center clickable-payment");
-			var $label = $("<span/>").html(payment.text() + whiteSpace(3));
-			var $cost = $("<span/>").html(formatMoney(payment.cost()));
+			var $label = div("flex-grow").html(payment.text());
+			var $cost = div().html(formatMoney(payment.cost()));
 			var $confirm = div("confirm-remove volatile").hide()
 				.text(L.Remove)
 				.on("click", function() { payment.remove(); dh.commit(); });

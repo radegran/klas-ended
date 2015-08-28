@@ -8,6 +8,13 @@ body {
 	font-family: 'Open Sans', sans-serif;
 }
 
+div {
+	text-overflow: ellipsis;
+	min-width: 0px;
+	overflow: hidden;
+	white-space: nowrap;
+}
+
 .root {
 	display: inline-block;
 }
@@ -173,11 +180,20 @@ input {
     -webkit-flex-shrink: 0;
     flex-shrink: 0;
 	-ms-flex-negative:0;
+	min-width: 0;
 }
 
 .flex-stretch {
    -webkit-align-content: stretch;
    align-content: stretch;
+}
+
+table {
+	min-width: 0px;
+}
+
+td {
+	overflow: hidden;
 }
 
 .mail-button,

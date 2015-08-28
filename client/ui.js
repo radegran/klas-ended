@@ -2,9 +2,9 @@
 {
 	var create = function($parent)
 	{
-		var $stats = div();
-		var $payments = div();
-		var $help = div();
+		var $stats = vertical();
+		var $payments = vertical();
+		var $help = vertical();
 		
 		statsUI.create($stats);
 		paymentUI.create($payments);
@@ -37,8 +37,7 @@ var UI = function(headerUI, contentUI, footerUI)
 		var $root = vertical("ui-root");
 		var $header = div("ui-header small-padding");
 		var $statusBar = div("ui-status-bar messagecontainer");
-		var $contentVertical = vertical("flex-justify-center");
-		var $contentHorizontal = horizontal("ui-content small-padding");
+		var $contentVertical = vertical("ui-content small-padding");
 		var $contentContainer = div("ui-content-container flex-grow nonbounce");
 		var $footer = div("ui-footer small-padding");
 		
@@ -51,9 +50,7 @@ var UI = function(headerUI, contentUI, footerUI)
 				$header,
 				$statusBar,
 				$contentContainer.append(
-					$contentHorizontal.append(
-						$contentVertical
-					)
+					$contentVertical
 				),
 				$footer
 			)

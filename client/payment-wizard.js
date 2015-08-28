@@ -342,7 +342,7 @@ var PersonPayment = function(person)
 		$expenseInput.css("background-color", "");
 	});
 	
-	var $row = row([$name, $payInput, $expenseInputContainer]);
+	var $row = row([horizontalFill().append($name), $payInput, $expenseInputContainer]);
 	
 	return {
 		"element": function() { return $row; }
@@ -410,7 +410,7 @@ var PaymentWizard = function(model, $uiRoot)
 		
 		var $paymentClose = div("payment-close").on("click", close);
 		var $paymentSave = div("payment-save").on("click", save);
-		var $paymentNavigation = vertical("flex-justify-center").append(
+		var $paymentNavigation = vertical().append(
 			horizontal().append(
 				$paymentClose,
 				$paymentSave
@@ -427,18 +427,14 @@ var PaymentWizard = function(model, $uiRoot)
 			$table.append(pp.element())
 		});
 		
-		var $contentVertical = vertical();
-		var $contentHorizontal = horizontal("ui-content small-padding");
-		var $contentContainer = div("ui-content-container flex-grow");
+		var $contentContainer = horizontalFill("ui-content-container flex-grow");
 		
 		$wizElem = vertical("ui-root").append(
 			horizontal("ui-header").append($paymentTitle),
 			$contentContainer.append(
-				$contentHorizontal.append(
-					$contentVertical.append(
-						$table
-					)
-				)
+				div("flex-grow"),
+				horizontalFill().append(div("flex-grow").append($table)),
+				div("flex-grow")
 			),
 			horizontal("ui-footer").append($paymentNavigation)
 		);

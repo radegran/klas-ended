@@ -34,7 +34,7 @@ var HelpUI = function(model, net, networkStatus)
 			div("big-margin").html(whiteSpace(1))
 		);
 			
-		var $container = vertical("flex-justify-center volatile").hide();
+		var $container = vertical("volatile").hide();
 		
 		var $helpButton = div("help-button").on("click", function(e) { e.stopPropagation(); $container.show(showHideSpeed); });
 		

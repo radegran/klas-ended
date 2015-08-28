@@ -2,9 +2,9 @@ var editable = function(text, onChange)
 {
 	onChange = onChange || $.noop;
 	
-	var $e = $("<span/>").html(text);
+	var $e = div().html(text);
 	var $input = $("<input/>").hide();
-	var $cont = $("<span/>").append($e, $input);
+	var $cont = horizontalFill().append($e, $input);
 	
 	var beforeFocusVal;
 	
@@ -75,6 +75,11 @@ var whiteSpace = function(count)
 var horizontal = function(classNames)
 {
 	return $("<div/>").addClass("flex-horizontal-container flex-justify-center " + (classNames || ""));
+};
+	
+var horizontalFill = function(classNames)
+{
+	return $("<div/>").addClass("flex-horizontal-container " + (classNames || ""));
 };
 
 var vertical = function(classNames)

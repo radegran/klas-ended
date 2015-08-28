@@ -51,9 +51,10 @@ var StatsUI = function(paymentWizard, model)
 					return;
 				}
 				
-				var $detail = $("<div/>").addClass("clickable-payment flex-horizontal-container flex-justify-center").append(
-					$("<div/>").html(payment.text() + whiteSpace(3)).addClass("flex-grow"),
-					$("<div/>").html(formatMoney(diff, true))).on("click", function()
+				var $detail = horizontal("clickable-payment").append(
+					div().html(payment.text()),
+					div("flex-grow"),
+					div().html(formatMoney(diff, true))).on("click", function()
 					{
 						editPayment(payment.index);
 					});
@@ -68,10 +69,9 @@ var StatsUI = function(paymentWizard, model)
 			var $name = editableName.element();
 			
 			$personSummary = vertical("person-summary volatile-container flex-grow").append(
-				horizontal().append(
-					$name,
-					div("flex-grow").html(whiteSpace(7)),
-					div().html(formatMoney(person.diff, true))
+				horizontalFill().append(
+					$name.addClass("flex-grow"),
+					div("flex-no-shrink").html(formatMoney(person.diff, true))
 				),
 				$details.addClass("volatile"),
 				horizontal().append($confirm, div("flex-grow"), $removeButton)
@@ -130,7 +130,7 @@ var StatsUI = function(paymentWizard, model)
 		$addPerson = div("person-add");
 		
 		$parent.append(
-			horizontal().append($stats),
+			$stats,
 			horizontal().append($addPerson),
 			horizontal().append(
 				$transferPlan.append(
