@@ -197,6 +197,8 @@ var PayModel = function(names, payment, allActiveDefault)
 					numUnlockedOthers++; 
 				}));
 				
+				p.isActive = true;
+				
 				if (numUnlockedOthers === 0)
 				{
 					// Only me is unlocked
@@ -224,6 +226,7 @@ var PayModel = function(names, payment, allActiveDefault)
 				
 				var contrib = p.pay - value;
 				p.pay = value;
+				p.isActive = true;
 				
 				iteratePersons(function(it) { it.isLocked = false; });
 				distributeExpense(contrib, true);
@@ -267,7 +270,7 @@ var PersonPayment = function(person)
 		var beforeFocusValue;
 		
 		var $m = $("<input type='number' pattern='[0-9]+([\.|,][0-9]+)?' step='none'/>")
-			.css("width", "4em")
+			.addClass("money-input")
 			.on("focus", function() { beforeFocusValue = $(this).val(); $(this).val(""); })
 			.on("blur", function() { if ($(this).val() === "") $(this).val(beforeFocusValue); })
 			.on("change paste", function()
@@ -315,14 +318,10 @@ var PersonPayment = function(person)
 		if (isActive)
 		{
 			$name.removeClass("inactive");
-			$payInput.show(showHideSpeed);
-			$expenseInputContainer.show(showHideSpeed);
 		}
 		else
 		{
 			$name.addClass("inactive");
-			$payInput.hide(showHideSpeed);
-			$expenseInputContainer.hide(showHideSpeed);
 		}
 		
 		if (isLocked)
@@ -359,23 +358,12 @@ var PaymentWizard = function(model, $uiRoot)
 		var values = payment.values;
 		var payModel = PayModel(dh.names(), payment, false);
 		
+		// currenty no used
 		var $selectActiveLabel = div();
 		
 		// paymodel general update
 		payModel.onUpdate(function(anyActive, anyPay)
 		{
-			$selectActiveLabel.html(anyActive ? "" : "Välj vilka som berörs");
-		
-			if (!anyActive)
-			{
-				$(".col1").hide(showHideSpeed);
-				$(".col2").hide(showHideSpeed);
-				return;
-			}
-			
-			$(".col1").show(showHideSpeed);
-			$(".col2").show(showHideSpeed);
-			
 			if (!anyPay)
 			{
 				$(".col2").hide(showHideSpeed);
@@ -418,8 +406,8 @@ var PaymentWizard = function(model, $uiRoot)
 		);
 		
 		// content
-		var $table = $("<table/>");
-		$table.append(row([$selectActiveLabel, div().text("betalat"), div().text("borde betalat")]));
+		var $table = vertical();
+		$table.append(row([$selectActiveLabel, div("input-match").text("betalat"), div("input-match").text("skuld")]));
 		
 		payModel.eachPerson(function(person)
 		{

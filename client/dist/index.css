@@ -104,6 +104,14 @@ input {
 	background-color: khaki;
 }
 
+.input-match,
+.money-input
+{
+	margin: 0 0.25em 0 0.25em;
+	padding:0 0.25em 0 0.25em;
+	width: 4em;
+}
+
 .offline input {
 	background-color: gainsboro;
 }
@@ -161,6 +169,11 @@ input {
     flex-direction: column;
 }
 
+.flex-align-center {
+	-webkit-align-items: center;
+	align-items: center;
+}
+
 .flex-justify-center {
 	-webkit-align-items: center;
 	align-items: center;
@@ -188,12 +201,15 @@ input {
    align-content: stretch;
 }
 
-table {
-	min-width: 0px;
+.table {
+	table-layout: fixed;
+	overflow: hidden;
+	white-space: nowrap;
 }
 
-td {
+.table td {
 	overflow: hidden;
+	white-space: nowrap;
 }
 
 .mail-button,

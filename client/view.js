@@ -54,10 +54,17 @@ var editable = function(text, onChange)
 
 var row  = function(colElems)
 {
-	var $r = $("<tr/>");
+	var $r = horizontalFill("flex-align-center");
 	for (var i = 0; i < colElems.length; i++)
 	{
-		$r.append($("<td/>").addClass("col" + i).append(colElems[i]));
+		var $cell = div("col" + i);
+		
+		if (i==0)
+		{
+			$cell.addClass("flex-grow");
+		}
+	
+		$r.append($cell.append(colElems[i]));		
 	}
 	return $r;
 };

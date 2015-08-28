@@ -290,4 +290,20 @@ describe("PayModel", function()
 		verifyOut("ccc", true, 0, 10, false);
 		verifyOut("ddd", false, 0, 0, false);
 	});
+	
+	it("pay/expense should activate", function()
+	{
+		var pm = makePM(false, [0,0], [0,0], [0,0]);
+		
+		verifyOut("aaa", false, 0, 0, false);
+		verifyOut("bbb", false, 0, 0, false);
+		verifyOut("ccc", false, 0, 0, false);
+	
+		modify("aaa", "pay", 30);
+		modify("bbb", "expense", 30);
+		
+		verifyOut("aaa", true, 30, 0, false);
+		verifyOut("bbb", true, 0, 30, true);
+		verifyOut("ccc", false, 0, 0, false);
+	});
 });
