@@ -274,7 +274,7 @@ var PayModel = function(names, payment, allActiveDefault)
 
 var PersonPayment = function(person)
 {
-	var $name = div("clickable-person").html(person.name);
+	var $name = div().css("margin-right", "1em").html(person.name);
 	
 	var moneyInput = function(onChanged) 
 	{
@@ -303,21 +303,23 @@ var PersonPayment = function(person)
 	var $payInput = moneyInput(function(newValue)
 	{
 		person.pay(newValue);
-	});
+	}).css("color", "green");
 	
 	var $expenseInput = moneyInput(function(newValue)
 	{
 		person.expense(newValue);
-	});
+	}).css("color", "red");
 	
-	var $expenseInputContainer = horizontal().append($expenseInput, $locked);
+	var $activator = div("input-match")
+		.css("cursor", "pointer")
+		.html("(check)")
+		.on("click", person.toggleActive);
 	
 	var $locked = $("<div/>");
+	var $expenseInputContainer = horizontal().append($expenseInput, $activator, $locked);
 	
 	var isLockedState;
 	var isActiveState = true;
-	
-	$name.on("click", person.toggleActive);
 	
 	$locked.on("click", function() { person.lock(!isLockedState); });
 	
@@ -328,11 +330,13 @@ var PersonPayment = function(person)
 
 		if (isActive)
 		{
-			$name.removeClass("inactive");
+			$activator.hide();
+			$expenseInput.show();
 		}
 		else
 		{
-			$name.addClass("inactive");
+			$activator.show();
+			$expenseInput.hide();
 		}
 		
 		if (isLocked)
@@ -418,7 +422,7 @@ var PaymentWizard = function(model, $uiRoot)
 		
 		// content
 		var $table = vertical();
-		$table.append(row([$selectActiveLabel, div("input-match").text("betalat"), div("input-match").text("skuld")]));
+		$table.append(row([$selectActiveLabel, div("input-match").text("betalat"), horizontal().append(div("input-match").text("skuld"), div("lock-indent"))]));
 		
 		payModel.eachPerson(function(person)
 		{

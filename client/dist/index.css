@@ -107,8 +107,8 @@ input {
 .input-match,
 .money-input
 {
-	margin: 0 0.25em 0 0.25em;
-	padding:0 0.25em 0 0.25em;
+	margin: 0 0.5em 0 0.5em;
+	padding:0.5em;
 	width: 4em;
 }
 
@@ -278,6 +278,7 @@ input {
 	background-image: url('compose.png');
 }
 
+.lock-indent,
 .confirm-remove,
 .person-add,
 .people-remove,
@@ -355,6 +356,10 @@ input {
 
 .dot.filled {
     background-color: rgb(79, 93, 115);
+}
+
+.row {
+	margin-bottom: 1em;
 }
 
 .clickable-person,

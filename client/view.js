@@ -54,7 +54,7 @@ var editable = function(text, onChange)
 
 var row  = function(colElems)
 {
-	var $r = horizontalFill("flex-align-center");
+	var $r = horizontalFill("flex-align-center row");
 	for (var i = 0; i < colElems.length; i++)
 	{
 		var $cell = div("col" + i);
