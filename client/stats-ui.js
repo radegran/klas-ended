@@ -131,7 +131,7 @@ var StatsUI = function(paymentWizard, model)
 
 	var create = function($parent)
 	{
-		var $transferHeader = $("<div/>").text(L.MakeEven);
+		var $transferHeader = div("small-text").text(L.MakeEven);
 		$stats = vertical();
 		$transferPlan = vertical();
 		$transfers = vertical();
@@ -142,9 +142,9 @@ var StatsUI = function(paymentWizard, model)
 			horizontal().append($addPerson),
 			horizontal().append(
 				$transferPlan.append(
-					$("<div/>").html(whiteSpace(1)),
+					div("small-text").html(whiteSpace(1)),
 					horizontal().append($transferHeader), 
-					$("<div/>").html(whiteSpace(1)),
+					div("small-text").html(whiteSpace(1)),
 					$transfers)));
 	};
 	
