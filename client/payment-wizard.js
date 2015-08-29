@@ -274,7 +274,7 @@ var PayModel = function(names, payment, allActiveDefault)
 
 var PersonPayment = function(person)
 {
-	var $name = div().css("margin-right", "1em").html(person.name);
+	var $name = div("clickable-person").html(person.name);
 	
 	var moneyInput = function(onChanged) 
 	{
@@ -315,6 +315,8 @@ var PersonPayment = function(person)
 		.html("(check)")
 		.on("click", person.toggleActive);
 	
+	$name.on("click", person.toggleActive);
+	
 	var $locked = $("<div/>");
 	var $expenseInputContainer = horizontal().append($expenseInput, $activator, $locked);
 	
@@ -332,11 +334,13 @@ var PersonPayment = function(person)
 		{
 			$activator.hide();
 			$expenseInput.show();
+			$name.removeClass("inactive");
 		}
 		else
 		{
 			$activator.show();
 			$expenseInput.hide();
+			$name.addClass("inactive");
 		}
 		
 		if (isLocked)
@@ -396,12 +400,19 @@ var PaymentWizard = function(model, $uiRoot)
 			payment.text = "new!";
 		}
 		
+		var $describePayment = div("small-text").html("Beskriv betalningen").hide();
+		
 		var editableTitle = editable(payment.text, function(newValue)
 		{
+			$describePayment.hide();
 			payment.text = newValue;
 		});
 		
-		var $paymentTitle = editableTitle.element().on("click", function() { editableTitle.editMode(); });
+		var $paymentTitle = editableTitle.element().on("click", function() 
+		{
+			$describePayment.show();
+			editableTitle.editMode(); 
+		});
 		
 		// navigation
 		var close = function() { $wizElem.remove(); $uiRoot.fadeIn('fast'); };
@@ -433,7 +444,10 @@ var PaymentWizard = function(model, $uiRoot)
 		var $contentContainer = horizontalFill("ui-content-container flex-grow");
 		
 		$wizElem = vertical("ui-root").append(
-			horizontal("ui-header").append($paymentTitle),
+			vertical("ui-header").append(
+				horizontal().append($describePayment), 
+				horizontal().append($paymentTitle)
+			),
 			$contentContainer.append(
 				div("flex-grow"),
 				horizontalFill().append(div("flex-grow").append($table)),
@@ -449,6 +463,11 @@ var PaymentWizard = function(model, $uiRoot)
 		$wizElem.fadeIn('fast');
 		
 		payModel.triggerUpdate();
+				
+		if (isNewPayment)
+		{
+			$paymentTitle.trigger('click');
+		}
 	};
 	
 	return {

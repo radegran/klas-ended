@@ -108,7 +108,7 @@ input {
 .money-input
 {
 	margin: 0 0.5em 0 0.5em;
-	padding:0.5em;
+	padding:0.35em;
 	width: 4em;
 }
 
@@ -271,7 +271,7 @@ input {
 }
 
 .people-remove {
-	background-image: url('stop.png');
+	background-image: url('close.png');
 }
 
 .people-edit {
@@ -296,6 +296,11 @@ input {
 	padding: 0.15em 0.3em 0.15em 0.3em;
 }
 
+.person-add {
+	height: 2em;
+	width: 2em;
+}
+
 .confirm-remove {
 	width: auto;
 	background-color: salmon;
@@ -305,6 +310,7 @@ input {
     -webkit-border-radius: 0.5em;
     -khtml-border-radius: 0.5em;
     border-radius: 0.5em;
+	margin-right:  0.5em;
 }
 
 .people-remove,
@@ -321,7 +327,7 @@ input {
 }
 
 .payment-remove {
-	background-image: url('stop.png');
+	background-image: url('close.png');
 }
 
 .payment-locked {

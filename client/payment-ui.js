@@ -4,7 +4,7 @@
 
 	var create = function($parent)
 	{
-		var $historyHeader = div("small-text").text(L.PreviousPayments);
+		var $historyHeader = div("small-text").html(whiteSpace(1) /*L.PreviousPayments*/);
 		$pastPayments = vertical();
 		$historyContainer = vertical();
 		

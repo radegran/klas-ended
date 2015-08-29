@@ -41,6 +41,7 @@ var StatsUI = function(paymentWizard, model)
 		$.each(persons, function(i, person)
 		{
 			var $details = div("person-history").hide();
+			var isRemoveable = true;
 			
 			// Paymeny details for person
 			person.eachPayment(function(payment)
@@ -50,6 +51,8 @@ var StatsUI = function(paymentWizard, model)
 				{
 					return;
 				}
+				
+				isRemoveable = false;
 				
 				var $detail = horizontal("clickable-payment").append(
 					div().html(payment.text()),
@@ -69,7 +72,8 @@ var StatsUI = function(paymentWizard, model)
 			var $name = editableName.element();
 			
 			$personSummary = vertical("person-summary volatile-container").append(
-				horizontalFill().append(
+				horizontalFill("flex-align-center").append(
+					$confirm,
 					$name,
 					div("flex-grow").on("click", function(e) 
 					{ 
@@ -79,10 +83,10 @@ var StatsUI = function(paymentWizard, model)
 							e.stopPropagation();
 						} 
 					}),  // AAAAh... snygga till!!!
-					div("flex-no-shrink").html(formatMoney(person.diff, true))
+					div("flex-no-shrink").html(formatMoney(person.diff, true)),
+					$removeButton
 				),
-				$details.addClass("volatile"),
-				horizontal().append($confirm, div("flex-grow"), $removeButton)
+				$details.addClass("volatile")
 			);
 			
 			$removeButton.on("click", function(e) 
@@ -93,21 +97,26 @@ var StatsUI = function(paymentWizard, model)
 			});
 			$name.on("click", function(e) 
 			{ 
-				if ($details.is(":visible"))
-				{
-					editableName.editMode(); 
-					$removeButton.hide(showHideSpeed); 
-					$confirm.hide(showHideSpeed); 
-					e.stopPropagation();					
-				}
+				editableName.editMode(); 
+				$removeButton.hide(showHideSpeed); 
+				$confirm.hide(showHideSpeed); 
+				e.stopPropagation();								
 			});
 			$confirm.on("click", function() { person.remove(); dh.commit(); });
 			
 			$personSummary.on("click", function() 
 			{ 
 				$("person-summary").not(this).find(".volatile").hide(showHideSpeed);
-				$details.show(showHideSpeed);
-				$removeButton.show(showHideSpeed);
+				
+				if (isRemoveable)
+				{
+					// Person is removeable if there are no non-zero diffs
+					$removeButton.show(showHideSpeed);
+				}
+				else
+				{
+					$details.show(showHideSpeed);
+				}
 			});
 				
 			$stats.append($personSummary);
@@ -131,7 +140,7 @@ var StatsUI = function(paymentWizard, model)
 
 	var create = function($parent)
 	{
-		var $transferHeader = div("small-text").text(L.MakeEven);
+		var $transferHeader = div("small-text").html(whiteSpace(1) /*L.MakeEven*/);
 		$stats = vertical();
 		$transferPlan = vertical();
 		$transfers = vertical();
