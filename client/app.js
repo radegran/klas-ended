@@ -16,7 +16,7 @@ var initialize = function(docProxy, net, networkStatus)
 			MainContentUI(
 				StatsUI(paymentWizard, model),
 				PaymentUI(paymentWizard, model),
-				HelpUI(model, net, networkStatus)), 
+				HelpUI(model, net, networkStatus, $uiRoot)), 
 			AddPaymentButtonUI(paymentWizard, model));
 	
 	ui.create($uiRoot);

@@ -1,8 +1,8 @@
-var HelpUI = function(model, net, networkStatus)
+var HelpUI = function(model, net, networkStatus, $uiRoot)
 {
 	var create = function($parent)
 	{
-		// $helpContainer.addClass("help-container yellow");
+		// $showHideSpeed.addClass("help-container yellow");
 		
 		// var text = function(content)
 		// {
@@ -14,7 +14,7 @@ var HelpUI = function(model, net, networkStatus)
 			// return $("<div/>").addClass("help-header").append($("<span/>").html(content));
 		// };
 		
-		// $helpContainer.append(
+		// $showHideSpeed.append(
 			// header("&nbsp;"),
 			// header(L.HelpHeader1),
 			// text(L.HelpText1),
@@ -34,9 +34,7 @@ var HelpUI = function(model, net, networkStatus)
 			div("big-margin").html(whiteSpace(1))
 		);
 			
-		var $container = vertical("volatile").hide();
-		
-		var $helpButton = div("help-button").on("click", function(e) { e.stopPropagation(); $container.show(showHideSpeed); });
+		var $container = vertical();
 		
 		var emailSent = false;
 		var updateSubmitButton;
@@ -84,14 +82,40 @@ var HelpUI = function(model, net, networkStatus)
 		
 		$container.append(
 			$urlContainer, 
-			$textArea, 
-			$inputEmail, 
-			$submit);
-		$parent.append(
-			horizontal().append($helpButton), 
-			horizontal("volatile-container").append($container.addClass("help-container")));
-		
+			horizontal().append($textArea), 
+			horizontal().append($inputEmail), 
+			horizontal().append($submit)
+		);
+	
 		updateSubmitButton();
+
+		var $helpButton = div("help-button");
+		var $closeButton = div("payment-back")
+					
+		$parent.append(
+			horizontal().append(
+				$helpButton
+			)
+		);
+		
+		var $helpContainer = vertical("ui-root").append(
+			$container.addClass("flex-grow"),
+			horizontal("ui-footer small-padding").append($closeButton)
+		);
+		
+		$helpContainer.hide();
+		$(document.body).append($helpContainer);
+		
+		$helpButton.on("click", function(e) 
+		{ 
+			$uiRoot.fadeOut('fast');
+			$helpContainer.fadeIn('fast');		
+		});
+		$closeButton.on("click", function() 
+		{
+			$uiRoot.fadeIn('fast');
+			$helpContainer.fadeOut('fast');					
+		});
 	};
 	
 	return {

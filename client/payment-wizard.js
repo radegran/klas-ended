@@ -397,20 +397,16 @@ var PaymentWizard = function(model, $uiRoot)
 		
 		if (isNewPayment)
 		{
-			payment.text = "new!";
+			payment.text = "Beskriv betalningen här";
 		}
-		
-		var $describePayment = div("small-text").html("Beskriv betalningen").hide();
-		
+			
 		var editableTitle = editable(payment.text, function(newValue)
 		{
-			$describePayment.hide();
 			payment.text = newValue;
 		});
 		
 		var $paymentTitle = editableTitle.element().on("click", function() 
 		{
-			$describePayment.show();
 			editableTitle.editMode(); 
 		});
 		
@@ -433,7 +429,7 @@ var PaymentWizard = function(model, $uiRoot)
 		
 		// content
 		var $table = vertical();
-		$table.append(row([$selectActiveLabel, div("input-match").text("betalat"), horizontal().append(div("input-match").text("skuld"), div("lock-indent"))]));
+		$table.append(row([$selectActiveLabel, div("input-match").text("Betalat"), horizontal().append(div("input-match").text("Skuld"), div("lock-indent"))]));
 		
 		payModel.eachPerson(function(person)
 		{
@@ -444,16 +440,13 @@ var PaymentWizard = function(model, $uiRoot)
 		var $contentContainer = horizontalFill("ui-content-container flex-grow");
 		
 		$wizElem = vertical("ui-root").append(
-			vertical("ui-header").append(
-				horizontal().append($describePayment), 
-				horizontal().append($paymentTitle)
-			),
+			horizontal("ui-header small-padding").append($paymentTitle),
 			$contentContainer.append(
 				div("flex-grow"),
 				horizontalFill().append(div("flex-grow").append($table)),
 				div("flex-grow")
 			),
-			horizontal("ui-footer").append($paymentNavigation)
+			horizontal("ui-footer small-padding").append($paymentNavigation)
 		);
 		
 		$uiRoot.fadeOut('fast');
@@ -463,11 +456,6 @@ var PaymentWizard = function(model, $uiRoot)
 		$wizElem.fadeIn('fast');
 		
 		payModel.triggerUpdate();
-				
-		if (isNewPayment)
-		{
-			$paymentTitle.trigger('click');
-		}
 	};
 	
 	return {
