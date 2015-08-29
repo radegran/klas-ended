@@ -161,8 +161,8 @@ var Strings =
 		"sv": "din.mail@domän.com"
 	},
 	"CommentSample": {
-		"en": "Enter questions or comments here and we'll get back to you",
-		"sv": "Skriv frågor eller kommentarer här så återkommer vi snarast"
+		"en": "Enter questions or comments here and we'll get back to you.",
+		"sv": "Skriv frågor eller kommentarer här så återkommer vi snarast."
 	},
 	"CopyUrlInfo": {
 		"en": "Share this link with friends",

@@ -45,13 +45,17 @@ var HelpUI = function(model, net, networkStatus, $uiRoot)
 			.attr("rows", 6)
 			.on("focus", function() { if ($textArea.val() == L.CommentSample) $textArea.val("");})
 			.on("input paste", function() { updateSubmitButton(); });
+		
 		var $inputEmail = $("<input/>").addClass("big-margin small-text")
 			.css("width", "15em")
-			.css("padding", "0.2em")
+			.css("background-color", "transparent")
+			.css("padding", "6px")
 			.css("border", "1px solid rgb(79,93,115)")
 			.attr("placeholder", L.ExampleEmail)
 			.on("input paste", function() { updateSubmitButton(); });
-		var $submit = $("<button/>").addClass("mail-button big-margin").on("click", function() {
+			
+		var $submit = $("<button/>").addClass("mail-button big-margin").on("click", function() 
+		{
 			net.sendmail({"message": $textArea.val(), "from": $inputEmail.val()});
 			emailSent = true;
 			updateSubmitButton();
