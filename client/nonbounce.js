@@ -17,12 +17,12 @@ var nonbounceSetup = function()
     var initTouchHandling = function() {
         if (!defaults.touchstartInit) {
             defaults.touchstartInit = true;
-            $(window).on("touchstart", touchstart);
+            $(window).off("touchstart").on("touchstart", touchstart);
         }
         
         if (!defaults.touchmoveInit) {
             defaults.touchmoveInit = true;
-            $(window).on("touchmove", touchmove);
+            $(window).off("touchmove").on("touchmove", touchmove);
         }
     };
     
@@ -59,13 +59,14 @@ var nonbounceSetup = function()
     var touchmove = function(evt) {
         if (!(evt.originalEvent.touches && evt.originalEvent.touches.length > 1)) {
             // Prevents scrolling of all but the nonbounce elements
-            if (!~$.inArray(true, $.map(defaults.$these, compareElem, evt.target))) {
+			var mapped = $.map(defaults.$these, compareElem, evt.target);
+            if (!~$.inArray(true, mapped)) {
                 evt.preventDefault();
             }
             
             // Prevents scrolling of nonbounce element if bound conditions are met
             if (!hasCorrectBounds(evt)) {
-                evt.preventDefault();
+				evt.preventDefault();
             }
         }
 

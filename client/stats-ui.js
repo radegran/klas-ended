@@ -127,7 +127,7 @@ var StatsUI = function(paymentWizard, model)
 		$.each(plan, function(i, transfer)
 		{
 			// Improve UI
-			var $plan = $("<div/>").append(
+			var $plan = $("<div/>").addClass("transfer-div").append(
 				$("<span/>").html(dh.name(transfer.from) + " " + L.ShouldGive + " "),
 				formatMoney(transfer.amount), 
 				$("<span/>").html(" " + L.To + " " + dh.name(transfer.to)));

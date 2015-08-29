@@ -112,6 +112,12 @@ input {
 	width: 4em;
 }
 
+.activator {
+	cursor: pointer;
+	color: #a0a0a0;
+	background-color: #f8f8f8;
+}
+
 .offline input {
 	background-color: gainsboro;
 }
@@ -201,15 +207,10 @@ input {
    align-content: stretch;
 }
 
-.table {
-	table-layout: fixed;
-	overflow: hidden;
-	white-space: nowrap;
-}
-
-.table td {
-	overflow: hidden;
-	white-space: nowrap;
+.transfer-div {
+	white-space: normal;
+	overflow: visible;
+	margin-bottom: 0.5em;
 }
 
 .mail-button,

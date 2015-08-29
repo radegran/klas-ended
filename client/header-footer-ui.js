@@ -1,4 +1,4 @@
-var TitleUI = function(model)
+var TitleUI = function(model, helpUI)
 {
 	var $title = null;
 	
@@ -21,8 +21,22 @@ var TitleUI = function(model)
 	
 	var create = function($parent)
 	{
-		$title = horizontal();
-		$parent.append($title);
+		var $help = div("flex-no-shrink").css("font-size", "0.5em");
+		helpUI.create($help);
+		$title = horizontal("");
+		var $indent = div("flex-grow").css({
+			"max-width": "1.6em",
+		});
+		
+		$parent.append(
+			horizontalFill("flex-align-center").append(
+				$indent,
+				div("flex-grow"),
+				$title, 
+				div("flex-grow"),
+				$help
+			)
+		);
 	};
 	
 	return {

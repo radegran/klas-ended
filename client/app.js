@@ -12,12 +12,15 @@ var initialize = function(docProxy, net, networkStatus)
 	
 	var paymentWizard = PaymentWizard(model, $uiRoot);
 
-	ui = UI(TitleUI(model),
+	ui = UI(TitleUI(
+				model,
+				HelpUI(model, net, networkStatus, $uiRoot)),
 			MainContentUI(
 				StatsUI(paymentWizard, model),
-				PaymentUI(paymentWizard, model),
-				HelpUI(model, net, networkStatus, $uiRoot)), 
-			AddPaymentButtonUI(paymentWizard, model));
+				PaymentUI(paymentWizard, model)
+			),
+			AddPaymentButtonUI(paymentWizard, model)
+		);
 	
 	ui.create($uiRoot);
 	

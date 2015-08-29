@@ -99,9 +99,13 @@ var HelpUI = function(model, net, networkStatus, $uiRoot)
 		);
 		
 		var $helpContainer = vertical("ui-root").append(
-			$container.addClass("flex-grow"),
-			horizontal("ui-footer small-padding").append($closeButton)
-		);
+			div("ui-content-container flex-grow nonbounce").append(
+				vertical("ui-content small-padding").append(
+					$container.addClass("flex-grow")			
+				)
+			),
+			horizontal("ui-footer small-padding").append($closeButton)	
+		);	
 		
 		$helpContainer.hide();
 		$(document.body).append($helpContainer);

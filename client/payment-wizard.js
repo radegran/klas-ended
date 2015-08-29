@@ -310,10 +310,9 @@ var PersonPayment = function(person)
 		person.expense(newValue);
 	}).css("color", "red");
 	
-	var $activator = div("input-match")
-		.css("cursor", "pointer")
-		.html("(check)")
-		.on("click", person.toggleActive);
+	var $activator = div("input-match activator")
+		.on("click", person.toggleActive)
+		.append(div("small-text").html("Lägg till"));
 	
 	$name.on("click", person.toggleActive);
 	
@@ -437,14 +436,18 @@ var PaymentWizard = function(model, $uiRoot)
 			$table.append(pp.element())
 		});
 		
-		var $contentContainer = horizontalFill("ui-content-container flex-grow");
+		var $contentContainer = div("ui-content-container flex-grow nonbounce");
 		
 		$wizElem = vertical("ui-root").append(
 			horizontal("ui-header small-padding").append($paymentTitle),
 			$contentContainer.append(
-				div("flex-grow"),
-				horizontalFill().append(div("flex-grow").append($table)),
-				div("flex-grow")
+				vertical("ui-content").append(
+					horizontalFill().append(
+						div("flex-grow"),
+						horizontalFill().append(div("flex-grow").append($table)),
+						div("flex-grow")
+					)
+				)				
 			),
 			horizontal("ui-footer small-padding").append($paymentNavigation)
 		);
@@ -456,6 +459,8 @@ var PaymentWizard = function(model, $uiRoot)
 		$wizElem.fadeIn('fast');
 		
 		payModel.triggerUpdate();
+		
+		nonbounceSetup();
 	};
 	
 	return {
