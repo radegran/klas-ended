@@ -187,7 +187,7 @@ describe("PayModel", function()
 	//...
 	it("inactive persons should be untouched by paying/expenseing", function()
 	{
-		var pm = makePM(false, [90,60], [0,30], [0,0]);
+		var pm = makePM(false, [90,45], [0,45], [0,0]);
 		verifyOut("ccc", false, 0, 0, false);
 		
 		modify("aaa", "expense", 70);
@@ -336,5 +336,29 @@ describe("PayModel", function()
 		verifyOut("bbb", true, 0, 20, true);
 		verifyOut("ccc", true, 0, 10, false);
 		verifyOut("ddd", true, 0, 50, true);
+	});
+	
+	it("lock and unlock is like do and redo", function()
+	{
+		var pm = makePM(false, [90,45], [0,45], [0,0]);
+		
+		verifyOut("aaa", true, 90, 45, false);
+		verifyOut("bbb", true, 0, 45, false);
+		verifyOut("ccc", false, 0, 0, false);
+		
+		modify("bbb", "expense", 50);		
+		verifyOut("aaa", true, 90, 40, false);
+		verifyOut("bbb", true, 0, 50, true);
+		verifyOut("ccc", false, 0, 0, false);
+
+		modify("aaa", "lock", true);		
+		verifyOut("aaa", true, 90, 40, true);
+		verifyOut("bbb", true, 0, 50, true);
+		verifyOut("ccc", false, 0, 0, false);
+		
+		modify("aaa", "lock", false);		
+		verifyOut("aaa", true, 90, 40, false);
+		verifyOut("bbb", true, 0, 50, true);
+		verifyOut("ccc", false, 0, 0, false)
 	});
 });

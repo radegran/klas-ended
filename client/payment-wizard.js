@@ -327,7 +327,7 @@ var PayModel = function(names, payment, allActiveDefault)
 				
 				if (!p.isLocked)
 				{
-					var gap = computeGap(unlockedActiveFilter);
+					var gap = computeGap(activeFilter);
 					distributeExpenseOnUnlocked(gap.amount, gap.unlockedCount, unlockedActiveFilter);
 				}
 				
