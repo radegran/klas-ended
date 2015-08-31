@@ -2,10 +2,8 @@ CACHE MANIFEST
 http://fonts.googleapis.com/css?family=Open+Sans
 http://fonts.gstatic.com/s/opensans/v13/cJZKeOuBrn4kERxqtaUH3VtXRa8TVwTICgirnJhmVJw.woff2
 arrow-left.png
-arrow-right.png
 barchart.png
 close.png
-compose.png
 contacts.png
 creditcard.png
 fastclick.js
@@ -21,8 +19,7 @@ help.png
 plus.png
 source.js
 startapp.js
-stop.png
 upload.png
 localization.js
 
-# Thu Aug 20 08:24:43 WEDT 2015
+# Mon Aug 31 18:07:40 WEDT 2015

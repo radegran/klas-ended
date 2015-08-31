@@ -1,7 +1,7 @@
 $(document).ready(function()
 {
 	var $page = vertical().append(
-		horizontal("ui-navigation-bar").append(
+		horizontal("ui-header").css("font-size", "1em").append(
 			vertical().css("padding", "1.5em").append(
 				div().html(L.Welcome1),
 				div().html(L.Welcome2)		

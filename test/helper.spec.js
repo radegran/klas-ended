@@ -96,7 +96,8 @@ var makeModel = function()
 		},
 		"addRow": function(text)
 		{
-			helper.addPayment(text);
+			var p = helper.newPayment();
+			p.text = text;
 			helper.commit();
 		}
 	};

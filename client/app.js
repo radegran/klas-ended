@@ -1,7 +1,6 @@
-var initialize = function(docProxy, net, networkStatus, errorHandler)
+var initialize = function(docProxy, net, networkStatus)
 {	
 	var ui;
-	var hasSetStartPage = false;
 	
 	var model = Model(function(newdata) 
 	{ 
@@ -9,32 +8,27 @@ var initialize = function(docProxy, net, networkStatus, errorHandler)
 		docProxy.update(newdata);
 	});
 	
-	var fullScreen = function(shouldFullScreen)
-	{
-		ui.fullScreen(shouldFullScreen);
-	};
+	var $uiRoot = div("ui-root");
 	
-	var addWizard = AddWizard(model, fullScreen, errorHandler);
+	var paymentWizard = PaymentWizard(model, $uiRoot);
+
+	ui = UI(TitleUI(
+				model,
+				HelpUI(model, net, networkStatus, $uiRoot)),
+			MainContentUI(
+				StatsUI(paymentWizard, model),
+				PaymentUI(paymentWizard, model)
+			),
+			AddPaymentButtonUI(paymentWizard, model)
+		);
 	
-	var ui = MainUI(StatsUI(addWizard, model), 
-				    PaymentUI(addWizard, model), 
-					PeopleUI(model),
-					HeaderUI(model),
-					HelpUI(model, net, networkStatus));
+	ui.create($uiRoot);
 	
-	ui.create($(document.body));
-	
+	$(document.body).append($uiRoot);
 	
 	var onData = function(data) 
 	{
 		model.reset(data);
-		
-		if (!hasSetStartPage)
-		{
-			setStartPage(ui, model)
-			hasSetStartPage = true;
-		}
-		
 		ui.update();
 	};
 	
@@ -69,10 +63,18 @@ var startApp = function()
 		}
 	});
 	
-	initialize(docProxy, net, networkStatus, errorHandler); 	
+	initialize(docProxy, net, networkStatus); 	
 	
 	var ajaxTimer = null;
 	var messageObj = {"hide": $.noop};
+	
+	nonbounceSetup();
+	
+	$(window).on("click", function(e) 
+	{ 
+		var $inTopMostVolatileContainer = $(e.target).parents(".volatile-container").last().find(".volatile")
+		$(".volatile").not($inTopMostVolatileContainer).hide(showHideSpeed);
+	});
 	
 	$(document).ajaxStart(function()
 	{

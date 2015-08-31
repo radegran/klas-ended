@@ -2,6 +2,36 @@ var PayModel = function(names, payment, allActiveDefault)
 {
 	var persons = [];
 	
+	var onAllUpdateCallback = $.noop;
+	
+	var onAllUpdate = function(cb)
+	{
+		onAllUpdateCallback = cb;
+	};
+	
+	var triggerAllUpdate = function(triggerPersonsUpdate)
+	{
+		var anyActive = false;
+		var anyLocked = false;
+		var totalPay = 0;
+	
+		for (var i = 0; i < persons.length; i++)
+		{
+			var it = persons[i].internal;
+			
+			anyActive |= it.isActive;
+			anyLocked |= it.isLocked;
+			totalPay += it.pay;
+			
+			if (triggerPersonsUpdate)
+			{
+				it.update();
+			}
+		}
+		
+		onAllUpdateCallback(anyActive, anyLocked, totalPay > 0);
+	};
+	
 	var eachPerson = function(callback)
 	{
 		$.each(names, function(i, name)
@@ -23,8 +53,7 @@ var PayModel = function(names, payment, allActiveDefault)
 			
 			var onUpdate = function(updateCallback_)
 			{
-				updateCallback = updateCallback_
-				p.update();
+				updateCallback = updateCallback_;
 			};
 			
 			var iteratePersons = function(itCallback)
@@ -38,6 +67,7 @@ var PayModel = function(names, payment, allActiveDefault)
 			var updateAll = function()
 			{
 				iteratePersons(function(it) { it.update(); });
+				triggerAllUpdate();
 			};
 			
 			var otherUnlockedActiveFilter = function(cb)
@@ -51,11 +81,33 @@ var PayModel = function(names, payment, allActiveDefault)
 				}
 			};
 			
+			var otherActiveFilter = function(cb)
+			{
+				return function(it, isMe)
+				{
+					if (!isMe && it.isActive)
+					{
+						cb(it);
+					}
+				}
+			};
+			
 			var unlockedActiveFilter = function(cb)
 			{
 				return function(it, isMe)
 				{
 					if (it.isActive && !it.isLocked)
+					{
+						cb(it);
+					}
+				}
+			};
+
+			var activeFilter = function(cb)
+			{
+				return function(it, isMe)
+				{
+					if (it.isActive)
 					{
 						cb(it);
 					}
@@ -101,28 +153,99 @@ var PayModel = function(names, payment, allActiveDefault)
 				{
 					distributeExpense(notDistributed);
 				}
-			}
+			};
+			
+			var computeGap = function(filter)
+			{
+				var unlockedCount = 0;
+				var lockedGap = 0;
+				iteratePersons(filter(function(it)
+				{
+					lockedGap += it.pay;
+					
+					if (it.isLocked)
+					{
+						lockedGap -= it.expense;
+					}
+					else
+					{
+						unlockedCount += 1;
+					}
+				}));
+				
+				return {
+					"amount": lockedGap,
+					"unlockedCount": unlockedCount
+				};
+			};
+							
+			var distributeExpenseOnUnlocked = function(totalAmount, numUnlocked, filter)
+			{
+				iteratePersons(filter(function(it)
+				{
+					it.expense = totalAmount / numUnlocked;
+				}));
+			};
+			
+			var activate = function()
+			{
+				if (p.isActive)
+				{
+					return;
+				}
+				
+				p.isActive = true;
+			
+				var gap = computeGap(activeFilter);
+				distributeExpenseOnUnlocked(gap.amount, gap.unlockedCount, unlockedActiveFilter);
+			};
 			
 			var toggleActive = function()
 			{
 				if (!p.isActive)
 				{
-					p.isActive = true;
-					p.update();
+					activate();
+					updateAll();
 					return;
 				}
+							
+				// inactivate
+				var contrib = p.pay - p.expense;
 				
-				iteratePersons(function(p) { p.isLocked = false; });
+				var gap = computeGap(otherActiveFilter);
+					
+				if (contrib > 0)
+				{
+					if (gap.unlockedCount > 0 && contrib <= (gap.amount + p.pay))
+					{
+						distributeExpenseOnUnlocked(gap.amount, gap.unlockedCount, otherUnlockedActiveFilter);
+					}
+					else
+					{
+						// Fail
+						p.update();
+						return;
+					}
+				}
+				else if (contrib < 0)
+				{
+					if (gap.unlockedCount > 0)
+					{
+						distributeExpenseOnUnlocked(gap.amount, gap.unlockedCount, otherUnlockedActiveFilter);
+					}
+					else
+					{
+						// Fail
+						p.update();
+						return;
+					}
+				}
 				
-				var expense = p.expense;
-				var pay = p.pay;
-				var contrib = pay - expense;
 				p.expense = 0;
 				p.pay = 0;
 				p.isActive = false;
 				p.isLocked = false;
 	
-				distributeExpense(contrib);
 				updateAll();
 			};
 			
@@ -134,6 +257,8 @@ var PayModel = function(names, payment, allActiveDefault)
 					return;
 				}
 				
+				activate();
+				
 				var numUnlockedOthers = 0;
 				var expenseUnlockedOthers = 0;
 				
@@ -142,6 +267,7 @@ var PayModel = function(names, payment, allActiveDefault)
 					expenseUnlockedOthers += it.expense;
 					numUnlockedOthers++; 
 				}));
+				
 				
 				if (numUnlockedOthers === 0)
 				{
@@ -168,18 +294,44 @@ var PayModel = function(names, payment, allActiveDefault)
 					return;
 				}
 				
+				activate();
+				
+				var gap = computeGap(activeFilter);
+				
+				if (gap.unlockedCount == 0)
+				{
+					p.update();
+					return;
+				}
+				
 				var contrib = p.pay - value;
+				
+				if (contrib > 0)
+				{
+					if (gap.amount < contrib)
+					{
+						p.update();
+						return;
+					}
+				}
+				
 				p.pay = value;
 				
-				iteratePersons(function(it) { it.isLocked = false; });
-				distributeExpense(contrib, true);
+				distributeExpenseOnUnlocked(gap.amount - contrib, gap.unlockedCount, unlockedActiveFilter);
 				updateAll();
 			};
 			
 			var lock = function(shouldLock)
 			{
 				p.isLocked = shouldLock;
-				p.update();
+				
+				if (!p.isLocked)
+				{
+					var gap = computeGap(activeFilter);
+					distributeExpenseOnUnlocked(gap.amount, gap.unlockedCount, unlockedActiveFilter);
+				}
+				
+				updateAll();
 			};
 			
 			var external = {
@@ -192,68 +344,122 @@ var PayModel = function(names, payment, allActiveDefault)
 			};
 			
 			persons.push({"external": external, "internal": p});
-
+			
 			callback(external);
 		});
+
+		var iterateKLAS = function(itCallback)
+		{
+			for (var j = 0; j < persons.length; j++)
+			{
+				var it = persons[j].internal;
+				
+				if (it.isActive)
+				{
+					itCallback(it);					
+				}
+			}			
+		};
+			
+		var initLocks = function()
+		{
+			var dict = {};
+			var uniqueExpenses = [];
+	
+			iterateKLAS(function(it)
+			{
+				if (!dict.hasOwnProperty(it.expense))
+				{
+					dict[it.expense] = 0;
+					uniqueExpenses.push(it.expense);
+				}
+
+				dict[it.expense]++;				
+			});
+
+			var maxCount = 0;
+			var maxOccuredExpense = -1;
+			
+			for (var i = 0; i < uniqueExpenses.length; i++)
+			{
+				var expense = uniqueExpenses[i];
+				if (dict[expense] > maxCount)
+				{
+					maxOccuredExpense = expense;
+					maxCount = dict[expense];
+				}			
+			}
+
+			iterateKLAS(function(it)
+			{
+				if (it.expense !== maxOccuredExpense)
+				{
+					it.isLocked = true;
+				}
+			});
+		};
+				
+		initLocks();
 	};
 	
 	return {
-		"eachPerson": eachPerson
+		"eachPerson": eachPerson,
+		"onUpdate": onAllUpdate,
+		"triggerUpdate": function() { triggerAllUpdate(true); }
 	};
 };
 
 var PersonPayment = function(person)
 {
-	var $container = div("payment-person-container");
-	
-	var $nameRow = horizontal("flex-grow");
-	var $inputRow = horizontal();
-	
-	var $indent = div("payment-indent");
 	var $name = div("clickable-person").html(person.name);
 	
-	var $payLabel = div("flex-grow pay-label").text(L.Paid);
-	var $expenseLabel = div("flex-grow expense-label").text(L.ShouldPaid);
-	
-	var moneyInput = function() 
+	var moneyInput = function(onChanged) 
 	{
-		return $("<input type='number' pattern='[0-9]+([\.|,][0-9]+)?' step='none'/>")
-			.css("width", "4em")
-			.on("focus", function() { $(this).val("");});
+		var beforeFocusValue;
+		
+		var $m = $("<input type='number' pattern='[0-9]+([\.|,][0-9]+)?' step='none'/>")
+			.addClass("money-input")
+			.on("focus", function() { beforeFocusValue = $(this).val(); $(this).val(""); })
+			.on("blur", function() { if ($(this).val() === "") $(this).val(beforeFocusValue); })
+			.on("change paste", function()
+			{
+				var parsed = toNonNegativeNumber($m.val());
+				var isNull = parsed === null;
+				
+				if (!isNull)
+				{
+					onChanged(parsed);
+				}
+				
+				$payInput.css("background-color", isNull ? "lightsalmon" : "");
+			});
+			
+		return $m;
 	};
 	
-	var $payInput = moneyInput();
-	var $expenseInput = moneyInput();
+	var $payInput = moneyInput(function(newValue)
+	{
+		person.pay(newValue);
+	}).css("color", "green");
+	
+	var $expenseInput = moneyInput(function(newValue)
+	{
+		person.expense(newValue);
+	}).css("color", "red");
+	
+	var $activator = div("input-match activator")
+		.on("click", person.toggleActive)
+		.append(div("small-text").html("Lägg till"));
+	
+	$name.on("click", person.toggleActive);
+	
 	var $locked = $("<div/>");
+	var $lockedIndent = div("lock-indent");
+	var $expenseInputContainer = horizontal().append($expenseInput, $activator);
+	var $lockedContainer = horizontal().append($locked, $lockedIndent);
 	
 	var isLockedState;
 	var isActiveState = true;
-	
-	$payInput.on("change paste", function()
-	{
-		var parsed = toNonNegativeNumber($payInput.val());
-		var isNull = parsed === null;
-		
-		if (!isNull)
-		{
-			person.pay(parsed);
-		}
-		
-		$payInput.css("background-color", isNull ? "lightsalmon" : "");
-	});
-		
-	$expenseInput.on("change paste", function()
-	{
-		var parsed = toNonNegativeNumber($expenseInput.val());
-		var isNull = parsed === null;
-		
-		if (!isNull)
-		{
-			person.expense(parsed);
-		}
-		
-		$expenseInput.css("background-color", isNull ? "lightsalmon" : "");
-	});
 	
 	$locked.on("click", function() { person.lock(!isLockedState); });
 	
@@ -264,11 +470,19 @@ var PersonPayment = function(person)
 
 		if (isActive)
 		{
+			$activator.hide(showHideSpeed);
+			$expenseInput.show(showHideSpeed);
 			$name.removeClass("inactive");
+			$locked.show(showHideSpeed);
+			$lockedIndent.hide(showHideSpeed);
 		}
 		else
 		{
+			$activator.show(showHideSpeed);
+			$expenseInput.hide(showHideSpeed);
 			$name.addClass("inactive");
+			$locked.hide(showHideSpeed);
+			$lockedIndent.show(showHideSpeed);
 		}
 		
 		if (isLocked)
@@ -288,354 +502,130 @@ var PersonPayment = function(person)
 		$expenseInput.css("background-color", "");
 	});
 	
-	//
-	// API
-	//	
-	var hide = function()
-	{
-		$container.find("*").detach();
-		$container.hide();
-		$name.off();
-	};
-	
-	var showAll = function()
-	{
-		hide();
-		$container.show();
-		
-		$container.append(
-			vertical().append(
-				horizontal().append(
-					$nameRow.append(
-						$name,
-						div("flex-grow")
-					)
-				),
-				$inputRow.append(
-					$indent.clone(),
-					vertical().append(
-						horizontal().append(
-							$payLabel,
-							$payInput,
-							$indent.clone()
-						),
-						horizontal().append(
-							$expenseLabel,
-							$expenseInput,
-							$locked
-						)
-					)
-				)
-			)
-		);
-	};
-	
-	var showName = function()
-	{
-		hide();
-		$container.show();
-		$container.append(
-			horizontal().append(
-				$name
-			)
-		);
-				
-		$name.on("click", function() 
-		{ 
-			person.toggleActive(); 
-		});
-	};
-	
-	var showPay = function()
-	{
-		if (!isActiveState)
-		{
-			hide();
-			return;
-		}
-		
-		hide();
-		$container.show();
-		$container.append(
-			horizontal().append(
-				$name,
-				div("flex-grow"),
-				$payInput
-			)
-		);
-	};
-	
-	var showShouldHavePaid = function()
-	{
-		if (!isActiveState)
-		{
-			hide();
-			return;
-		}
-		
-		hide();
-		$container.show();
-		$container.append(
-			horizontal().append(
-				$name,
-				div("flex-grow"),
-				$expenseInput,
-				$locked
-			)
-		);
-	};
-	
-	var showEverything = function()
-	{
-		if (!isActiveState)
-		{
-			hide();
-			return;
-		}
-		
-		showAll();
-	};
+	var $row = row([horizontalFill().append($name), $payInput, $expenseInputContainer, $lockedContainer]);
 	
 	return {
-		"element": function() { return $container; },
-		"hide": hide,
-		"showName": showName,
-		"showPay": showPay,
-		"showShouldHavePaid": showShouldHavePaid,
-		"showEverything": showEverything
+		"element": function() { return $row; }
 	};
 };
 
-var WizNav = function(steps, $navTitle, onSave, onClose)
+var PaymentWizard = function(model, $uiRoot)
 {
-	var currentStep = 0;
-	var stepCount = steps.length;
-	
-	var $close;
-	var $back;
-	var $next;
-	var $save;
-	var dots = [];
-	
-	for (var i = 0; i < stepCount; i++)
+	var show = function(paymentIndex) 
 	{
-		dots.push($("<div/>").addClass("dot"));
-	}
-	
-	var onSaveInternal = function()
-	{
-		$navTitle.hide();
-		onSave();
-	};
-		
-	var onCloseInternal = function()
-	{
-		$navTitle.hide();
-		onClose();
-	};
-	
-	var showCurrentStep = function()
-	{
-		$navTitle.show();
-		$close.removeClass("transparent").off().on("click", onCloseInternal);
-		$back.removeClass("transparent").off().on("click", prevStep);
-		$next.removeClass("transparent").off().on("click", nextStep);
-		$save.addClass("transparent").off();
-			
-		if (currentStep == 0)
-		{
-			$back.addClass("transparent").off();
-		}
-		
-		if (currentStep == stepCount-1)
-		{
-			$next.addClass("transparent").off();
-			$save.removeClass("transparent").off().on("click", onSaveInternal);				
-		}
-		
-		$(dots).removeClass("filled");
-		for (var i = 0; i < stepCount; i++)
-		{
-			if (i <= currentStep)
-			{
-				dots[i].addClass("filled");
-			}
-			else
-			{
-				dots[i].removeClass("filled");					
-			}
-		}
-		
-		steps[currentStep]();
-	};
-	
-	var nextStep = function()
-	{
-		currentStep++;
-		showCurrentStep();
-	};
-	
-	var prevStep = function()
-	{
-		currentStep--;
-		showCurrentStep();
-	};
-	
-	$close = $("<span/>").addClass("payment-close");
-	$back = $("<span/>").addClass("payment-back");
-	$next = $("<span/>").addClass("payment-next");
-	$save = $("<span/>").addClass("payment-save");
-	
-	var $dummy = $("<div/>").addClass("flex-grow");
-	
-	var $nav = $("<div/>").addClass("flex-horizontal-container flex-justify-center").append(
-		$dummy.clone(),
-		$close,
-		$back,
-		dots,
-		$next,
-		$save,
-		$dummy.clone());
-			
-	var begin = function()
-	{
-		showCurrentStep();
-	};
-	
-	var last = function()
-	{
-		currentStep = steps.length - 1;
-		showCurrentStep();
-	}
-	
-	return {
-		"element": function() { return $nav; },
-		"begin": begin,
-		"last": last
-	};
-};
-
-var AddWizard = function(model, fullScreenFunc, errorHandler)
-{	
-	var $items;
-	
-	var show = function($parent, onClose, paymentIndex)
-	{	
-		var onCloseInternal = function()
-		{
-			fullScreenFunc();
-			onClose();
-		};
-	
-		// Setup
 		var isNewPayment = paymentIndex === undefined;
 		var dh = model.getDataHelper();
-		var payment = isNewPayment ? dh.emptyPayment() : dh.payment(paymentIndex);
+		var payment = isNewPayment ? dh.newPayment() : dh.payment(paymentIndex);
 		var values = payment.values;
 		var payModel = PayModel(dh.names(), payment, false);
-
-		// Title
-		var editableTitle = editable(payment.text, function(value) 
-		{ 
-			if (value == "")
+		
+		// currenty no used
+		var $selectActiveLabel = div();
+		
+		// paymodel general update
+		payModel.onUpdate(function(anyActive, anyLocked, anyPay)
+		{
+			if (!anyPay)
 			{
-				payment.text = "...";
-				editableTitle.set("...");
+				$(".col2").hide(showHideSpeed);
 			}
 			else
 			{
-				payment.text = value;
+				$(".col2").show(showHideSpeed);
 			}
-		});
-		var $title = editableTitle.element()
-			.addClass("payment-title-wizard")
-			.on("click", editableTitle.editMode);
-	
-		// Throw in person payment objects
-		$items = vertical();
-		var personPayments = [];
-		payModel.eachPerson(function(person)
-		{
-			personPayments.push(PersonPayment(person));
-		});
-		$.each(personPayments, function(i, pp)
-		{
-			$items.append(pp.element());
-		});
-		var forAllPersonsCall = function(funcName)
-		{				
-			$.each(personPayments, function(i, pp)
-			{
-				pp[funcName]();
-			});
-		};
-					
-		// Navigation		
-		var $stepTitle = div("wiz-step-title");
-		var onSave = function()
-		{
-			if (isNewPayment)
-			{
-				dh.addPayment(payment.text, values);
-			}
-
-			dh.commit();
-			errorHandler.info(L.Saving);
-			onCloseInternal();
-		};
-		// SSSSSSSSSSTTTTTTTTEEEEEEEEPPPPPPPPSSSSSSSSSS
-		var step1 = function() 
-		{
-			$stepTitle.html(L.DescribePayment).show();
-			$title.show();
-			forAllPersonsCall("hide");
-			if ($title.text() == "")
-			{
-				editableTitle.editMode();			
-			}
-		};
-		var step2 = function()
-		{
-			$stepTitle.html(L.WhoAffected).show();
-			$title.hide();
-			forAllPersonsCall("showName");
-		};
-		var step3 = function()
-		{
-			$stepTitle.html(L.HowMuchPeoplePaid).show();
-			$title.hide();
-			forAllPersonsCall("showPay");
-		};
-		var step4 = function()
-		{
-			$stepTitle.html(L.HowMuchPeopleShouldPaid).show();
-			$title.hide();
-			forAllPersonsCall("showShouldHavePaid");
-		};
-		var step5 = function()
-		{
-			$stepTitle.html(L.Summary);
-			$title.show();
-			forAllPersonsCall("showEverything");
-		};
-		var nav = WizNav([step1, step2, step3, step4, step5], $stepTitle, onSave, onCloseInternal);
-		
-		// Add all
-		$parent.append(
-			horizontal().append($stepTitle), 
-			horizontal().append($title), 
-			horizontal().append($items));
 			
-		fullScreenFunc(nav.element());
+			if (anyLocked)
+			{
+				$(".col3").show(showHideSpeed);
+			}
+			else
+			{
+				$(".col3").hide(showHideSpeed);				
+			}
+		});
+
+		var $wizElem;
 		
 		if (isNewPayment)
 		{
-			nav.begin();
+			payment.text = "Beskriv betalningen här";
 		}
-		else
+			
+		var editableTitle = editable(payment.text, function(newValue)
 		{
-			nav.last();
-		}
+			payment.text = newValue;
+		});
+		
+		var $paymentTitle = editableTitle.element().on("click", function() 
+		{
+			editableTitle.editMode(); 
+		});
+		
+		// navigation
+		var close = function() { $wizElem.remove(); $uiRoot.fadeIn('fast'); };
+		var save = function() 
+		{ 
+			dh.commit(); 
+			close(); 
+		};
+		
+		var $paymentClose = div("payment-close").on("click", close);
+		var $paymentSave = div("payment-save").on("click", save);
+		var $paymentNavigation = vertical().append(
+			horizontal().append(
+				$paymentClose,
+				$paymentSave
+			)
+		);
+		
+		// content
+		var $table = vertical();
+		$table.append(row([$selectActiveLabel, div("input-match").text("Betalat"), horizontal().append(div("input-match").text("Skuld")), div("lock-indent")]));
+		
+		payModel.eachPerson(function(person)
+		{
+			var pp = PersonPayment(person);
+			$table.append(pp.element())
+		});
+		
+		var $confirm = div("confirm-remove volatile").hide()
+			.html("Är du säker?")
+			.on("click", function() 
+			{
+				dh.removePayment(paymentIndex); dh.commit(); 
+				close();
+			});
+				
+		var $remove = div("payment-remove")
+			.html("TA BORT")
+			.on("click", function(e) { $confirm.show(showHideSpeed); e.stopPropagation(); });
+							
+		var $contentContainer = div("ui-content-container flex-grow nonbounce");
+		
+		$wizElem = vertical("ui-root").append(
+			horizontal("ui-header small-padding").append($paymentTitle),
+			$contentContainer.append(
+				vertical("ui-content").append(
+					horizontalFill().append(
+						div("flex-grow"),
+						horizontalFill().append(div("flex-grow").append($table)),
+						div("flex-grow")
+					),
+					(!isNewPayment ? horizontal().append($confirm, $remove) : $())
+				)				
+			),
+			horizontal("ui-footer small-padding").append($paymentNavigation)
+		);
+		
+		$uiRoot.fadeOut('fast');
+		$(document.body).append($wizElem);
+		
+		$wizElem.hide();
+		$wizElem.fadeIn('fast');
+		
+		payModel.triggerUpdate();
+		
+		nonbounceSetup();
 	};
 	
 	return {
