@@ -104,8 +104,15 @@ var StatsUI = function(paymentWizard, model)
 			});
 			$confirm.on("click", function() { person.remove(); dh.commit(); });
 			
-			$personSummary.on("click", function() 
-			{ 
+			$personSummary.on("click", function(e) 
+			{ 			
+				if ($details.is(":visible")) 
+				{ 
+					$(".volatile").hide(); 
+					e.stopPropagation();
+					return;
+				} 
+			
 				$("person-summary").not(this).find(".volatile").hide(showHideSpeed);
 				
 				if (isRemoveable)
