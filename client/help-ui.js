@@ -29,9 +29,9 @@ var HelpUI = function(model, net, networkStatus, $uiRoot)
 			// text("&nbsp;"));
 			
 		var $urlContainer = div("big-margin").append(
-			horizontal().html(L.CopyUrlInfo).addClass("small-text big-margin"),
+			horizontal().html(L.CopyUrlInfo).addClass("small-text big-margin unselectable"),
 			horizontal().html(window.location.href).addClass("small-text"),
-			div("big-margin").html(whiteSpace(1))
+			div("big-margin unselectable").html(whiteSpace(1))
 		);
 			
 		var $container = vertical();
