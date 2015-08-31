@@ -334,11 +334,11 @@ input {
 .payment-locked {
 	background-image: url('locked.png');
 }
-/*
+
 .payment-unlocked {
 	background-image: url('unlocked.png');
 }
-*/
+
 
 .wiz-step-title {
 	margin-bottom:1em;
