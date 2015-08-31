@@ -588,6 +588,18 @@ var PaymentWizard = function(model, $uiRoot)
 			$table.append(pp.element())
 		});
 		
+		var $confirm = div("confirm-remove volatile").hide()
+			.html("Är du säker?")
+			.on("click", function() 
+			{
+				dh.removePayment(paymentIndex); dh.commit(); 
+				close();
+			});
+				
+		var $remove = div("payment-remove")
+			.html("TA BORT")
+			.on("click", function(e) { $confirm.show(showHideSpeed); e.stopPropagation(); });
+							
 		var $contentContainer = div("ui-content-container flex-grow nonbounce");
 		
 		$wizElem = vertical("ui-root").append(
@@ -598,7 +610,8 @@ var PaymentWizard = function(model, $uiRoot)
 						div("flex-grow"),
 						horizontalFill().append(div("flex-grow").append($table)),
 						div("flex-grow")
-					)
+					),
+					(!isNewPayment ? horizontal().append($confirm, $remove) : $())
 				)				
 			),
 			horizontal("ui-footer small-padding").append($paymentNavigation)

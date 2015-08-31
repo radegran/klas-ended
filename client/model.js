@@ -478,7 +478,13 @@ var DataHelper = function(data, onChange, onCommit)
 	var paymentByIndex = function(index)
 	{
 		return data.payments[index];
-	}
+	};
+	
+	var removePaymentByIndex = function(index)
+	{
+		data.payments.splice(index, 1);
+		onChange();
+	};
 	
 	var commit = function()
 	{
@@ -490,6 +496,7 @@ var DataHelper = function(data, onChange, onCommit)
 		"eachPayment": eachPayment,
 		"name": name,
 		"payment": paymentByIndex,
+		"removePayment": removePaymentByIndex,
 		"addPerson": addPerson,
 		"title": title,
 		"names": function() { return data.names; },

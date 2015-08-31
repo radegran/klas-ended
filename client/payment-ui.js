@@ -36,25 +36,18 @@
 			var $clickable = $("<div/>").addClass("flex-horizontal-container flex-grow flex-justify-center clickable-payment");
 			var $label = div("flex-grow").html(payment.text());
 			var $cost = div().html(formatMoney(payment.cost()));
-			var $confirm = div("confirm-remove volatile").hide()
-				.text(L.Remove)
-				.on("click", function() { payment.remove(); dh.commit(); });
-				
-			var $remove = $("<div/>")
-				.addClass("payment-remove")
-				.on("click", function(e) { $confirm.show(showHideSpeed); });
-							
+			
 			$label.on("click", function()
 			{
 				paymentWizard.show(payment.index);
 			});
 			
 			$pastPayments.append($p.append(
-				$confirm,
 				$clickable.append(
 					$label.addClass("flex-grow"), 
-					$cost), 
-				$remove));
+					$cost)
+				)
+			);
 				
 			$historyContainer.show();
 		});

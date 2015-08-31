@@ -8,9 +8,11 @@ var TitleUI = function(model, helpUI)
 		
 		var title = dh.title();
 		title = (title == "") ? "..." : title;
+		document.title = title;
 		
 		var editableTitle = editable(title, function(newValue)
 		{
+			document.title = newValue;
 			dh.title(newValue);
 			dh.commit();
 		});

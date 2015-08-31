@@ -96,7 +96,8 @@ div {
 }
 
 .offline .ui-navigation-bar,
-.offline .ui-header {
+.offline .ui-header,
+.offline .ui-footer {
 	background-color:gainsboro;
 }
 
@@ -284,7 +285,6 @@ input {
 .person-add,
 .people-remove,
 .people-edit,
-.payment-remove,
 .payment-indent,
 .payment-locked ,
 .payment-unlocked {
@@ -328,7 +328,10 @@ input {
 }
 
 .payment-remove {
-	background-image: url('close.png');
+	cursor: pointer;
+	background-color: lightsalmon;
+	padding: 0.5em;
+	margin: 1.5em;
 }
 
 .payment-locked {
