@@ -50,24 +50,39 @@ var TitleUI = function(model, helpUI)
 var AddPaymentButtonUI = function(paymentWizard, model)
 {
 	var $addPaymentButton = null;
+	var $addPaymentHelp = null;
+	var $parentElem = null;
 	
 	var update = function()
 	{
 		var dh = model.getDataHelper();
-
-		if (dh.names().length == 0)
+		
+		if (dh.payment(0) == null)
 		{
-			$addPaymentButton.hide();
+			$addPaymentHelp.show();
 		}
 		else
 		{
-			$addPaymentButton.slideDown();
+			$addPaymentHelp.hide();
+		}
+
+		if (dh.names().length == 0)
+		{
+			$parentElem.slideUp();
+		}
+		else
+		{
+			$parentElem.slideDown();
 		}
 	};
 	var create = function($parent)
 	{
-		$addPaymentButton = div("payment-add")
-			.on("click", function() { paymentWizard.show(); });
+		$parentElem = $parent;
+		$addPaymentHelp = div().html("Lägg till nya betalningar här").css("cursor", "pointer")
+		$addPaymentButton = horizontal().append(
+			div("payment-add"),
+			$addPaymentHelp
+		).on("click", function() { paymentWizard.show(); });
 
 		$parent.append(horizontal().append($addPaymentButton));
 	};

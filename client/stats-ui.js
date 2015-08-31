@@ -4,6 +4,7 @@ var StatsUI = function(paymentWizard, model)
 	var $transferPlan = null;
 	var $transfers = null;
 	var $addPerson = null;
+	var $addPersonHelp = null;
 	
 	var editPayment = function(index)
 	{
@@ -37,6 +38,15 @@ var StatsUI = function(paymentWizard, model)
 		{ 
 			return p1.diff - p2.diff;
 		});
+		
+		if (persons.length > 0)
+		{
+			$addPersonHelp.hide();
+		}
+		else
+		{
+			$addPersonHelp.show();			
+		}
 		
 		$.each(persons, function(i, person)
 		{
@@ -151,7 +161,11 @@ var StatsUI = function(paymentWizard, model)
 		$stats = vertical();
 		$transferPlan = vertical();
 		$transfers = vertical();
-		$addPerson = div("person-add");
+		$addPersonHelp = div().html("Lägg till personer här").css("cursor", "pointer").hide();
+		$addPerson = horizontal().append(
+			div("person-add"),
+			$addPersonHelp
+		);
 		
 		$parent.append(
 			$stats,

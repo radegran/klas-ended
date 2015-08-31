@@ -20,7 +20,7 @@ div {
 }
 
 .info {
-	margin: 0.2em;
+	margin: 0.5em 0.2em 0.2em 0.2em;
 	padding: 0.4em;
     -moz-border-radius: 0.4em;
     -webkit-border-radius: 0.4em;
@@ -29,7 +29,7 @@ div {
 }
 
 .yellow {
-	background-color: #FFE869;
+	background-color: #fef385;
 }
 
 /* NEW UI */

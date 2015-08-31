@@ -1,4 +1,4 @@
-var initialize = function(docProxy, net, networkStatus)
+var initialize = function(docProxy, net, networkStatus, errorHandler)
 {	
 	var ui;
 	
@@ -10,7 +10,7 @@ var initialize = function(docProxy, net, networkStatus)
 	
 	var $uiRoot = div("ui-root");
 	
-	var paymentWizard = PaymentWizard(model, $uiRoot);
+	var paymentWizard = PaymentWizard(model, errorHandler, $uiRoot);
 
 	ui = UI(TitleUI(
 				model,
@@ -39,7 +39,7 @@ var initialize = function(docProxy, net, networkStatus)
 var preloadImages = function() 
 {
   for (var i = 0; i < arguments.length; i++) {
-    $("<img />").attr("src", arguments[i]);
+    $(document.body).append($("<img />").attr("src", arguments[i]).css("display", "none"));
   }
 };
 
@@ -47,7 +47,7 @@ var preloadImages = function()
 var startApp = function()
 {
 	FastClick.attach(document.body);
-	preloadImages("hoverimage1.jpg","hoverimage2.jpg", "arrow-left.png", "close.png", "creditcard.png", "icon-144.png", "icon-57.png", "icon-72.png", "locked.png", "mail.png", "help.png", "plus.png");
+	//preloadImages("arrow-left.png", "close.png", "creditcard.png", "icon-144.png", "icon-57.png", "icon-72.png", "locked.png", "mail.png", "help.png", "plus.png");
 	
 	var errorHandler = {"fatal": bailout, "info": info};
 	var networkStatus = NetworkStatus();
@@ -71,7 +71,7 @@ var startApp = function()
 		}
 	});
 	
-	initialize(docProxy, net, networkStatus); 	
+	initialize(docProxy, net, networkStatus, errorHandler); 	
 	
 	var ajaxTimer = null;
 	var messageObj = {"hide": $.noop};

@@ -477,7 +477,12 @@ var DataHelper = function(data, onChange, onCommit)
 	
 	var paymentByIndex = function(index)
 	{
-		return data.payments[index];
+		if (index < data.payments.length)
+		{
+			return data.payments[index];
+		}
+		
+		return null;
 	};
 	
 	var removePaymentByIndex = function(index)

@@ -509,7 +509,7 @@ var PersonPayment = function(person)
 	};
 };
 
-var PaymentWizard = function(model, $uiRoot)
+var PaymentWizard = function(model, errorHandler, $uiRoot)
 {
 	var show = function(paymentIndex) 
 	{
@@ -565,6 +565,7 @@ var PaymentWizard = function(model, $uiRoot)
 		var close = function() { $wizElem.remove(); $uiRoot.fadeIn('fast'); };
 		var save = function() 
 		{ 
+			errorHandler.info("Sparar \"" + payment.text + "\"");
 			dh.commit(); 
 			close(); 
 		};

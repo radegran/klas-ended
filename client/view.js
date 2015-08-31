@@ -139,7 +139,7 @@ var showMessage = function(message, delay)
 		.addClass("message yellow info")
 		.text(message).hide();
 		
-	$(".messagecontainer").append($message);
+	$(".messagecontainer").append(horizontal().append($message));
 	
 	var timer = null;
 	
