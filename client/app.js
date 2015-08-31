@@ -36,10 +36,18 @@ var initialize = function(docProxy, net, networkStatus)
 	docProxy.read();
 };
 
+var preloadImages = function() 
+{
+  for (var i = 0; i < arguments.length; i++) {
+    $("<img />").attr("src", arguments[i]);
+  }
+};
+
 // called from app.html
 var startApp = function()
 {
 	FastClick.attach(document.body);
+	preloadImages("hoverimage1.jpg","hoverimage2.jpg", "arrow-left.png", "close.png", "creditcard.png", "icon-144.png", "icon-57.png", "icon-72.png", "locked.png", "mail.png", "help.png", "plus.png");
 	
 	var errorHandler = {"fatal": bailout, "info": info};
 	var networkStatus = NetworkStatus();
