@@ -67,8 +67,10 @@ var StatsUI = function(paymentWizard, model)
 				var $detail = horizontal("clickable-payment").append(
 					div().html(payment.text()),
 					div("flex-grow"),
-					div().html(formatMoney(diff, true))).on("click", function()
+					div("flex-no-shrink").html(formatMoney(diff, true)),
+					rightArrow()).on("click", function(e)
 					{
+						e.stopPropagation();
 						editPayment(payment.index);
 					});
 					
@@ -144,10 +146,10 @@ var StatsUI = function(paymentWizard, model)
 		$.each(plan, function(i, transfer)
 		{
 			// Improve UI
-			var $plan = $("<div/>").addClass("transfer-div").append(
-				$("<span/>").html(dh.name(transfer.from) + " " + L.ShouldGive + " "),
+			var $plan = horizontal("transfer-div").append(
+				$("<span/>").html(dh.name(transfer.from) + " " + L.ShouldGive + whiteSpace(1)),
 				formatMoney(transfer.amount), 
-				$("<span/>").html(" " + L.To + " " + dh.name(transfer.to)));
+				$("<span/>").html(whiteSpace(1) + L.To + " " + dh.name(transfer.to)));
 			
 			$transfers.append($plan);
 			

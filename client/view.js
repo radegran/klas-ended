@@ -99,6 +99,10 @@ var div = function(classNames)
 	return $("<div/>").addClass(classNames);
 };
 
+var rightArrow = function()
+{
+	return div("flex-no-shrink small-text").html(whiteSpace(2) + ">").css({"font-weight": "bold", color: "gray"});
+};
 var formatMoney = function(value, keepDecimals)
 {
 	var color = (value > 0) ? "green" : (value < 0 ? "red" : "");
@@ -116,7 +120,7 @@ var formatMoney = function(value, keepDecimals)
 		ret = fixed;
 	}
 	
-	return $("<span/>").css("color", color).text(ret);
+	return div().css("color", color).text(ret);
 };
 
 var isCtrlZ = function(e)

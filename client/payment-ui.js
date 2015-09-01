@@ -45,7 +45,8 @@
 			$pastPayments.append($p.append(
 				$clickable.append(
 					$label.addClass("flex-grow"), 
-					$cost)
+					$cost,
+					rightArrow())
 				)
 			);
 				

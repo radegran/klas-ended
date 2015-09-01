@@ -562,7 +562,12 @@ var PaymentWizard = function(model, errorHandler, $uiRoot)
 		});
 		
 		// navigation
-		var close = function() { $wizElem.remove(); $uiRoot.fadeIn('fast'); };
+		var close = function() 
+		{ 
+			 $wizElem.removeClass("translate"); 
+			 $uiRoot.removeClass("translate");
+			 setTimeout(function() { $wizElem.remove(); }, 500);
+		};
 		var save = function() 
 		{ 
 			errorHandler.info("Sparar \"" + payment.text + "\"");
@@ -618,11 +623,10 @@ var PaymentWizard = function(model, errorHandler, $uiRoot)
 			horizontal("ui-footer small-padding").append($paymentNavigation)
 		);
 		
-		$uiRoot.fadeOut('fast');
 		$(document.body).append($wizElem);
 		
-		$wizElem.hide();
-		$wizElem.fadeIn('fast');
+		$wizElem.css("left", "100%");
+		setTimeout(function() { $wizElem.addClass("translate"); $uiRoot.addClass("translate"); }, 0);
 		
 		payModel.triggerUpdate();
 		

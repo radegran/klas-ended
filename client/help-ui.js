@@ -111,19 +111,23 @@ var HelpUI = function(model, net, networkStatus, $uiRoot)
 			horizontal("ui-footer small-padding").append($closeButton)	
 		);	
 		
-		$helpContainer.hide();
+		// for transitions
+		$helpContainer.css("left", "100%").hide();
 		$(document.body).append($helpContainer);
 		
 		$helpButton.on("click", function(e) 
 		{ 
-			$uiRoot.fadeOut('fast');
-			$helpContainer.fadeIn('fast');		
+			$helpContainer.show();
+			setTimeout(function() { $helpContainer.addClass("translate"); $uiRoot.addClass("translate"); }, 0);
 		});
 		$closeButton.on("click", function() 
 		{
-			$uiRoot.fadeIn('fast');
-			$helpContainer.fadeOut('fast');					
+			$helpContainer.removeClass("translate"); 
+			$uiRoot.removeClass("translate");			
+			setTimeout(function() { $helpContainer.hide(); }, 500);
 		});
+		
+		nonbounceSetup();
 	};
 	
 	return {

@@ -81,7 +81,7 @@ var startApp = function()
 	$(window).on("click", function(e) 
 	{ 
 		var $inTopMostVolatileContainer = $(e.target).parents(".volatile-container").last().find(".volatile")
-		$(".volatile").not($inTopMostVolatileContainer).hide(showHideSpeed);
+		$(e.target).parents(".ui-root").find(".volatile").not($inTopMostVolatileContainer).hide(showHideSpeed);
 	});
 	
 	$(document).ajaxStart(function()
