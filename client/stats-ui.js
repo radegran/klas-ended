@@ -73,6 +73,9 @@ var StatsUI = function(paymentWizard, model)
 						e.stopPropagation();
 						editPayment(payment.index);
 					});
+				
+				$detail.css("background-color", (diff > 0 ? "#F0FFF0": (diff < 0 ? "#FFF0F0" : "transparent")));
+				$detail.css("border-color", (diff > 0 ? "#B0FFB0": (diff < 0 ? "#FFB0B0" : "lightgray")));
 					
 				$details.append($detail);
 			});
@@ -158,7 +161,9 @@ var StatsUI = function(paymentWizard, model)
 				div().html(dh.name(transfer.to))
 			);
 			
-			$transfers.append($plan);
+			$transfers.append(
+			    $plan
+			);
 			
 			$transferPlan.show();
 		});

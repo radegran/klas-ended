@@ -282,11 +282,6 @@ input {
 	margin: 0.2em 0.5em 0.2em 0.5em;
 }
 
-.payment-add,
-.person-add {
-	margin: 0.25em 0.25em 0.25em 0.25em;
-}
-
 .payment-next {
 	background-image: url('arrow-right.png');
 }
@@ -312,7 +307,6 @@ input {
 }
 
 .lock-indent,
-.confirm-remove,
 .person-add,
 .people-remove,
 .people-edit,
@@ -329,8 +323,15 @@ input {
 }
 
 .person-add {
-	height: 2em;
-	width: 2em;
+	height: 2.5em;
+	width: 2.5em;
+	margin: 0.5em 0.25em 0.25em 0.25em;
+	color: #3c8ce2
+}
+
+.payment-add {
+	margin: 0.25em 0.25em 0.25em 0.25em;
+	color: white;
 }
 
 .confirm-remove {
@@ -358,11 +359,15 @@ input {
 	opacity: 0.35;
 }
 
+.confirm-remove,
 .payment-remove {
 	cursor: pointer;
 	color: white;
 	background-color: salmon;
 	padding: 0.5em;
+}
+
+.payment-remove {
 	margin: 1.5em;
 }
 
@@ -379,30 +384,6 @@ input {
 	margin-bottom:1em;
 }
 
-.payment-add {
-	color: white;
-}
-
-.person-add {
-	color: #3c8ce2
-}
-
-.dot {
-	margin: 0.1em;
-	width: 0.6em;
-	height: 0.6em;
-	border: 2px solid rgb(79, 93, 115);
-    -moz-border-radius: 0.2em;
-    -webkit-border-radius: 0.2em;
-    -khtml-border-radius: 0.2em;
-    border-radius: 0.2em;
-	background-color: transparent;
-}
-
-.dot.filled {
-    background-color: rgb(79, 93, 115);
-}
-
 .row {
 	margin-bottom: 1em;
 }
@@ -416,23 +397,32 @@ input {
     -webkit-border-radius: 0.2em;
     -khtml-border-radius: 0.2em;
     border-radius: 0.2em;
-	background-color: #3c8ce2;
-	color:white;
 }
 .clickable-person {
 	border: 2px solid #3c8ce2;
+	background-color: #3c8ce2;
+	color: white;
 }
 .clickable-person.inactive {
 	background-color: transparent;
 	color: black;
 }
 
-.offline .clickable-person,
-.offline .clickable-payment {
+.clickable-payment,
+.clickable-person {
+	border: 1px solid #3c8ce2;
+}
+
+.offline .clickable-person {
 	background-color: gainsboro;
 }
+.offline.clickable-payment,
 .offline .clickable-person {
-	border: 2px solid gainsboro;
+	border: 1px solid gainsboro;
+	color: black;
+}
+.offline .clickable-person {
+	border: 1px solid gainsboro;
 }
 .offline .clickable-person.inactive {
 	background-color: transparent;
@@ -442,6 +432,12 @@ input {
 	/*background-image: url('mail.png');*/
 	color: #3c8ce2;
 	background-color: transparent;
+}
+
+.small-right-arrow {
+	padding: 0 0 0 0.5em;
+	width: 1em;
+	color: #3c8ce2;
 }
 
 .nav-stats {
@@ -486,4 +482,8 @@ input.money-input  {
 
 .ui-header input {
 	color:white;
+}
+
+.ui-content input {
+	background-color: white;
 }

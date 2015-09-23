@@ -4,14 +4,19 @@
 
 	var create = function($parent)
 	{
-		var $historyHeader = div("small-text").html(whiteSpace(1) /*L.PreviousPayments*/);
+		var $historyHeader = div()
+			.html(L.PreviousPayments)
+			.css({
+				"font-style": "italic",
+				"color": "#666666",
+				"margin": "1em 0 0.5em 0"
+			});
 		$pastPayments = vertical();
 		$historyContainer = vertical();
 		
 		$parent.append(
 			$historyContainer.append(
 				horizontal().append($historyHeader), 
-				$("<div/>").html(whiteSpace(1)),
 				$pastPayments));
 	};
 	
