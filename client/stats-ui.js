@@ -147,9 +147,16 @@ var StatsUI = function(paymentWizard, model)
 		{
 			// Improve UI
 			var $plan = horizontal("transfer-div").append(
-				$("<span/>").html(dh.name(transfer.from) + " " + L.ShouldGive + whiteSpace(1)),
-				formatMoney(transfer.amount), 
-				$("<span/>").html(whiteSpace(1) + L.To + " " + dh.name(transfer.to)));
+				div().html(dh.name(transfer.from)),
+				div("flex-no-shrink").append(
+					horizontal().append(
+						div().html(whiteSpace(1) + L.ShouldGive + whiteSpace(1)), 
+						div().append(formatMoney(transfer.amount).css("padding", 0)), 
+						div().html(whiteSpace(1) + L.To + whiteSpace(1))
+					)
+				),
+				div().html(dh.name(transfer.to))
+			);
 			
 			$transfers.append($plan);
 			

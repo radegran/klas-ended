@@ -37,7 +37,7 @@
 			var $label = div("flex-grow").html(payment.text());
 			var $cost = div().html(formatMoney(payment.cost()));
 			
-			$label.on("click", function()
+			$clickable.on("click", function()
 			{
 				paymentWizard.show(payment.index);
 			});

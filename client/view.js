@@ -101,7 +101,7 @@ var div = function(classNames)
 
 var rightArrow = function()
 {
-	return div("flex-no-shrink small-text").load("smallrightarrow.svg").css({width: "1em", color: "white"});
+	return div("flex-no-shrink small-text").load("smallrightarrow.svg").css({padding: "0 0 0 0.5em",width: "1em", color: "white"});
 };
 var formatMoney = function(value, keepDecimals)
 {

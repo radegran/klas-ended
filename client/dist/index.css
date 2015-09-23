@@ -49,7 +49,7 @@ div {
 
 .help-container,
 .person-summary {
-	padding: 0.3em 0.7em 0.3em 0.7em;
+	padding: 0.5em 0.7em 0.5em 0.7em;
 	margin:0.2em;
 	cursor: pointer;
 	border: 1px solid #3c8ce2;
@@ -113,6 +113,11 @@ div {
 .offline .ui-header,
 .offline .ui-footer {
 	background-color:gainsboro;
+}
+
+.col0, .col1, .col2, .col3
+{
+	padding: 1px;
 }
 
 input {
@@ -404,7 +409,7 @@ input {
 
 .clickable-person,
 .clickable-payment {
-	padding: 0.3em 0.4em 0.3em 0.4em;
+	padding: 0.5em 0.4em 0.5em 0.4em;
 	margin:0.2em;
 	cursor: pointer;
     -moz-border-radius: 0.2em;
