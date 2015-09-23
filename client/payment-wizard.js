@@ -488,12 +488,12 @@ var PersonPayment = function(person)
 		if (isLocked)
 		{
 			$locked.removeClass("payment-unlocked transparent");
-			$locked.addClass("payment-locked");
+			$locked.addClass("payment-locked").load("locked.svg");
 		}
 		else
 		{
 			$locked.removeClass("payment-locked");
-			$locked.addClass("payment-unlocked transparent");
+			$locked.addClass("payment-unlocked transparent").load("unlocked.svg");
 		}
 		
 		$payInput.val(formatMoney(payValue).text());
@@ -575,8 +575,8 @@ var PaymentWizard = function(model, errorHandler, $uiRoot)
 			close(); 
 		};
 		
-		var $paymentClose = div("payment-close").on("click", close);
-		var $paymentSave = div("payment-save").on("click", save);
+		var $paymentClose = div("payment-close").load("x.svg").on("click", close);
+		var $paymentSave = div("payment-save").load("save.svg").on("click", save);
 		var $paymentNavigation = vertical().append(
 			horizontal().append(
 				$paymentClose,

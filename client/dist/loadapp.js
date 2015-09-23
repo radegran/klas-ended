@@ -1,14 +1,14 @@
 $(document).ready(function()
 {
-	var $page = vertical().append(
+	var $page = vertical().css("height", "100%").append(
 		horizontal("ui-header").css("font-size", "1em").append(
 			vertical().css("padding", "1.5em").append(
 				div().html(L.Welcome1),
 				div().html(L.Welcome2)		
 			)
 		),
-		horizontal().css("padding", "2em").append(
-			div("nav-payments").on("click", loadApp)
+		horizontal("flex-grow").css("padding", "2em").append(
+			div("nav-payments").load("creditcard.svg").on("click", loadApp)
 		)
 	);
 	

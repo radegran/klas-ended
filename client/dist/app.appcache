@@ -1,11 +1,6 @@
 CACHE MANIFEST
 http://fonts.googleapis.com/css?family=Open+Sans
 http://fonts.gstatic.com/s/opensans/v13/cJZKeOuBrn4kERxqtaUH3VtXRa8TVwTICgirnJhmVJw.woff2
-arrow-left.png
-barchart.png
-close.png
-contacts.png
-creditcard.png
 fastclick.js
 favicon.ico
 icon-144.png
@@ -13,13 +8,17 @@ icon-57.png
 icon-72.png
 index.css
 jquery-1.11.3.min.js
-locked.png
-mail.png
-help.png
-plus.png
 source.js
 startapp.js
-upload.png
 localization.js
-
-# Tue Sep  1 21:50:13 WEDT 2015
+back.svg
+creditcard.svg
+help.svg
+locked.svg
+mail.svg
+plus.svg
+save.svg
+smallrightarrow.svg
+unlocked.svg
+x.svg
+# Wed Sep 23 13:12:47 WEDT 2015

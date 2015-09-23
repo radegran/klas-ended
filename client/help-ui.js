@@ -54,7 +54,7 @@ var HelpUI = function(model, net, networkStatus, $uiRoot)
 			.attr("placeholder", L.ExampleEmail)
 			.on("input paste", function() { updateSubmitButton(); });
 			
-		var $submit = $("<button/>").addClass("mail-button big-margin").on("click", function() 
+		var $submit = $("<button/>").addClass("mail-button big-margin").load("mail.svg").on("click", function() 
 		{
 			net.sendmail({"message": $textArea.val(), "from": $inputEmail.val()});
 			emailSent = true;
@@ -93,8 +93,8 @@ var HelpUI = function(model, net, networkStatus, $uiRoot)
 	
 		updateSubmitButton();
 
-		var $helpButton = div("help-button");
-		var $closeButton = div("payment-back")
+		var $helpButton = div("help-button").load("help.svg");
+		var $closeButton = div("payment-back").load("back.svg");
 					
 		$parent.append(
 			horizontal().append(

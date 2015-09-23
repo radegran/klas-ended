@@ -217,7 +217,7 @@ var SampleApp = function() {
 	{
 		var files = fs.readdirSync(clientDistDir)
 					.filter(function(v){
-						return (/.(js|css|png|ico|map)$/).test(v);
+						return (/.(js|css|png|svg|ico|map)$/).test(v);
 					});
 					
 		for (var i = 0; i < files.length; i++)
@@ -374,6 +374,10 @@ var SampleApp = function() {
 				else if (file.search("png") > -1)
 				{
 					res.setHeader('Content-Type', 'image/png');
+				}
+				else if (file.search("svg") > -1)
+				{
+					res.setHeader('Content-Type', 'image/svg+xml');
 				}
 				else if (file.search("css") > -1)
 				{

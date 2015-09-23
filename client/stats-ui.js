@@ -78,7 +78,7 @@ var StatsUI = function(paymentWizard, model)
 			});
 			
 			// Person summary
-			var $removeButton = div("volatile people-remove").hide();
+			var $removeButton = div("volatile people-remove").load("x.svg").hide();
 			var $confirm = div("volatile confirm-remove").text(L.Remove).hide();
 			var editableName = editable(person.name, function(newValue) { person.setName(newValue); dh.commit(); });
 			var $name = editableName.element();
@@ -165,7 +165,7 @@ var StatsUI = function(paymentWizard, model)
 		$transfers = vertical();
 		$addPersonHelp = div().html("Lägg till personer här").css("cursor", "pointer").hide();
 		$addPerson = horizontal().append(
-			div("person-add"),
+			div("person-add").load("plus.svg"),
 			$addPersonHelp
 		);
 		

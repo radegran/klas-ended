@@ -101,7 +101,7 @@ var div = function(classNames)
 
 var rightArrow = function()
 {
-	return div("flex-no-shrink small-text").html(whiteSpace(2) + ">").css({"font-weight": "bold", color: "gray"});
+	return div("flex-no-shrink small-text").load("smallrightarrow.svg").css({width: "1em", color: "white"});
 };
 var formatMoney = function(value, keepDecimals)
 {
@@ -120,7 +120,14 @@ var formatMoney = function(value, keepDecimals)
 		ret = fixed;
 	}
 	
-	return div().css("color", color).text(ret);
+	return div().css({
+		"color": color,
+		"background-color": "white",
+		"padding": "0 1em 0 1em",
+		"-moz-border-radius": "0.5em",
+		"-webkit-border-radius": "0.5em",
+		"-khtml-border-radius": "0.5em",
+		"border-radius": "0.5em"}).text(ret);
 };
 
 var isCtrlZ = function(e)
