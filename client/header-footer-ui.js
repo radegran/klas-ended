@@ -80,7 +80,7 @@ var AddPaymentButtonUI = function(paymentWizard, model)
 		$parentElem = $parent;
 		$addPaymentHelp = div().html("Lägg till nya betalningar här").css("cursor", "pointer")
 		$addPaymentButton = horizontal().append(
-			div("payment-add").load("plus.svg"),
+			div("payment-add").load("plus-payment.svg"),
 			$addPaymentHelp
 		).on("click", function() { paymentWizard.show(); });
 

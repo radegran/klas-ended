@@ -4,13 +4,8 @@
 
 	var create = function($parent)
 	{
-		var $historyHeader = div()
-			.html(L.PreviousPayments)
-			.css({
-				"font-style": "italic",
-				"color": "#666666",
-				"margin": "1em 0 0.5em 0"
-			});
+		var $historyHeader = div("section-header")
+			.html(L.PreviousPayments + whiteSpace(1));
 		$pastPayments = vertical();
 		$historyContainer = vertical();
 		
@@ -37,8 +32,8 @@
 		
 		$.each(paymentList, function(i, payment) 
 		{
-			var $p = horizontal("volatile-container");
-			var $clickable = $("<div/>").addClass("flex-horizontal-container flex-grow flex-justify-center clickable-payment");
+			var $p = horizontal("volatile-container clickable-payment");
+			var $clickable = $("<div/>").addClass("flex-horizontal-container flex-grow flex-justify-center");
 			var $label = div("flex-grow").html(payment.text());
 			var $cost = div().html(formatMoney(payment.cost()));
 			

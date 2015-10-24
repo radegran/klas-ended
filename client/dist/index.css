@@ -324,14 +324,18 @@ input {
 
 .person-add {
 	height: 2.5em;
-	width: 2.5em;
+	width: 5em;
 	margin: 0.5em 0.25em 0.25em 0.25em;
-	color: #3c8ce2
+	color: #3c8ce2;
+	fill: currentColor;
 }
 
 .payment-add {
+	height: 2.5em;
+	width: 5em;
 	margin: 0.25em 0.25em 0.25em 0.25em;
 	color: white;
+	fill: currentColor;
 }
 
 .confirm-remove {
@@ -379,6 +383,11 @@ input {
 	color: #3c8ce2;
 }
 
+.section-header{
+	color: gray;
+	font-style: italic;
+	margin: 0.6em;
+}
 
 .wiz-step-title {
 	margin-bottom:1em;
@@ -411,6 +420,10 @@ input {
 .clickable-payment,
 .clickable-person {
 	border: 1px solid #3c8ce2;
+}
+
+.person-history .clickable-payment {
+	border: none;
 }
 
 .offline .clickable-person {

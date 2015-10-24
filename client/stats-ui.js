@@ -53,7 +53,7 @@ var StatsUI = function(paymentWizard, model)
 			var $details = div("person-history").hide();
 			var isRemoveable = true;
 			
-			// Paymeny details for person
+			// Payment details for person
 			person.eachPayment(function(payment)
 			{	
 				var diff = payment.valuePair()[0] - payment.valuePair()[1];
@@ -75,9 +75,9 @@ var StatsUI = function(paymentWizard, model)
 					});
 				
 				$detail.css("background-color", (diff > 0 ? "#F0FFF0": (diff < 0 ? "#FFF0F0" : "transparent")));
-				$detail.css("border-color", (diff > 0 ? "#B0FFB0": (diff < 0 ? "#FFB0B0" : "lightgray")));
+				//$detail.css("border-color", (diff > 0 ? "#B0FFB0": (diff < 0 ? "#FFB0B0" : "lightgray")));
 					
-				$details.append($detail);
+				$details.prepend($detail);
 			});
 			
 			// Person summary
@@ -171,13 +171,13 @@ var StatsUI = function(paymentWizard, model)
 
 	var create = function($parent)
 	{
-		var $transferHeader = div("small-text").html(whiteSpace(1) /*L.MakeEven*/);
-		$stats = vertical();
+		var $transferHeader = div("section-header").html(L.MakeEven + whiteSpace(1));
+		$stats = vertical("person-summaries");
 		$transferPlan = vertical();
 		$transfers = vertical();
 		$addPersonHelp = div().html("Lägg till personer här").css("cursor", "pointer").hide();
 		$addPerson = horizontal().append(
-			div("person-add").load("plus.svg"),
+			div("person-add").load("plus-person.svg"),
 			$addPersonHelp
 		);
 		
@@ -187,8 +187,7 @@ var StatsUI = function(paymentWizard, model)
 			horizontal().append(
 				$transferPlan.append(
 					div("small-text").html(whiteSpace(1)),
-					horizontal().append($transferHeader), 
-					div("small-text").html(whiteSpace(1)),
+					horizontal().append($transferHeader),
 					$transfers)));
 	};
 	
