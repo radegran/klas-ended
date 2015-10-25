@@ -81,16 +81,16 @@ var Strings =
 		"sv": "Någon har gjort en ändring, försök igen."
 	},
 	"AllChangesAreSaved": {
-		"en": "All changes are saved to the link in the address bar!",
-		"sv": "Alla ändringar sparas till länken i adressfältet!"
+		"en": "All changes are saved to the link in the address bar.",
+		"sv": "Alla ändringar sparas till länken i adressfältet."
 	},
 	"Saving": {
 		"en": "Saving ...",
 		"sv": "Sparar ..."
 	},
 	"ThankYou": {
-		"en": "Thank you!",
-		"sv": "Tack!"
+		"en": "Thank you",
+		"sv": "Tack"
 	},
 	"SubmitFeedback": {
 		"en": "Submit feedback",
@@ -106,7 +106,7 @@ var Strings =
 	},
 	"Welcome2": {
 		"en": "Then, don't forget to copy the link in the address bar or add the page to your mobile's home screen to get back.",
-		"sv": "Glöm inte att sedan kopiera länken eller lägg till sidan på mobilens hemskärm för att återkomma!"
+		"sv": "Glöm inte att sedan kopiera länken eller lägg till sidan på mobilens hemskärm för att återkomma."
 	},
 	"OfflineMode": {
 		"en": "Offline mode - You can add new payments.",

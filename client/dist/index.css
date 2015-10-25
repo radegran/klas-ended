@@ -330,6 +330,11 @@ input {
 	fill: currentColor;
 }
 
+.offline .person-add {
+	height: 0;
+	width:0;
+}
+
 .payment-add {
 	height: 2.5em;
 	width: 5em;
@@ -417,9 +422,12 @@ input {
 	color: black;
 }
 
-.clickable-payment,
-.clickable-person {
+.clickable-payment{
 	border: 1px solid #3c8ce2;
+}
+
+.clickable-person {
+	border: none;
 }
 
 .person-history .clickable-payment {
@@ -434,15 +442,11 @@ input {
 	border: 1px solid gainsboro;
 	color: black;
 }
-.offline .clickable-person {
-	border: 1px solid gainsboro;
-}
 .offline .clickable-person.inactive {
 	background-color: transparent;
 }
 
 .mail-button {
-	/*background-image: url('mail.png');*/
 	color: #3c8ce2;
 	background-color: transparent;
 }
@@ -451,18 +455,6 @@ input {
 	padding: 0 0 0 0.5em;
 	width: 1em;
 	color: #3c8ce2;
-}
-
-.nav-stats {
-	background-image: url('barchart.png');
-}
-
-.nav-people {
-	background-image: url('contacts.png');
-}
-
-.nav-payments {
-	/*background-image: url('creditcard.svg');*/
 }
 
 .help-button {
