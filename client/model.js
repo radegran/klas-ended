@@ -296,9 +296,15 @@ var DataHelper = function(data, onChange, onCommit)
 						data.payments[paymentIndex].values[nameIndex] = pair;
 					};
 				
+					var createdTime = function()
+					{
+						return data.payments[paymentIndex].createdTime;
+					};
+				
 					return {
 						"text": text,
 						"valuePair": valuePair,
+						"createdTime": createdTime,
 						"index": paymentIndex
 					}
 				};
@@ -431,6 +437,11 @@ var DataHelper = function(data, onChange, onCommit)
 				onChange();
 			};
 			
+			var createdTime = function()
+			{
+				return payment.createdTime;
+			};
+			
 			var remove = function()
 			{
 				payment.remove = true;
@@ -443,6 +454,7 @@ var DataHelper = function(data, onChange, onCommit)
 			callback({
 				"cost": cost,
 				"text": text,
+				"createdTime": createdTime,
 				"remove": remove,
 				"index": index
 			});
@@ -462,7 +474,8 @@ var DataHelper = function(data, onChange, onCommit)
 	{
 		var p = {
 			"text": "",
-			"values": []
+			"values": [],
+			"createdTime": Date.now()
 		};
 		
 		for (var i = 0; i < data.names.length; i++)

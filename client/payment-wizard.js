@@ -608,10 +608,13 @@ var PaymentWizard = function(model, errorHandler, $uiRoot)
 							
 		var $contentContainer = div("ui-content-container flex-grow nonbounce");
 		
+		var $createdTime = $("<span/>").html(formatTimeSince(payment.createdTime)).addClass("payment-wizard-created-time");
+		
 		$wizElem = vertical("ui-root").append(
 			horizontal("ui-header small-padding").append($paymentTitle),
 			$contentContainer.append(
 				vertical("ui-content").append(
+					(!isNewPayment ? horizontal().append($createdTime) : $()),
 					horizontalFill().append(
 						div("flex-grow"),
 						horizontalFill().append(div("flex-grow").append($table)),

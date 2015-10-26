@@ -66,7 +66,7 @@ var StatsUI = function(paymentWizard, model)
 				
 				var $detail = horizontal("clickable-payment").append(
 					div().html(payment.text()),
-					div("flex-grow"),
+					div("created-time flex-grow").html(formatTimeSince(payment.createdTime())),
 					div("flex-no-shrink").html(formatMoney(diff, true)),
 					rightArrow()).on("click", function(e)
 					{
@@ -75,7 +75,6 @@ var StatsUI = function(paymentWizard, model)
 					});
 				
 				$detail.css("background-color", (diff > 0 ? "#F0FFF0": (diff < 0 ? "#FFF0F0" : "transparent")));
-				//$detail.css("border-color", (diff > 0 ? "#B0FFB0": (diff < 0 ? "#FFB0B0" : "lightgray")));
 					
 				$details.prepend($detail);
 			});

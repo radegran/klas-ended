@@ -34,7 +34,10 @@
 		{
 			var $p = horizontal("volatile-container clickable-payment");
 			var $clickable = $("<div/>").addClass("flex-horizontal-container flex-grow flex-justify-center");
-			var $label = div("flex-grow").html(payment.text());
+			var $label = horizontal().append(
+				div().html(payment.text()),
+				div("created-time flex-grow").html(formatTimeSince(payment.createdTime()))
+			);
 			var $cost = div().html(formatMoney(payment.cost()));
 			
 			$clickable.on("click", function()

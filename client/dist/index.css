@@ -331,6 +331,18 @@ input {
 	fill: currentColor;
 }
 
+.section-header,
+.created-time,
+.payment-wizard-created-time {
+	font-size: 0.9em;
+	color: #888888;
+	font-style: italic;
+}
+
+.created-time { margin-left: 0.8em; }
+.section-header { margin: 0.6em; }
+.payment-wizard-created-time { margin-bottom: 0.7em; }
+
 .offline .person-add {
 	height: 0;
 	width:0;
@@ -387,12 +399,6 @@ input {
 
 .payment-unlocked {
 	color: #3c8ce2;
-}
-
-.section-header{
-	color: gray;
-	font-style: italic;
-	margin: 0.6em;
 }
 
 .wiz-step-title {
