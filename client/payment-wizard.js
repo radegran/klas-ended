@@ -556,10 +556,12 @@ var PaymentWizard = function(model, errorHandler, $uiRoot)
 			payment.text = newValue;
 		});
 		
-		var $paymentTitle = editableTitle.element().on("click", function() 
-		{
-			editableTitle.editMode(); 
-		});
+		var $paymentTitle = editableTitle
+			.element()
+			.on("click", function() 
+			{
+				editableTitle.editMode(); 
+			});
 		
 		// navigation
 		var close = function() 
@@ -625,6 +627,18 @@ var PaymentWizard = function(model, errorHandler, $uiRoot)
 			),
 			horizontal("ui-footer small-padding").append($paymentNavigation)
 		);
+		
+		if (isNewPayment)
+		{
+			$paymentTitle.addClass("new-payment-title translate-y");
+			$contentContainer.addClass("new-payment-content translate-y")
+			window.setTimeout(function() { 
+				$paymentTitle.removeClass("translate-y");
+			}, 200);
+			window.setTimeout(function() { 
+				$contentContainer.removeClass("translate-y");
+			}, 500);
+		}
 		
 		$(document.body).append($wizElem);
 		

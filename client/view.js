@@ -172,8 +172,8 @@ var showMessage = function(message, delay)
 	$(".messagecontainer").empty();
 	
 	var $message = $("<div/>")
-		.addClass("message yellow info")
-		.text(message).hide();
+		.addClass("message yellow info translate-y")
+		.text(message);
 		
 	$(".messagecontainer").append(horizontal().append($message));
 	
@@ -181,13 +181,13 @@ var showMessage = function(message, delay)
 	
 	var obj = {"hide": function() 
 	{
-		$message.slideUp();
+		$message.addClass("translate-y");
 		obj.hide = $.noop;
 		clearTimeout(timer);
 	}};
 
-	$message.slideDown('fast');
-	timer = setTimeout(function() { $message.slideUp() }, delay || 3000);
+	setTimeout(function() {$message.removeClass("translate-y");}, 0);
+	timer = setTimeout(function() { $message.addClass("translate-y"); }, delay || 3000);
 	
 	return obj;
 };

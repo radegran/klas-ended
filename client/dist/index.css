@@ -28,6 +28,10 @@ div {
     border-radius: 0.2em;
 }
 
+.messagecontainer {
+	z-index: 10;
+}
+
 .yellow {
 	background-color: #fef385;
 }
@@ -85,6 +89,24 @@ div {
 	height: 100%;
 }
 
+.message,
+.new-payment-content,
+.new-payment-title
+{
+    -webkit-transition: 0.75s ease-out;
+    -moz-transition: 0.75s ease-out;
+    -o-transition: 0.75s ease-out;
+    transition: 0.75s ease-out;
+}
+
+.translate-y {
+    -webkit-transform: translate(0, -150%);
+    -moz-transform: translate(0, -150%);
+    -o-transform: translate(0, -150%);
+    -ms-transform: translate(0, -150%);
+    transform: translate(0, -150%);
+}
+
 .translate {
     -webkit-transform: translate(-100%,0);
     -moz-transform: translate(-100%,0);
@@ -94,7 +116,6 @@ div {
 }
 
 .ui-header {
-	box-shadow: rgba(0, 0, 0, 0.25) 0px 4px 4px;
 	font-size: 1.5em;
 }
 
@@ -106,7 +127,7 @@ div {
 .ui-header {
 	color: white;
 	background-color:#3c8ce2;
-	z-index: 1;
+	z-index: 2;
 }
 
 .offline .ui-navigation-bar,
@@ -158,6 +179,8 @@ input {
 }
 
 .ui-status-bar {
+	position: absolute;
+	width:100%;
 }
 
 .add-button {

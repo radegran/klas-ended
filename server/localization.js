@@ -1,8 +1,8 @@
 var Strings =
 {
 	"NoDocumentFound": {
-		"en": "Could not find any document for this address.",
-		"sv": "Kunde inte hitta något dokument för den här adressen."
+		"en": "Could not find the document.",
+		"sv": "Kunde inte hitta dokumentet."
 	},
 	"UnknownErrorReloadPage": {
 		"en": "Ooops! An error has occurred... Reloading the page soon!",
@@ -70,7 +70,7 @@ var Strings =
 	},
 	"Name": {
 		"en": "Name",
-		"sv": "Namn"
+		"sv": "Skriv namn här"
 	},
 	"Help": {
 		"en": "Help",
