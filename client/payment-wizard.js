@@ -631,12 +631,8 @@ var PaymentWizard = function(model, errorHandler, $uiRoot)
 		if (isNewPayment)
 		{
 			$paymentTitle.addClass("new-payment-title translate-y");
-			$contentContainer.addClass("new-payment-content translate-y")
 			window.setTimeout(function() { 
 				$paymentTitle.removeClass("translate-y");
-			}, 200);
-			window.setTimeout(function() { 
-				$contentContainer.removeClass("translate-y");
 			}, 500);
 		}
 		

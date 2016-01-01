@@ -90,7 +90,6 @@ div {
 }
 
 .message,
-.new-payment-content,
 .new-payment-title
 {
     -webkit-transition: 0.75s ease-out;
