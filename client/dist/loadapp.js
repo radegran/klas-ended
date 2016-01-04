@@ -27,7 +27,7 @@ $(document).ready(function()
 					"white-space": "normal",
 					"padding-bottom": "0.3em"}).html(L.Welcome1),
 				div('view-example').css("white-space", "normal").append(
-					"Eller titta först på ",
+					"Men titta först på ",
 					$("<a/>")
 						.attr("href", "#")
 						.html("ett exempel.")
@@ -41,9 +41,7 @@ $(document).ready(function()
 		horizontal().css("padding", "2em").append(
 			div("nav-payments").load("creditcard.svg").on("click", loadApp)
 		)
-	);
-	
-	
+	);	
 	
 	$(document.body).append(
 		$page,
@@ -137,4 +135,6 @@ $(document).ready(function()
 		
 	$exampleContainer.append($uiRoot);
 	$exampleContainer.append($iGetIt);
+	
+	nonbounceSetup();
 });

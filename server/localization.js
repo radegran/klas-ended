@@ -102,7 +102,7 @@ var Strings =
 	},
 	"Welcome1": {
 		"en": "Click on the button to get started.",
-		"sv": "Klicka på knappen för att komma igång."
+		"sv": "Klicka på knappen och börja splitta."
 	},
 	"Welcome2": {
 		"en": "Then, don't forget to copy the link in the address bar or add the page to your mobile's home screen to get back.",
