@@ -274,8 +274,8 @@ input {
 }
 
 .nav-payments {
-	height: 8em;
-	width: 8em;
+	height: 6em;
+	width: 6em;
 }
 
 .mail-button {
@@ -520,4 +520,32 @@ input.money-input  {
 
 .ui-content input {
 	background-color: white;
+}
+
+.i-get-it {
+	z-index:10;
+	cursor: pointer;
+	position: absolute;
+	bottom: 1em;
+	right: 1em;
+	background-color: salmon;
+	color: white;
+	padding: 0.7em;
+	-webkit-transform: scale(0) rotate(120deg);
+    -moz-transform: scale(0) rotate(120deg);
+    -o-transform: scale(0) rotate(120deg);
+    -ms-transform: scale(0) rotate(120deg);
+    transform: scale(0) rotate(120deg);
+	-webkit-transition: 0.25s all ease-out;
+    -moz-transition: 0.25s all ease-out;
+    -o-transition: 0.25s all ease-out;
+    transition: 0.25s all ease-out;
+}
+
+.i-get-it-entrance {
+	-webkit-transform: scale(1) rotate(-15deg);
+    -moz-transform: scale(1) rotate(-15deg);
+    -o-transform: scale(1) rotate(-15deg);
+    -ms-transform: scale(1) rotate(-15deg);
+    transform: scale(1) rotate(-15deg);	
 }

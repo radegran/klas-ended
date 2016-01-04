@@ -101,8 +101,8 @@ var Strings =
 		"sv": "Kunde inte skapa dokumentet!"
 	},
 	"Welcome1": {
-		"en": "Click on the button to get started with your own payment list.",
-		"sv": "Klicka på knappen för att komma igång med en egen betalningslista."
+		"en": "Click on the button to get started.",
+		"sv": "Klicka på knappen för att komma igång."
 	},
 	"Welcome2": {
 		"en": "Then, don't forget to copy the link in the address bar or add the page to your mobile's home screen to get back.",
@@ -184,7 +184,9 @@ var Strings =
 
 var getLang = function(ereq)
 {
-	return (ereq.acceptsLanguage("sv") || ereq.acceptsLanguage("sv-SE") || ereq.acceptsLanguage("sv-se")) ? "sv" : "en";
+	return "sv";
+	// Disabled localization for now
+	//return (ereq.acceptsLanguage("sv") || ereq.acceptsLanguage("sv-SE") || ereq.acceptsLanguage("sv-se")) ? "sv" : "en";
 };
 
 var getTranslator = function(expressRequest)

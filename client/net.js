@@ -335,7 +335,7 @@ var DocProxy = function(localDoc, remoteDoc, networkStatus, errorHandler)
 		
 		if (!lastServerData && !networkStatus.isOnline)
 		{
-			errorHandler.fatal("Ooooops!");
+			errorHandler.fatal("Ooooops!!");
 		}
 	};
 	

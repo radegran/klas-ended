@@ -68,7 +68,7 @@ var AddPaymentButtonUI = function(paymentWizard, model)
 
 		if (dh.names().length == 0)
 		{
-			$parentElem.slideUp();
+			$parentElem.hide();
 		}
 		else
 		{
@@ -78,7 +78,7 @@ var AddPaymentButtonUI = function(paymentWizard, model)
 	var create = function($parent)
 	{
 		$parentElem = $parent;
-		$addPaymentHelp = div().html("Lägg till nya betalningar här").css("cursor", "pointer")
+		$addPaymentHelp = div().html("Lägg till nya betalningar här").css("cursor", "pointer");
 		$addPaymentButton = horizontal().append(
 			div("payment-add").load("plus-payment.svg"),
 			$addPaymentHelp
