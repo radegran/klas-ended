@@ -17,7 +17,7 @@ $(document).ready(function()
 		}
 	};
 	
-	$page = $("<div/>").append(
+	$page = vertical().css("height","100%").append(
 		horizontal("ui-header").css("font-size", "1em").append(
 			vertical().css("padding", "1.8em").append(
 				div().css({
@@ -38,7 +38,7 @@ $(document).ready(function()
 				div().css("font-size", "0.5em").html("&nbsp;")		
 			)
 		),
-		horizontal().css("padding", "2em").append(
+		horizontal("flex-grow").css("padding", "2em").append(
 			div("nav-payments").load("creditcard.svg").on("click", loadApp)
 		)
 	);	
@@ -46,9 +46,6 @@ $(document).ready(function()
 	$(document.body).append(
 		$page,
 		$exampleContainer);
-	$(document.querySelector("html")).css({
-		"overflow-y": "auto"	
-	});
 	// EXAMPLE
 	
 	var errorHandler = {
