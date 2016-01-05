@@ -123,6 +123,28 @@ var formatMoney = function(value, keepDecimals)
 	return div().css({"color": color}).text(ret);
 };
 
+var formatTime = function(t)
+{
+	var months = ["Jan", "Feb", "Mar", "April", "Maj", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dec"];
+	var time = new Date(t);
+	var hours = time.getHours();
+	var minutes = time.getMinutes();
+	console.log(hours < 10)
+	
+	var str = time.getDate() + " " + months[time.getMonth()];
+	str += " " + ((hours < 10) ? ("-" + hours) : hours);
+	str += ":" + ((minutes < 10) ? ("?" + minutes) : minutes);
+	
+	var nowtime = new Date();
+	if (time.getFullYear() != nowtime.getFullYear())
+	{
+		str += " " + time.getFullYear();
+	}
+	
+	return str;
+
+};
+
 var formatTimeSince = function(t)
 {
 	if (t === undefined)
@@ -134,7 +156,6 @@ var formatTimeSince = function(t)
 	var sec = 1000;
 	var min = 60*sec;
 	var hour = 60*min;
-	var months = ["Jan", "Feb", "Mar", "April", "Maj", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dec"];
 	
 	var now = Date.now();
 	var dt = now - t;
@@ -142,17 +163,8 @@ var formatTimeSince = function(t)
 	if (dt < hour) return Math.round(dt / min) + " minuter sen";
 	if (dt >= hour && dt < 2*hour) return "En timme sen";
 	if (dt < 24*hour) return Math.round(dt / hour) + " timmar sen";
-	
-	var time = new Date(t);
-	var str = time.getDate() + " " + months[time.getMonth()];
-	
-	var nowtime = new Date(now);
-	if (time.getFullYear() != nowtime.getFullYear())
-	{
-		str += " " + time.getFullYear();
-	}
-	
-	return str;
+
+	return formatTime(t);
 };
 
 var isCtrlZ = function(e)

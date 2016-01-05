@@ -236,6 +236,7 @@ var SampleApp = function() {
         //  Local cache for static content.
         self.zcache['index.html'] = fs.readFileSync(clientDistDir + 'index.html');
 	    self.zcache['app.html'] = fs.readFileSync(clientDistDir + 'app.html');
+	    self.zcache['summary.html'] = fs.readFileSync(clientDistDir + 'summary.html');
 	    self.zcache['app.appcache'] = fs.readFileSync(clientDistDir + 'app.appcache');
 		
 		eachResource(function(file)
@@ -356,6 +357,12 @@ var SampleApp = function() {
             res.send(self.cache_get('app.html') );			
 		};
 		
+		self.routes['/summary/[0-9a-f]+$'] = function(req, res) 
+		{
+            res.setHeader('Content-Type', 'text/html');
+            res.send(self.cache_get('summary.html') );			
+		};
+		
 		// DEBUG
 		self.routes["/[.]*.js"] = function(req, res)
 		{
@@ -427,7 +434,7 @@ var SampleApp = function() {
 			});			
 		};
 		
-		// P O S T   H A N D L E R S 
+		// P O S T   H A N D L E R S
 		self.app.post("/ping", function(req, res) 
 		{
 			res.send("pong");
