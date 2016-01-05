@@ -2,8 +2,8 @@
 {
 	var create = function($parent)
 	{
-		var $stats = vertical();
-		var $payments = vertical();
+		var $stats = vertical("stats-container");
+		var $payments = vertical("payments-container");
 		
 		statsUI.create($stats);
 		paymentUI.create($payments);

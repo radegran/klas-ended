@@ -172,7 +172,7 @@ var StatsUI = function(paymentWizard, model)
 	{
 		var $transferHeader = div("section-header").html(L.MakeEven + whiteSpace(1));
 		$stats = vertical("person-summaries");
-		$transferPlan = vertical();
+		$transferPlan = vertical("transfer-plan");
 		$transfers = vertical();
 		$addPersonHelp = div().html("Lägg till personer här").css("cursor", "pointer").hide();
 		$addPerson = horizontal().append(
