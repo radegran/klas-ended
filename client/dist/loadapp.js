@@ -2,12 +2,15 @@ $(document).ready(function()
 {
 	var $exampleContainer = $("<div/>").hide();
 	var $page;
+	var $iGetIt;
+	
 	var viewExample = function(visible)
 	{
 		if (visible)
 		{
 			$page.hide();
-			$exampleContainer.show();			
+			$exampleContainer.show();		
+			window.setTimeout(function() { $iGetIt.addClass("i-get-it-entrance");}, 1000);
 		}
 		else
 		{
@@ -120,7 +123,7 @@ $(document).ready(function()
 	docProxy.onData(onData);
 	docProxy.read();
 	
-	var $iGetIt = div("i-get-it i-get-it-entrance")
+	$iGetIt = div("i-get-it")
 		.html("Jag fattar!")
 		.on("click", function() { 
 			$iGetIt.removeClass("i-get-it-entrance");
@@ -129,7 +132,7 @@ $(document).ready(function()
 				viewExample(false);
 			}, 250);
 		});
-		
+
 	$exampleContainer.append($uiRoot);
 	$exampleContainer.append($iGetIt);
 	
