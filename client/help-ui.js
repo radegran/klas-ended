@@ -30,7 +30,17 @@ var HelpUI = function(model, net, networkStatus, $uiRoot)
 			
 		var $urlContainer = div("big-margin").append(
 			horizontal().html(L.CopyUrlInfo).addClass("small-text unselectable"),
-			horizontal().append($("<a/>").attr("href", window.location.href).html(window.location.href).addClass("small-text big-margin")),
+			horizontal().append($("<a/>").addClass("link-to-self").attr("href", window.location.href).html(window.location.href).addClass("small-text big-margin"))
+		);
+		
+		var url = window.location.href;
+		var urlSplit = url.split("/");
+		urlSplit.splice(urlSplit.length-1, 0, "summary");
+		url = urlSplit.join("/");
+					
+		var $summaryUrlContainer = div("big-margin").append(
+			horizontal().html("Se översikt över allt som gjorts, <br>praktiskt att dela med andra.").addClass("small-text unselectable"),
+			horizontal().append($("<a/>").addClass("link-to-summary").attr("href", url).html("Visa översikt").addClass("small-text big-margin")),
 			div("big-margin unselectable").html(whiteSpace(1))
 		);
 			
@@ -86,6 +96,7 @@ var HelpUI = function(model, net, networkStatus, $uiRoot)
 		
 		$container.append(
 			$urlContainer, 
+			$summaryUrlContainer,
 			horizontal().append($textArea), 
 			horizontal().append($inputEmail), 
 			horizontal().append($submit)
