@@ -96,7 +96,7 @@ var buildSummary = function($container, o)
 	$container.append($t);
 	
 	var spentTotal = new Array(names.length);
-	contents($t, spentTotal, 0, "Utgifter");
+	contents($t, spentTotal, 0, "Utlägg");
 	addRowWith($t, "", "1.5em");
 	
 	var consumeTotal = new Array(names.length);
@@ -130,7 +130,7 @@ var buildSummary = function($container, o)
 		var transfer = plan[p];
 		$t.append(
 			$("<tr/>").append(
-				$("<td/>").html(
+				$("<td/>").attr("colspan", 2 + names.length).html(
 					names[transfer.from] + 
 					" ska ge " + 
 					moneyTd(transfer.amount).text() +
@@ -139,6 +139,8 @@ var buildSummary = function($container, o)
 			)
 		);
 	}
+	
+	$container.append($("<br/>"), $("<br/>"));
 };
 
 $(document).ready(function()
