@@ -261,7 +261,7 @@ $(document).ready(function()
 			['.person-summaries', "Se vem som är skyldig mest"],
 			['.person-add', null],
 			['.ui-footer', "Lägg till nya betalningar"],
-			['.help-button', "Klicka för information", function() { $(".help-button").trigger("click");}],
+			['.help-button', "Klicka för att dela", function() { $(".help-button").trigger("click");}],
 			['.link-to-self', "Ingen inloggning eller registrering<br>krävs. Kopiera istället den här länken<br>för att återkomma."],
 			['.link-to-summary', "Här finns en<br>utskriftsvänlig översikt.", function() { $(".payment-back").trigger("click");}],
 			['.i-get-it', "Prova att klicka runt lite<br>och gå sedan tillbaka!"]
