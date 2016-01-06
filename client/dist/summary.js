@@ -67,7 +67,7 @@ var buildSummary = function($container, o)
 		
 		addRowWith($table, "1px dashed black");
 		
-		var $totalTr = $("<tr/>").appendTo($table);
+		var $totalTr = $("<tr/>").css("font-weight", "bold").appendTo($table);
 		var $totalTitle = $("<td/>").html(totalText + " totalt").appendTo($totalTr);
 		$("<td/>").appendTo($totalTr);
 			
