@@ -166,7 +166,7 @@ var Strings =
 	},
 	"CopyUrlInfo": {
 		"en": "Share this link with friends",
-		"sv": "Dela den här länken med dina vänner"
+		"sv": "Dela den här länken med dina<br>vänner så kan de också vara med<br>och lägga till betalningar."
 	},
 	"StartData": {
 		"en": {
