@@ -6,7 +6,7 @@ var buildSummary = function($container, o)
 
 	var title = function($c)
 	{
-		$c.append($("<h3/>").html(o.data.title));	
+		$c.append($("<h3/>").css("padding-left", "0.6em").html(o.data.title));	
 	};
 
 	var moneyTd = function(value)
@@ -24,7 +24,7 @@ var buildSummary = function($container, o)
 	
 		for (var j = 0; j < names.length; j++)
 		{
-			var $td = $("<td/>").html(names[j]);
+			var $td = $("<td/>").attr("align", "right").html(names[j]);
 			$header.append($td);
 		}
 		
@@ -67,7 +67,7 @@ var buildSummary = function($container, o)
 		
 		addRowWith($table, "1px dashed black");
 		
-		var $totalTr = $("<tr/>").css("font-weight", "bold").appendTo($table);
+		var $totalTr = $("<tr/>").appendTo($table);
 		var $totalTitle = $("<td/>").html(totalText + " totalt").appendTo($totalTr);
 		$("<td/>").appendTo($totalTr);
 			
@@ -101,7 +101,7 @@ var buildSummary = function($container, o)
 	
 	var consumeTotal = new Array(names.length);
 	contents($t, consumeTotal, 1, "Spenderat");
-	addRowWith($t, "", "1.5em");
+	addRowWith($t, "", "2em");
 	
 	totalDiff($t, spentTotal, consumeTotal);
 	
@@ -114,23 +114,28 @@ var buildSummary = function($container, o)
 		balances[i] = spentTotal[i] - consumeTotal[i];
 	}
 	
-	$("<tr/>").css("font-weight", "bold").html("Bli kvitt såhär").appendTo($t);
+	$t.append(
+		$("<tr/>").css("font-weight", "bold").append(
+			$("<td/>").html("Bli kvitt såhär")
+		)	
+	);
+	
 	var $total = $("<tr/>").appendTo($t);
 	$total.append($("<td/>"), $("<td/>"));
 	
-	
-	var $table2 = $("<table/>").appendTo($container);
 	var plan = transferPlan(balances);
 	
 	for (var p = 0; p < plan.length; p++)
 	{
 		var transfer = plan[p];
-		$table2.append(
+		$t.append(
 			$("<tr/>").append(
-				$("<td/>").html(names[transfer.from] + " ska ge "),
-				moneyTd(transfer.amount),
-				$("<td/>").html(" till "),
-				$("<td/>").html(names[transfer.to])						
+				$("<td/>").html(
+					names[transfer.from] + 
+					" ska ge " + 
+					moneyTd(transfer.amount).text() +
+					" till " +
+					names[transfer.to])						
 			)
 		);
 	}
@@ -179,8 +184,13 @@ $(document).ready(function()
 						}
 					}
 			*/
-			$(document.querySelector("body")).css("overflow", "auto");
-			buildSummary($(document.body).css("padding-left", "1em"), data)
+			$("body").css({
+				"overflow": "auto",
+				"padding-left": "1em",
+				"margin-bottom": "1em",
+				"font-family": "courier new"	
+			});
+			buildSummary($(document.body), data)
 		}		
 	});
 	

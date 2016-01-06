@@ -568,4 +568,5 @@ input.money-input  {
 
 .summary-table td {
 	padding: 0.3em 0.6em;
+	white-space: nowrap;
 }

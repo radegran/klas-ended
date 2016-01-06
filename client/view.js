@@ -125,6 +125,11 @@ var formatMoney = function(value, keepDecimals)
 
 var formatTime = function(t)
 {
+	if (!t)
+	{
+		return "";
+	}
+	
 	var months = ["Jan", "Feb", "Mar", "April", "Maj", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dec"];
 	var time = new Date(t);
 	var hours = time.getHours();
