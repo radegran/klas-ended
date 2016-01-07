@@ -588,7 +588,7 @@ var PaymentWizard = function(model, errorHandler, $uiRoot)
 		
 		// content
 		var $table = vertical();
-		$table.append(row([$selectActiveLabel, div("input-match").text("Betalat"), horizontal().append(div("input-match").text("Skuld")), div("lock-indent")]));
+		$table.append(row([$selectActiveLabel, div("input-match").text("Betalat"), horizontal().append(div("input-match").text("Spenderat")), div("lock-indent")]));
 		
 		payModel.eachPerson(function(person)
 		{
