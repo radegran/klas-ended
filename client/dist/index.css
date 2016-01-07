@@ -145,6 +145,7 @@ input {
 
 }
 
+.input-match-less-pbm,
 .input-match,
 .money-input
 {
@@ -152,6 +153,12 @@ input {
 	margin: 0 0.5em 0 0.5em;
 	padding:0.35em;
 	width: 4em;
+}
+.input-match-less-pbm
+{
+	margin: 0 0.5em 0 0.1em; 
+	text-overflow: unset; 
+	width: 4.4em;
 }
 
 .activator {
