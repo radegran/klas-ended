@@ -137,8 +137,8 @@ var formatTime = function(t)
 	console.log(hours < 10)
 	
 	var str = time.getDate() + " " + months[time.getMonth()];
-	str += " " + ((hours < 10) ? ("-" + hours) : hours);
-	str += ":" + ((minutes < 10) ? ("?" + minutes) : minutes);
+	str += " " + ((hours < 10) ? ("0" + hours) : hours);
+	str += ":" + ((minutes < 10) ? ("0" + minutes) : minutes);
 	
 	var nowtime = new Date();
 	if (time.getFullYear() != nowtime.getFullYear())
