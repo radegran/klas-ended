@@ -510,7 +510,37 @@ var PersonPayment = function(person)
 };
 
 var PaymentWizard = function(model, errorHandler, $uiRoot)
-{
+{    
+    // helpers for savd validations
+    var numPaying = function(values)
+    {
+        var num = 0;
+        for (var i = 0; i < values.length; i++)
+        {
+            if (values[i][0] > 0)
+            {
+                num++;
+            }
+        }  
+        return num;
+    };
+    var isNoPaying = function(values)
+    {
+        return numPaying(values) == 0;
+    };
+    var onlyOnePayAndSameSpend = function(values)
+    {
+        for (var i = 0; i < values.length; i++)
+        {
+            // check if paying > 0 and paying == spending 
+            if (values[i][0] > 0 && values[i][0] == values[i][1])
+            {
+                return numPaying(values) == 1;
+            }
+        }  
+        return false;
+    };
+    
 	var show = function(paymentIndex) 
 	{
 		var isNewPayment = paymentIndex === undefined;
@@ -545,10 +575,12 @@ var PaymentWizard = function(model, errorHandler, $uiRoot)
 		});
 
 		var $wizElem;
+        
+        var newPaymentText = "Beskriv betalningen här";
 		
 		if (isNewPayment)
 		{
-			payment.text = "Beskriv betalningen här";
+			payment.text = newPaymentText;
 		}
 			
 		var editableTitle = editable(payment.text, function(newValue)
@@ -564,25 +596,47 @@ var PaymentWizard = function(model, errorHandler, $uiRoot)
 			});
 		
 		// navigation
+        var $areYouSureSave;
 		var close = function() 
 		{ 
 			 $wizElem.removeClass("translate"); 
 			 $uiRoot.removeClass("translate");
 			 setTimeout(function() { $wizElem.remove(); }, 500);
 		};
-		var save = function() 
+		var save = function(e) 
 		{ 
-			errorHandler.info("Sparar \"" + payment.text + "\"");
-			dh.commit(); 
-			close(); 
+            if (payment.text == newPaymentText)
+            {
+                $areYouSureSave.html("Beskriv betalningen").show();
+                e.stopPropagation();
+            }
+            else if (isNoPaying(payment.values))
+            {
+                $areYouSureSave.html("Någon måste betala").show();
+                e.stopPropagation();
+            }
+            else if (onlyOnePayAndSameSpend(payment.values))
+            {
+                $areYouSureSave.html("Lägg till personer").show();
+                e.stopPropagation();
+            }
+            else
+            {
+                // Okay!
+                errorHandler.info("Sparar \"" + payment.text + "\"");
+                dh.commit(); 
+                close();    
+            }
 		};
 		
 		var $paymentClose = div("payment-close").load("x.svg").on("click", close);
 		var $paymentSave = div("payment-save").load("save.svg").on("click", save);
+        $areYouSureSave = div("confirm-save volatile").on("click", save).hide();
 		var $paymentNavigation = vertical().append(
 			horizontal().append(
 				$paymentClose,
-				$paymentSave
+				$paymentSave,
+                $areYouSureSave
 			)
 		);
 		

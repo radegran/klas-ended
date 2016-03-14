@@ -362,6 +362,12 @@ var SampleApp = function() {
             res.setHeader('Content-Type', 'text/html');
             res.send(self.cache_get('summary.html') );			
 		};
+        
+        self.routes['/summary/$'] = function(req, res) 
+		{
+            res.setHeader('Content-Type', 'text/html');
+            res.send(self.cache_get('summary.html') );			
+		};
 		
 		// DEBUG
 		self.routes["/[.]*.js"] = function(req, res)

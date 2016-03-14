@@ -33,14 +33,11 @@ var HelpUI = function(model, net, networkStatus, $uiRoot)
 			horizontal().append($("<a/>").addClass("link-to-self").attr("href", window.location.href).html(window.location.href).addClass("small-text big-margin"))
 		);
 		
-		var url = window.location.href;
-		var urlSplit = url.split("/");
-		urlSplit.splice(urlSplit.length-1, 0, "summary");
-		url = urlSplit.join("/");
+		var url = createSummaryUrl(window.location.href);
 					
 		var $summaryUrlContainer = div("big-margin").append(
-			horizontal().html("Se översikt över allt som gjorts, <br>praktiskt att dela med andra.").addClass("small-text unselectable"),
-			horizontal().append($("<a/>").addClass("link-to-summary").attr("href", url).html("Visa översikt").addClass("small-text big-margin")),
+			horizontal().html("Se sammanställning över allt som gjorts, <br>praktiskt att dela med andra.").addClass("small-text unselectable"),
+			horizontal().append($("<a/>").addClass("link-to-summary").attr("href", url).html("Visa sammanställning").addClass("small-text big-margin")),
 			div("big-margin unselectable").html(whiteSpace(1))
 		);
 			

@@ -156,44 +156,57 @@ $(document).ready(function()
 		
 		return val;
 	};
-
-	$.ajax({
-		url: "/get",
-		type: "POST",
-		data: JSON.stringify({"id": id}),
-		contentType: "application/json",
-		success: function(data)
-		{
-			/*
-			{
-				"id":"2791388c791ae39ec7d2",
-				"created":1450285470242,
-				"lastUpdated":1450285497288,
-				"generation":5,
-				"data":{
-					"title":"Skriv en titel här",
-					"names":["Klas","Namn"],
-					"payments":[
-						{
-							"text":"En betöööölning",
-							"values":[[34,17],[0,17]],
-							"createdTime":1450285476222
-						},
-						{
-							"text":"Hohoho",
-							"values":[[0,3322],[3332,10]],
-							"createdTime":1450285487486}]
-						}
-					}
-			*/
-			$("body").css({
-				"overflow": "auto",
-				"padding-left": "1em",
-				"margin-bottom": "1em",
-				"font-family": "courier new"	
-			});
-			buildSummary($(document.body), data)
-		}		
-	});
-	
+    
+    if (id == "")
+    {
+        
+    }
+    
+    var go = function(data)
+    {
+        /*
+        {
+            "id":"2791388c791ae39ec7d2",
+            "created":1450285470242,
+            "lastUpdated":1450285497288,
+            "generation":5,
+            "data":{
+                "title":"Skriv en titel här",
+                "names":["Klas","Namn"],
+                "payments":[
+                    {
+                        "text":"En betöööölning",
+                        "values":[[34,17],[0,17]],
+                        "createdTime":1450285476222
+                    },
+                    {
+                        "text":"Hohoho",
+                        "values":[[0,3322],[3332,10]],
+                        "createdTime":1450285487486}]
+                    }
+                }
+        */
+        $("body").css({
+            "overflow": "auto",
+            "padding-left": "1em",
+            "margin-bottom": "1em",
+            "font-family": "courier new"	
+        });
+        buildSummary($(document.body), data)
+    };
+    
+    if (id == "")
+    {
+        go({"data": L.ExampleData});   
+    }
+    else
+    {
+        $.ajax({
+            url: "/get",
+            type: "POST",
+            data: JSON.stringify({"id": id}),
+            contentType: "application/json",
+            success: go
+        });        
+    }
 });

@@ -234,6 +234,13 @@ var setOnlineCss = function(isOnline)
 	}
 };
 
+var createSummaryUrl = function(url)
+{
+    var urlSplit = url.split("/");
+    urlSplit.splice(urlSplit.length-1, 0, "summary");
+	return urlSplit.join("/");
+};
+
 var log = function(message)
 {
 	if (false)

@@ -5,12 +5,20 @@ var StatsUI = function(paymentWizard, model)
 	var $transfers = null;
 	var $addPerson = null;
 	var $addPersonHelp = null;
+    var $areYouSureAdd = null;
 	
 	var editPayment = function(index)
 	{
 		paymentWizard.show(index);
 	};
 	
+    var addPerson = function()
+    {
+		var dh = model.getDataHelper();
+        dh.addPerson(L.Name);
+        dh.commit();
+    };
+    
 	var update = function()
 	{
 		$stats.empty();
@@ -21,11 +29,23 @@ var StatsUI = function(paymentWizard, model)
 		var persons = [];
 		
 		var dh = model.getDataHelper();
-		
-		$addPerson.off().on("click", function() 
+        
+		$addPerson.off().on("click", function(e) 
 		{
-			dh.addPerson(L.Name);
-			dh.commit();
+            if (persons.length > 0)
+            {
+                e.stopPropagation();
+                $areYouSureAdd.show().off().on("click", function(e2)
+                {
+                    e2.stopPropagation();
+                    $areYouSureAdd.hide();
+                    addPerson();
+                });        
+            }
+            else
+            {
+                addPerson();
+            }
 		});
 		
 		dh.eachPerson(function(person)
@@ -170,13 +190,23 @@ var StatsUI = function(paymentWizard, model)
 
 	var create = function($parent)
 	{
+        var viewSummary = function()
+        {
+            window.open(createSummaryUrl(window.location.href));  
+        };
+        
 		var $transferHeader = div("section-header").html(L.MakeEven + whiteSpace(1));
 		$stats = vertical("person-summaries");
 		$transferPlan = vertical("transfer-plan");
+        var $viewSummary = horizontal().append(
+            div("view-summary").html("Visa sammanställning").on("click", viewSummary)
+            );
 		$transfers = vertical();
 		$addPersonHelp = div().html("Lägg till personer här").css("cursor", "pointer").hide();
-		$addPerson = horizontal().append(
+		$areYouSureAdd = div("confirm-add-person volatile").html("Lägg till ny person?").hide();
+        $addPerson = horizontal().append(
 			div("person-add").load("plus-person.svg"),
+            $areYouSureAdd,
 			$addPersonHelp
 		);
 		
@@ -187,7 +217,8 @@ var StatsUI = function(paymentWizard, model)
 				$transferPlan.append(
 					div("small-text").html(whiteSpace(1)),
 					horizontal().append($transferHeader),
-					$transfers)));
+					$transfers,
+                    $viewSummary)));
 	};
 	
 	return {

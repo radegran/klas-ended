@@ -179,8 +179,40 @@ var Strings =
 			"names": [],
 			"payments": []
 		},
-	}
+	},
+    "ExampleData": {
+        "en": null, // populated below
+        "sv": null
+    }
 };
+
+var createExampleData = function()
+{
+   	var data = {};
+	data.title = "Danmarksresan";
+	data.names = ["Alva", "Patrik", "Berit"];
+	data.payments = [
+		{
+			text: "Hyrbil",
+			createdTime: Date.now() - 14*24*60*60*1000,
+			values: [[1500, 500], [0, 500], [0, 500]]
+		},
+		{
+			text: "Vandrarhem",
+			createdTime: Date.now() - 13*24*60*60*1000,
+			values: [[0, 300], [900, 300], [0, 300]]
+		},
+		{
+			text: "Berit och Patrik - Öl",
+			createdTime: Date.now() - 12.5*24*60*60*1000,
+			values: [[0, 0], [0, 60], [135, 75]]
+		}
+	]
+    
+    return data;
+};
+
+Strings.ExampleData.sv = createExampleData();
 
 var getLang = function(ereq)
 {

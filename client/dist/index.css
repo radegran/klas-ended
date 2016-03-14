@@ -385,9 +385,27 @@ input {
 	fill: currentColor;
 }
 
+.view-summary {
+    color: #3c8ce2;
+    cursor: pointer;
+}
+
 .confirm-remove {
 	width: auto;
 	background-color: salmon;
+	color: white;
+	cursor: pointer;
+    -moz-border-radius: 0.2em;
+    -webkit-border-radius: 0.2em;
+    -khtml-border-radius: 0.2em;
+    border-radius: 0.2em;
+	margin-right:  0.5em;
+}
+
+.confirm-add-person {
+	width: auto;
+    padding: 0.2em 0.5em;
+	background-color: #33dd22;
 	color: white;
 	cursor: pointer;
     -moz-border-radius: 0.2em;
