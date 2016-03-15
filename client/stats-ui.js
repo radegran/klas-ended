@@ -189,17 +189,12 @@ var StatsUI = function(paymentWizard, model)
 	};
 
 	var create = function($parent)
-	{
-        var viewSummary = function()
-        {
-            window.open(createSummaryUrl(window.location.href));  
-        };
-        
+	{        
 		var $transferHeader = div("section-header").html(L.MakeEven + whiteSpace(1));
 		$stats = vertical("person-summaries");
 		$transferPlan = vertical("transfer-plan");
         var $viewSummary = horizontal().append(
-            div("view-summary").html("Visa sammanställning").on("click", viewSummary)
+            div("view-summary").html("Visa sammanställning").on("click", openSummary)
             );
 		$transfers = vertical();
 		$addPersonHelp = div().html("Lägg till personer här").css("cursor", "pointer").hide();

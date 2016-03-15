@@ -37,7 +37,7 @@ var HelpUI = function(model, net, networkStatus, $uiRoot)
 					
 		var $summaryUrlContainer = div("big-margin").append(
 			horizontal().html("Se sammanställning över allt som gjorts, <br>praktiskt att dela med andra.").addClass("small-text unselectable"),
-			horizontal().append($("<a/>").addClass("link-to-summary").attr("href", url).html("Visa sammanställning").addClass("small-text big-margin")),
+			horizontal().append($("<a/>").addClass("link-to-summary").attr("href", "#").html("Visa sammanställning").addClass("small-text big-margin").on("click", openSummary)),
 			div("big-margin unselectable").html(whiteSpace(1))
 		);
 			
