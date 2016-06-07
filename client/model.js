@@ -98,26 +98,6 @@ var transferPlan = function(balances)
 	return plan;
 };
 
-// Only for testing!!! TODO: jasminify
-var testTransfer = function(balances)
-{
-	var sum = balances.reduce(function(a, b) { return a + b; });
-	var normBalances = balances.map(function(v) { return v - sum/balances.length; });
-	
-	var plan = transferPlan(normBalances);
-	var p = plan.pop();
-	while(p)
-	{
-		normBalances[p.from] += p.amount;
-		normBalances[p.to] -= p.amount;
-		
-		console.log(p.from + " -> " + p.to + ": " + p.amount);
-		p = plan.pop();
-	}
-	
-	console.log(normBalances);
-}
-
 var isValidCellValue = function(text)
 {
 	var trimmed = text.replace(/ /g, "");

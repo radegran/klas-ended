@@ -1,10 +1,56 @@
 describe("Model", function()
 {	
+	describe("Transfer plan", function()
+	{
+		var testTransfer = function(spentList)
+		{
+			var sum = spentList.reduce(function(a, b) { return a + b; });
+			var balances = spentList.map(function(v) { return v - sum/spentList.length; });
+			
+			var plan = transferPlan(balances);
+			var p = plan.pop();
+			
+			while(p)
+			{
+				balances[p.from] += p.amount;
+				balances[p.to] -= p.amount;
+				//console.log(p.from + " -> " + p.to + ": " + p.amount);
+				p = plan.pop();
+			}
+			
+			for (var i = 0; i < balances.length; i++)
+			{
+				expect(balances[i]).toBeCloseTo(0, 4);	
+			}
+		}
+		
+		it("Test many...", function()
+		{
+			testTransfer([0, 10, 40])
+			testTransfer([-10, 10, 440])
+			testTransfer([10, 10, -40, 55])
+			testTransfer([44, -10, 40, 22.5, 10, 40])
+			testTransfer([22.5, 10, 40])
+			testTransfer([10, 1, -40, -929])
+			testTransfer([10, 410, 999940, -453])
+			
+			testTransfer([550.4, 0, 10, 40])
+			testTransfer([550.4, -10, 10, 440])
+			testTransfer([550.4, 10, 10, -40, 55])
+			testTransfer([550.4, 44, -10, 40, 22.5, 10, 40])
+			testTransfer([550.4, 22.5, 10, 40])
+			testTransfer([550.4, 10, 1, -40, -929])
+			testTransfer([550.4, 10, 410, 999940, -453])
+		})
+
+	});
+	
 	// {"text": "T0", "values": [[0,10], [0,10], [30,10]]},
 	// {"text": "T1", "values": [[0,0], [29, 14.5], [0,14.5]]},
 	// {"text": "T2", "values": [[40,0], [0,40], [0,0]]}
 
-	it("removes name (0)", function()
+	// Not supported
+	xit("removes name (0)", function()
 	{
 		var m = makeModel();
 		m.updateName("", 0);
@@ -15,7 +61,8 @@ describe("Model", function()
 		expect(localData.payments[2].values).toEqual([[0,0], [0,0]]);
 	});
 	
-	it("removes name (1)", function()
+	// Not supported	
+	xit("removes name (1)", function()
 	{
 		var m = makeModel();
 		m.updateName("", 1);
@@ -26,7 +73,8 @@ describe("Model", function()
 		expect(localData.payments[2].values).toEqual([[40,20], [0,20]]);
 	});
 	
-	it("removes name (2)", function()
+	// Not supported
+	xit("removes name (2)", function()
 	{
 		var m = makeModel();
 		m.updateName("", 2);
