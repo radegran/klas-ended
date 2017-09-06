@@ -76,8 +76,8 @@ var DB = function(mongoClient, isDevelEnv)
     if (process.env.MONGODB_PASSWORD) {
         connectionString = process.env.MONGODB_USER + ":" +
         process.env.MONGODB_PASSWORD + "@" +
-        process.env.MONGODB_HOST + ':' +
-        process.env.MONGODB_PORT + '/' +
+        process.env.MONGODB_SERVICE_HOST + ':' +
+        process.env.MONGODB_SERVICE_PORT + '/' +
         process.env.MONGODB_DATABASE;
 	}
 	
