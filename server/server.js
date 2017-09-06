@@ -66,12 +66,6 @@ var DB = function(mongoClient, isDevelEnv)
 	    // default to a 'localhost' configuration:
     var connectionString = '127.0.0.1:27017/klas';
 
-	// Logging
-	for (var key in process.env)
-	{
-		console.log(key + " : " + process.env[key]);
-	}
-
     // if OPENSHIFT env variables are present, use the available connection info:
     if (process.env.MONGODB_PASSWORD) {
         connectionString = process.env.MONGODB_USER + ":" +
