@@ -66,12 +66,12 @@ var DB = function(mongoClient, isDevelEnv)
 	    // default to a 'localhost' configuration:
     var connectionString = '127.0.0.1:27017/klas';
     // if OPENSHIFT env variables are present, use the available connection info:
-    if (process.env.OPENSHIFT_MONGODB_DB_PASSWORD) {
-        connectionString = process.env.OPENSHIFT_MONGODB_DB_USERNAME + ":" +
-        process.env.OPENSHIFT_MONGODB_DB_PASSWORD + "@" +
-        process.env.OPENSHIFT_MONGODB_DB_HOST + ':' +
-        process.env.OPENSHIFT_MONGODB_DB_PORT + '/' +
-        process.env.OPENSHIFT_APP_NAME;
+    if (process.env.MONGODB_PASSWORD) {
+        connectionString = process.env.MONGODB_USER + ":" +
+        process.env.MONGODB_PASSWORD + "@" +
+        process.env.MONGODB_HOST + ':' +
+        process.env.MONGODB_PORT + '/' +
+        process.env.MONGODB_DATABASE;
 	}
 	
 	mongoClient.connect("mongodb://" + connectionString, function(err, validDatabase)
