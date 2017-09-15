@@ -64,18 +64,40 @@ var DB = function(mongoClient, isDevelEnv)
 	var database; 
 	
 	    // default to a 'localhost' configuration:
-    var connectionString = '127.0.0.1:27017/klas';
+    var mongoURL = 'mongodb://127.0.0.1:27017/klas';
 
     // if OPENSHIFT env variables are present, use the available connection info:
-    if (process.env.MONGODB_PASSWORD) {
-        connectionString = process.env.MONGODB_USER + ":" +
-        process.env.MONGODB_PASSWORD + "@" +
-        process.env.MONGODB_SERVICE_HOST + ':' +
-        process.env.MONGODB_SERVICE_PORT + '/' +
-        process.env.MONGODB_DATABASE;
+    // if (process.env.MONGODB_PASSWORD) {
+    //     connectionString = "mongodb://" + process.env.MONGODB_USER + ":" +
+    //     process.env.MONGODB_PASSWORD + "@" +
+    //     process.env.MONGODB_SERVICE_HOST + ':' +
+    //     process.env.MONGODB_SERVICE_PORT + '/' +
+    //     process.env.MONGODB_DATABASE;
+	// }
+
+	mongoURL = process.env.OPENSHIFT_MONGODB_DB_URL || process.env.MONGO_URL,
+    mongoURLLabel = "";
+
+	if (mongoURL == null && process.env.DATABASE_SERVICE_NAME) {
+		var mongoServiceName = process.env.DATABASE_SERVICE_NAME.toUpperCase(),
+			mongoHost = process.env[mongoServiceName + '_SERVICE_HOST'],
+			mongoPort = process.env[mongoServiceName + '_SERVICE_PORT'],
+			mongoDatabase = process.env[mongoServiceName + '_DATABASE'],
+			mongoPassword = process.env[mongoServiceName + '_PASSWORD']
+			mongoUser = process.env[mongoServiceName + '_USER'];
+
+		if (mongoHost && mongoPort && mongoDatabase) {
+			mongoURLLabel = mongoURL = 'mongodb://';
+			if (mongoUser && mongoPassword) {
+			mongoURL += mongoUser + ':' + mongoPassword + '@';
+			}
+			// Provide UI label that excludes user id and pw
+			mongoURLLabel += mongoHost + ':' + mongoPort + '/' + mongoDatabase;
+			mongoURL += mongoHost + ':' +  mongoPort + '/' + mongoDatabase;
+		}
 	}
 	
-	mongoClient.connect("mongodb://" + connectionString, function(err, validDatabase)
+	mongoClient.connect(mongoURL, function(err, validDatabase)
 	{
 		if (err) 
 		{ 
@@ -202,8 +224,8 @@ var SampleApp = function() {
      */
     self.setupVariables = function() {
         //  Set the environment variables we need.
-        self.ipaddress = '0.0.0.0'; //process.env.NODEJS_MONGO_PERSISTENT_SERVICE_HOST;
-        self.port      = 8080; //process.env.NODEJS_MONGO_PERSISTENT_SERVICE_PORT || 8080; 
+        self.ipaddress = process.env.IP   || process.env.OPENSHIFT_NODEJS_IP || '0.0.0.0';
+        self.port      = process.env.PORT || process.env.OPENSHIFT_NODEJS_PORT || 8080; 
 
         if (typeof self.ipaddress === "undefined") {
             //  Log errors on OpenShift but continue w/ 127.0.0.1 - this
