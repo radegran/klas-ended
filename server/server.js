@@ -78,6 +78,8 @@ var DB = function(mongoClient, isDevelEnv)
 	mongoURL = process.env.OPENSHIFT_MONGODB_DB_URL || process.env.MONGO_URL,
     mongoURLLabel = "";
 
+	console.log("DBG1 " + mongoURL);
+
 	if (mongoURL == null && process.env.DATABASE_SERVICE_NAME) {
 		var mongoServiceName = process.env.DATABASE_SERVICE_NAME.toUpperCase(),
 			mongoHost = process.env[mongoServiceName + '_SERVICE_HOST'],
@@ -95,6 +97,8 @@ var DB = function(mongoClient, isDevelEnv)
 			mongoURLLabel += mongoHost + ':' + mongoPort + '/' + mongoDatabase;
 			mongoURL += mongoHost + ':' +  mongoPort + '/' + mongoDatabase;
 		}
+
+		console.log("DBG2 " + mongoURL);
 	}
 	
 	mongoClient.connect(mongoURL, function(err, validDatabase)
