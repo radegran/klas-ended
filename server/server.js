@@ -205,7 +205,6 @@ var DB = function(mongoClient, isDevelEnv)
 // The database instance
 var db;
 
-
 /**
  *  Define the sample application.
  */
