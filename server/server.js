@@ -436,14 +436,21 @@ var SampleApp = function() {
      *  the handlers.
      */
     self.initializeServer = function() {
+
+		console.log("initializeServer 1")
+
         self.createRoutes();
         self.app = express();
 		self.app.use(express.bodyParser());
+
+		console.log("initializeServer 2")
 
         //  Add handlers for the app (from the routes).
         for (var r in self.routes) {
             self.app.get(r, self.routes[r]);
         }
+
+		console.log("initializeServer 3")
 
 		var update = function(doc, req, res)
 		{
@@ -551,8 +558,12 @@ var SampleApp = function() {
         self.populateCache();
         self.setupTerminationHandlers();
 
+		console.log("initialize 1")
+
         // Create the express server and routes.
         self.initializeServer();
+
+		console.log("initialize 2")
     };
 
 
