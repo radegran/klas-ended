@@ -548,7 +548,6 @@ var SampleApp = function() {
 		});
     };
 
-
     /**
      *  Initializes the sample application.
      */
