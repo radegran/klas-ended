@@ -4,7 +4,7 @@ var fs      = require('fs');
 var crypto  = require('crypto');
 var mongoClient = require('mongodb').MongoClient;
 var L = require('./localization');
-var sendgrid = require("sendgrid")("klas", process.env.SENDGRID_PASSWORD || "");
+var sendgrid = require("sendgrid")("klas-ended", process.env.SENDGRID_PASSWORD || "");
 var clientDistDir = "./client/dist/";
 
 var MockDataBase = function()
