@@ -243,13 +243,16 @@ var createSummaryUrl = function(url)
 
 var openSummary = function()
 {
+	window.open(createSummaryUrl(window.location.href));
+	/*
 	var a = document.createElement('a');
     a.setAttribute("href", createSummaryUrl(window.location.href));
     a.setAttribute("target", "_blank");
 
     var dispatch = document.createEvent("HTMLEvents");
     dispatch.initEvent("click", true, true);
-    a.dispatchEvent(dispatch);	
+    a.dispatchEvent(dispatch);
+	*/	
 };
 
 var log = function(message)
