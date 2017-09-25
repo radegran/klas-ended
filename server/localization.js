@@ -189,7 +189,7 @@ var Strings =
 var createExampleData = function()
 {
    	var data = {};
-	data.title = "Danmarksresan";
+	data.title = "Splitta Notan";
 	data.names = ["Alva", "Patrik", "Berit"];
 	data.payments = [
 		{
