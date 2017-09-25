@@ -194,7 +194,9 @@ var StatsUI = function(paymentWizard, model)
 		$stats = vertical("person-summaries");
 		$transferPlan = vertical("transfer-plan");
         var $viewSummary = horizontal().append(
-            div("view-summary").html("Visa sammanställning").on("click", openSummary)
+            $("<a/>")
+				.html("Visa sammanställning")
+				.attr("href", createSummaryUrl(window.location.href))
             );
 		$transfers = vertical();
 		$addPersonHelp = div().html("Lägg till personer här").css("cursor", "pointer").hide();
