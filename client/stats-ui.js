@@ -195,6 +195,7 @@ var StatsUI = function(paymentWizard, model)
 		$transferPlan = vertical("transfer-plan");
         var $viewSummary = horizontal().append(
             $("<a/>")
+				.addClass("view-summary")
 				.html("Visa sammanställning")
 				.attr("href", createSummaryUrl(window.location.href))
             );
