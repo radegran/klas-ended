@@ -387,6 +387,7 @@ input {
 .view-summary {
     color: #3c8ce2;
     cursor: pointer;
+	text-decoration: none;
 }
 
 .confirm-remove {
