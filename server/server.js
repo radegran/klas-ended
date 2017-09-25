@@ -264,6 +264,7 @@ var SampleApp = function() {
 		self.zcache = {};
         
         //  Local cache for static content.
+		self.zcache['google1cc9300789172331.html'] = fs.readFileSync(clientDistDir + 'google1cc9300789172331.html');
         self.zcache['index.html'] = fs.readFileSync(clientDistDir + 'index.html');
 	    self.zcache['app.html'] = fs.readFileSync(clientDistDir + 'app.html');
 	    self.zcache['summary.html'] = fs.readFileSync(clientDistDir + 'summary.html');
@@ -333,6 +334,12 @@ var SampleApp = function() {
      */
     self.createRoutes = function() {
         self.routes = { };
+
+		self.routes['/google1cc9300789172331.html'] = function(req, res)
+		{
+			res.setHeader('Content-Type', 'text/html');
+            res.send(self.cache_get('google1cc9300789172331.html') );
+		};
 
         self.routes['/'] = function(req, res) 
 		{
