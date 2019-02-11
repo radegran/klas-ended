@@ -5,6 +5,7 @@ var crypto  = require('crypto');
 var mongoClient = require('mongodb').MongoClient;
 var L = require('./localization');
 var sendgrid = require("sendgrid")("klas-ended", process.env.SENDGRID_PASSWORD || "");
+var slack = require('slack-notify')(process.env.SLACKWEBHOOK); // "https://hooks.slack.com/services/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");
 var clientDistDir = "./client/dist/";
 
 var MockDataBase = function()
@@ -104,7 +105,7 @@ var DB = function(mongoClient, isDevelEnv)
 	// }
 	
 	// 3rd TRY
-	mongoURL = process.env.MLAB_MONGO_URL;
+	mongoURL = process.env.MLAB_MONGO_URL || "mongodb://klas.com";
 	
 	mongoClient.connect(mongoURL, function(err, validDatabase)
 	{
@@ -231,7 +232,7 @@ var SampleApp = function() {
      */
     self.setupVariables = function() {
         //  Set the environment variables we need.
-        self.ipaddress = process.env.IP   || process.env.OPENSHIFT_NODEJS_IP || '0.0.0.0';
+        self.ipaddress = process.env.IP   || process.env.OPENSHIFT_NODEJS_IP;
         self.port      = process.env.PORT || process.env.OPENSHIFT_NODEJS_PORT || 8080; 
 
         if (typeof self.ipaddress === "undefined") {
@@ -492,6 +493,15 @@ var SampleApp = function() {
 		
 		self.app.post("/sendmail", function(req, res)
 		{
+			slack.send({
+				channel: '#splittanotan',
+				text: req.body.message,
+				unfurl_links: 1,
+				username: req.body.from
+			});
+
+			return;
+
 			var payload   = {
 				to      : 'jesper.radegran@gmail.com',
 				from    : req.body.from,
