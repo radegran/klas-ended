@@ -105,7 +105,7 @@ var DB = function(mongoClient, isDevelEnv)
 	// }
 	
 	// 3rd TRY
-	mongoURL = process.env.MLAB_MONGO_URL || "mongodb://klas.com";
+	mongoURL = process.env.DB_URI || "mongodb://klas.com";
 	
 	mongoClient.connect(mongoURL, function(err, validDatabase)
 	{
