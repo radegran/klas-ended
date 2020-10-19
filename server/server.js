@@ -241,6 +241,7 @@ var SampleApp = function() {
             console.warn('No NODEJS_MONGO_PERSISTENT_SERVICE_HOST var, using 127.0.0.1');
             self.ipaddress = "0.0.0.0" || "127.0.0.1";
 			self.isDevelEnv = true;
+			console.log("USING MOCK DATABASE")
         };
     };
 
@@ -502,25 +503,6 @@ var SampleApp = function() {
 
 			return;
 
-			var payload   = {
-				to      : 'jesper.radegran@gmail.com',
-				from    : req.body.from,
-				subject : 'Meddelande från klas-ended-sajten!',
-				text    : req.body.message
-			};
-
-			console.log("Sending email...");
-			sendgrid.send(payload, function(err, json)
-			{
-				if (err) 
-				{ 
-					res.send({"reply": "err" + err}); 
-				}
-				else
-				{
-					res.send({"reply": "ok"});
-				}
-			});	
 		});
 		
 		self.app.post("/update", function(req, res) 

@@ -26,7 +26,8 @@
     "express": "~3.4.4",
     "mongodb": "^2.2.31",
     "sendgrid": "^1.9.2",
-    "slack-notify": "^0.1.7"
+    "slack-notify": "^0.1.7",
+    "uglify-js": "^3.11.3"
   },
   "devDependencies": {},
   "bundleDependencies": [],
