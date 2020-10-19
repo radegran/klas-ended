@@ -107,7 +107,7 @@ var DB = function(mongoClient, isDevelEnv)
 	// 3rd TRY
 	mongoURL = process.env.DB_URI || "mongodb://klas.com";
 	
-	mongoClient.connect(mongoURL, function(err, validDatabase)
+	mongoClient.connect(mongoURL, function(err, client)
 	{
 		if (err) 
 		{ 
@@ -121,7 +121,7 @@ var DB = function(mongoClient, isDevelEnv)
 		else
 		{
 			console.log("Connected to Mongo database!")
-			database = validDatabase;
+			database = client.db();
 		}
 	});
 	
